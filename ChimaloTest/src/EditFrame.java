@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 
 public class EditFrame extends JFrame{
 	
-	
+	//wijziging
 	 public final static String jpeg = "jpeg";
 	    public final static String jpg = "jpg";
 	    public final static String gif = "gif";
