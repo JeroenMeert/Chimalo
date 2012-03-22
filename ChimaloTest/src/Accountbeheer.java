@@ -25,6 +25,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	private Model m;
 	private JFrame parent;
 	private JButton activate;
+	//bvjkxgvusgcelzqhsvcqsukvd
 	/**
 	 * Launch the application.
 	 */
