@@ -69,7 +69,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Model m = new Model("Anthony");
+					Model m = new Model("Anthony", "Administrator");
 					hoofd_scherm frame = new hoofd_scherm(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -110,6 +110,10 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		menuBar.add(mnAccountManagement);
 		
 		JMenuItem mntmBeheerdersBeheren = new JMenuItem("Account beheer");
+		if(model.getActiveType().equals("Beheerder"))
+		{
+			mntmBeheerdersBeheren.setEnabled(false);
+		}
 		mntmBeheerdersBeheren.addActionListener(new ActionListener() {
 			
 			@Override
@@ -225,10 +229,6 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		c.gridy=0;*/
 		//contentPane.add(panel_1);
 		panel_1.setLayout(new GridLayout(100, 0));
-		
-
-		
-		
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -262,7 +262,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		
 
 		ImagePanel panel = new ImagePanel("logochimalo.jpg");
-		panel.setBounds(0, 0, 99, 91);
+		panel.setBounds(0, 0, 1000, 92);
 		contentPane.add(panel);
 		
 		 btnWijzigen = new JButton("Wijzigen");
@@ -315,41 +315,6 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		activePhoto = new ImagePanel();
 		activePhoto.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		activePhoto.setBounds(67, 163, 253, 315);
-		activePhoto.addMouseListener(new MouseListener(){
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(model.getActiveItem()!=null){
-				EditFrame ef = new EditFrame(activePhoto.getPhoto(),model);
-				ef.setVisible(true);
-				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
 		contentPane.add(activePhoto);
 		
 		JLabel lblBewerken = new JLabel("Bewerken");
@@ -562,12 +527,10 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		refreshItems();
-		if (model.getItems().size()==0){
-			panel_1.setLayout(new GridLayout(1,0));
-		}
-		else {
-			panel_1.setLayout(new GridLayout(model.getItems().size(),0));
-		}
+		if(model.getItems().size() == 0)
+			panel_1.setLayout(new GridLayout(1, 0));
+		else
+			panel_1.setLayout(new GridLayout(model.getItems().size(), 0));
 		refreshForState();
 		repaint();
 	}
@@ -594,22 +557,18 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 			btnAfkeuren.setEnabled(true);
 			btnWijzigen.setEnabled(true);
 			saveWijziging.setVisible(false);
-
-			
 		}
 		if (state=="Afgekeurd"){
 			btnGoedkeuren.setEnabled(true);
 			btnAfkeuren.setEnabled(false);
 			btnWijzigen.setEnabled(true);
 			saveWijziging.setVisible(false);
-
 		}
 		if (state =="Keurlijst"){
 			btnGoedkeuren.setEnabled(true);
 			btnAfkeuren.setEnabled(true);
 			btnWijzigen.setEnabled(true);
 			saveWijziging.setVisible(false);
-
 		}
 		}
 	

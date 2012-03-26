@@ -7,6 +7,7 @@ import javax.swing.event.ChangeListener;
 public class Model {
 
 	private String activeUser;
+	private String activeType;
 	private ArrayList<Item>items;
 	private DataBankConnection dbc;
 	private ArrayList<ChangeListener> listeners;
@@ -16,6 +17,15 @@ public class Model {
 		dbc = new DataBankConnection(this);
 		items = dbc.leesItemsOpStatus("KeurLijst");
 		this.activeUser=activeUser;
+	}
+	
+	public Model(String activeUser, String type)
+	{
+		listeners = new ArrayList<ChangeListener>();
+		dbc = new DataBankConnection(this);
+		items = dbc.leesItemsOpStatus("KeurLijst");
+		this.activeUser=activeUser;
+		this.activeType = type;
 	}
 	
 	public void subscribe(ChangeListener c){
@@ -93,5 +103,15 @@ public class Model {
 		dbc.updateGebruiker(nr, naam, voornaam, pass, type);
 		notifyChangeListeners();
 	}
+
+	public String getActiveType() {
+		return activeType;
+	}
+	
+	public String getMd5(String woord)
+	{
+		return dbc.md5(woord);
+	}
+	
 	
 }

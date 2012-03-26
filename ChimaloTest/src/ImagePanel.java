@@ -55,8 +55,4 @@ g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
 
 }
-
-public Image getPhoto(){
-	return image;
-}
 }

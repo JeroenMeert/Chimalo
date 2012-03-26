@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 public class DataBankConnection {
 	private BufferedImage image;
 	private Model m;
+	private String type = "Administrator";
 	
 	public DataBankConnection(Model m) {
 		this.m = m;
@@ -37,7 +38,7 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
-        	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Naam = ? AND Wachtwoord = ? AND Actief = ?");
+        	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
 
         	zoekLogin.setString(1, name);
         	zoekLogin.setString(2, pass);
@@ -48,7 +49,10 @@ public class DataBankConnection {
             {
             	String status = rs.getString("Type");
             	if(status.equals("Beheerder") || status.equals("Administrator"))
+            	{
+            		type = status;
             		return true; 
+            	}
             	else
             		return false;
             }
@@ -74,13 +78,13 @@ public class DataBankConnection {
 		return false;
        
     }
-	public boolean hasDuplicates(String naam) {
+	public boolean hasDuplicates(String Gebruikersnaam) {
 		Connection conn= null;
 		try {
 			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
     		int count = 0;
-    		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS rowcount FROM Gebruiker WHERE Naam =? ");
-    		haalItemsOp.setString(1,naam);
+    		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS rowcount FROM Gebruiker WHERE Gebruikersnaam =? ");
+    		haalItemsOp.setString(1,Gebruikersnaam);
     		ResultSet r = haalItemsOp.executeQuery();
     		r.next();
     		count = r.getInt("rowcount") ;
@@ -107,14 +111,14 @@ public class DataBankConnection {
 	}
 	
 	
-	public void voegToe(String naam, String voornaam, String pass, String type){
+	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type){
 		Connection conn = null;
-		if(!hasDuplicates(naam)) {
+		if(!hasDuplicates(Gebruikersnaam)) {
         try {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Naam, Voornaam, Wachtwoord, Type, Actief) VALUES (?,?,?,?,?)");
-        	voegBeheerderToe.setString(1, naam);
-        	voegBeheerderToe.setString(2, voornaam);
+        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief) VALUES (?,?,?,?,?)");
+        	voegBeheerderToe.setString(1, Gebruikersnaam);
+        	voegBeheerderToe.setString(2, Naam);
         	voegBeheerderToe.setString(3, pass);
         	voegBeheerderToe.setString(4, type);
         	voegBeheerderToe.setBoolean(5, true);
@@ -131,22 +135,22 @@ public class DataBankConnection {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}	
         }
 		}
 		else {
-			JOptionPane.showMessageDialog(null, "Een gebruiker met deze naam bestaat al, kies een andere!");
+			JOptionPane.showMessageDialog(null, "Een gebruiker met deze Gebruikersnaam bestaat al, kies een andere!");
 		}
 	}
-	public void updateGebruiker(int nr, String naam, String voornaam, String pass, String type){
+	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type){
 		Connection conn = null;
         try {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
         	if(!pass.equals(""))
         	{
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Naam = ? ,Voornaam = ?,Wachtwoord = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
-        		voegBeheerderToe.setString(1, naam);
-        		voegBeheerderToe.setString(2, voornaam);
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
+        		voegBeheerderToe.setString(1, Gebruikersnaam);
+        		voegBeheerderToe.setString(2, Naam);
         		voegBeheerderToe.setString(3, pass);
         		voegBeheerderToe.setString(4, type);
         		voegBeheerderToe.setBoolean(5, true);
@@ -154,9 +158,9 @@ public class DataBankConnection {
         		voegBeheerderToe.executeUpdate();
         	}
         	else {
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Naam = ? ,Voornaam = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
-            	voegBeheerderToe.setString(1, naam);
-            	voegBeheerderToe.setString(2, voornaam);
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
+            	voegBeheerderToe.setString(1, Gebruikersnaam);
+            	voegBeheerderToe.setString(2, Naam);
             	voegBeheerderToe.setString(3, type);
             	voegBeheerderToe.setBoolean(4, true);
             	voegBeheerderToe.setInt(5, nr);
@@ -190,7 +194,7 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr FROM Object ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr FROM Object ");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
@@ -223,11 +227,11 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 			
             Statement stat = conn.createStatement();
-        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT Naam, Voornaam FROM Gebruiker WHERE GebruikerNr =? ");
+        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT Gebruikersnaam, Naam FROM Gebruiker WHERE GebruikerNr =? ");
         	haalGebruikerOp.setInt(1, userNr);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
-        		 result = rs.getString("Voornaam")+" "+ rs.getString("Naam");
+        		 result = rs.getString("Naam")+" "+ rs.getString("Gebruikersnaam");
         	}
         	
         	
@@ -329,7 +333,7 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr FROM Object WHERE Status = ?");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT * FROM Object WHERE Status = ?");
         	haalItemsOp.setString(1, status);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -468,7 +472,7 @@ public class DataBankConnection {
         		String type = rs.getString("Type");
         		if(type.equals("Beheerder") || type.equals("Administrator"))
         		{
-        		Gebruiker i = new Gebruiker(rs.getString("Naam"), rs.getString("Voornaam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"));
+        		Gebruiker i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"));
         		gebruikers.add(i);
         		}
         	}
@@ -659,5 +663,22 @@ public class DataBankConnection {
 			}
         }
 	}
+	public String getType() {
+		return type;
+	}
+	public String md5(String md5) {
+		   try {
+		        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+		        byte[] array = md.digest(md5.getBytes());
+		        StringBuffer sb = new StringBuffer();
+		        for (int i = 0; i < array.length; ++i) {
+		          sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+		       }
+		        return sb.toString();
+		    } catch (java.security.NoSuchAlgorithmException e) {
+		    }
+		    return null;
+		}
+
 }
 	

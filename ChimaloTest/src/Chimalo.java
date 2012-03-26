@@ -78,7 +78,7 @@ public class Chimalo extends JFrame {
 		    img = ImageIO.read(new File("logo.jpg"));
 		} catch (IOException e) {
 		}
-		ImageIcon image = new ImageIcon(getClass().getResource("logochimalo.jpg"));
+		ImageIcon image = new ImageIcon(getClass().getResource("logo.jpg"));
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
@@ -110,8 +110,8 @@ public class Chimalo extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				DataBankConnection dbc = new DataBankConnection();
-				if (dbc.checkAccount(user.getText(), pass.getText())){
-					hoofd_scherm scherm = new hoofd_scherm(new Model(user.getText()));
+				if (dbc.checkAccount(user.getText(), dbc.md5(pass.getText()))){
+					hoofd_scherm scherm = new hoofd_scherm(new Model(user.getText(), dbc.getType()));
 					scherm.setVisible(true);
 					parent.dispose();
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();

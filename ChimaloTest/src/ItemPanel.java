@@ -80,7 +80,7 @@ public class ItemPanel extends JPanel {
 		this.setBackground(Color.white);
 		this.setBorder(BorderFactory.createEtchedBorder(Color.DARK_GRAY,Color.lightGray ));
 		setPreferredSize(new Dimension(280, 79));
-		JLabel lblNaam = new JLabel("Gebruikersnaam/Naam:");
+		JLabel lblNaam = new JLabel("Gebruikersnaam:");
 		lblNaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblNaam.setBounds(10, 11, 120, 14);
 		add(lblNaam);
@@ -100,7 +100,7 @@ public class ItemPanel extends JPanel {
 		type.setBounds(140, 42, 95, 14);
 		add(type);
 		
-		JLabel lblVoornaam = new JLabel("Voornaam:");
+		JLabel lblVoornaam = new JLabel("Naam:");
 		lblVoornaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblVoornaam.setBounds(10, 27, 107, 14);
 		add(lblVoornaam);

@@ -25,7 +25,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	private Model m;
 	private JFrame parent;
 	private JButton activate;
-	//bvjkxgvusgcelzqhsvcqsukvd
+	private ChangeListener accountbeheer;
 	/**
 	 * Launch the application.
 	 */
@@ -33,7 +33,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Accountbeheer frame = new Accountbeheer(new Model("Anthony"));
+					Accountbeheer frame = new Accountbeheer(new Model("Van Dooren"));
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 					
@@ -60,6 +60,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		parent = this;
 		m = mod;
 		m.subscribe(this);
+		accountbeheer = this;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
@@ -80,7 +81,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				parent.dispose();
-				hoofd_scherm frame = new hoofd_scherm(new Model(m.getUser()));
+				hoofd_scherm frame = new hoofd_scherm(new Model(m.getUser(), "Administrator"));
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			    
@@ -127,6 +128,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				parent.dispose();
+				m.unsubscribe(accountbeheer);
 				Chimalo frame = new Chimalo(m.getUser());
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -152,8 +154,8 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 
 		gebruikers = m.getGebruikers();
 		
-		ImagePanel panel = new ImagePanel("logochimalo.jpg");
-		panel.setBounds(0, 0, 99, 91);
+		ImagePanel panel = new ImagePanel("banner2.jpg");
+		panel.setBounds(0, 0, 725, 92);
 		contentPane.add(panel);
 		
 		JLabel lblBewerken = new JLabel("Bewerken");
@@ -164,7 +166,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		groep.add(rdbtnAfgekeurde);
 		groep.add(rdbtnGeenFilter);
 		
-		JLabel lblGebruikersnaam = new JLabel("Gebruikersnaam/Naam:");
+		JLabel lblGebruikersnaam = new JLabel("Gebruikersnaam:");
 		lblGebruikersnaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblGebruikersnaam.setBounds(67, 166, 123, 14);
 		contentPane.add(lblGebruikersnaam);
@@ -193,7 +195,11 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		//contentPane.add(panel_1);
 		
 		//GridLayout gl_panel_1 = new GridLayout(dbconn.getCount("Gebruikers"), 0);
-		GridLayout gl_panel_1 = new GridLayout(20, 0);
+		GridLayout gl_panel_1;
+		if(gebruikers.size() == 0)
+			gl_panel_1 = new GridLayout(1, 0);
+		else
+			gl_panel_1 = new GridLayout(gebruikers.size(), 0);
 		panel_1_1.setLayout(gl_panel_1);
 		
 		JLabel lblType = new JLabel("Type:");
@@ -207,7 +213,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		typeBox.setBounds(200, 227, 123, 20);
 		contentPane.add(typeBox);
 		
-		JLabel lblVoornaam = new JLabel("Voornaam:");
+		JLabel lblVoornaam = new JLabel("Naam:");
 		lblVoornaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblVoornaam.setBounds(67, 187, 123, 14);
 		contentPane.add(lblVoornaam);
@@ -241,10 +247,10 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(activeGebruiker == -1) {
-					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), wachtwoordVeld.getText(), typeBox.getSelectedItem().toString());
+					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString());
 				}
 				else
-					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), wachtwoordVeld.getText(), typeBox.getSelectedItem().toString());
+					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString());
 				nieuw();
 			}
 		});
@@ -352,5 +358,9 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		gebruikers = m.getGebruikers();
 		panel_1_1 = GetGebruikerLijst(gebruikers);
 		panel_1_1.setVisible(true);
+		if(gebruikers.size() == 0)
+			panel_1.setLayout(new GridLayout(1, 0));
+		else
+			panel_1.setLayout(new GridLayout(gebruikers.size(), 0));
 	}
 }
