@@ -69,7 +69,10 @@ public class EditFrame extends JFrame{
 		btnSave = new JButton("Bewaren");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		//		model.getActiveItem().setFoto((BufferedImage)imagePanel.getPhoto());
+				model.getActiveItem().setFoto((BufferedImage)imagePanel.getFoto());
+				model.overschrijfActive();
+				model.notifyChangeListeners();
+				parent.dispose();
 			}
 		});
 		hoofdPanel = new JPanel();

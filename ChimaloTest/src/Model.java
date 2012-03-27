@@ -113,5 +113,9 @@ public class Model {
 		return dbc.md5(woord);
 	}
 	
+	public void overschrijfActive(){
+		dbc.overschrijfItem(activeItem);
+	}
+	
 	
 }

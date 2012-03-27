@@ -1,6 +1,8 @@
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -182,8 +184,45 @@ public class DataBankConnection {
 			}
         }
 	}
-	public void schrijfItem(){
+	public void overschrijfItem(Item i){
 		
+
+		Connection conn = null;
+        try {
+        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+
+        	BufferedImage im = i.getFoto(); 
+        	ByteArrayOutputStream os = new ByteArrayOutputStream();
+        	ImageIO.write(im, "gif", os);
+        	InputStream is = new ByteArrayInputStream(os.toByteArray());
+        	if (is == null)
+        		System.out.println("kak");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ? WHERE ObjectNr = ?");
+        	overschrijf.setString(1, i.getTitel());
+        	overschrijf.setDate(2,i.getInzendDatum());
+        	overschrijf.setString(3,i.getText());
+        	overschrijf.setBinaryStream(4,is,is.available());
+        	overschrijf.setInt(5,zoekGebruikerNr(i.getAuteur()));
+        	overschrijf.setString(6,"Keurlijst");
+        	overschrijf.setInt(7, i.getId());
+        	overschrijf.executeUpdate();
+
+        } catch (SQLException ex) {
+            for (Throwable t : ex) {
+                t.printStackTrace();
+            }
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        finally {
+        	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
 	}
 	public ArrayList<Item> leesItems(){
 		
@@ -679,6 +718,32 @@ public class DataBankConnection {
 		    }
 		    return null;
 		}
+ private int zoekGebruikerNr(String naam){
+	 Connection conn = null;
+     try {
+     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+
+         //Statement stat = conn.createStatement();
+     	PreparedStatement findNr = conn.prepareStatement("SELECT GebruikerNr FROM Gebruiker WHERE Gebruikersnaam =?");
+     	findNr.setString(1,naam);
+     	ResultSet rs= findNr.executeQuery();
+     	if (rs.next())     	
+     	return rs.getInt(1);
+     } catch (SQLException ex) {
+         for (Throwable t : ex) {
+             t.printStackTrace();
+         }
+     }
+     finally {
+     	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }
+     return 1;
+	}
 
 }
 	

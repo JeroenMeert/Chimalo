@@ -315,6 +315,41 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		activePhoto = new ImagePanel();
 		activePhoto.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		activePhoto.setBounds(67, 163, 253, 315);
+		activePhoto.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(model.getActiveItem()!=null){
+				EditFrame frame = new EditFrame(activePhoto.getFoto(),model);
+				frame.setVisible(true);
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		contentPane.add(activePhoto);
 		
 		JLabel lblBewerken = new JLabel("Bewerken");
@@ -526,6 +561,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
+		
 		refreshItems();
 		if(model.getItems().size() == 0)
 			panel_1.setLayout(new GridLayout(1, 0));
