@@ -117,5 +117,12 @@ public class Model {
 		dbc.overschrijfItem(activeItem);
 	}
 	
-	
+	public ArrayList<Erfgoed> getErfgoeden(){
+		return dbc.getErfGoeden();
+	}
+
+	public void schrijfNieuwItem(Item i) {
+		dbc.schrijfNieuwItem(i);
+		
+	}
 }

@@ -141,8 +141,8 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				
+				NieuwItemFrame nif = new NieuwItemFrame(model);
+				nif.setVisible(true);
 			}
 			
 		});

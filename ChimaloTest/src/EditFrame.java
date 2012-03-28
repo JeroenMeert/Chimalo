@@ -25,7 +25,7 @@ public class EditFrame extends JFrame{
 	    public final static String jpg = "jpg";
 	    public final static String gif = "gif";
 	    public final static String png = "png";
-	    
+	    private NieuwItemFrame ParentFrame;
 	    private String [] acceptableExtensions= new String[]{"jpeg","jpg","gif","png"};
 	    private JFileChooser kiesFile;
 	    private Model model;
@@ -90,7 +90,60 @@ public class EditFrame extends JFrame{
 	}
 	
 
-
+	public EditFrame(Model m,NieuwItemFrame nif){
+		ParentFrame=nif;
+		parent=this;
+		btnPanel = new JPanel();
+		imagePanel=new ImagePanel();
+		btnWijzig = new JButton("Wijzigen");
+		parent=this;
+		model=m;
+		btnWijzig.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnVal=fc.showOpenDialog(null);
+				
+				if (returnVal==JFileChooser.APPROVE_OPTION){
+					File file = fc.getSelectedFile();
+					if (checkExtension(file)){
+						
+						try {
+							imagePanel.setNewFoto(ImageIO.read(file));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						//parent.repaint();
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Het bestand dat u probeerde te openen heeft geen geldige extensie om als afbeelding toegevoegd te worden");
+					}
+				}
+			}
+		});
+		btnSave = new JButton("Bewaren");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ParentFrame.setFoto((BufferedImage)imagePanel.getFoto());
+				
+				parent.dispose();
+			}
+		});
+		hoofdPanel = new JPanel();
+		
+		hoofdPanel.setLayout(new BorderLayout());
+		btnPanel.setLayout(new GridLayout(1,2));
+		btnPanel.add(btnWijzig);
+		btnPanel.add(btnSave);
+		hoofdPanel.add(btnPanel,BorderLayout.SOUTH);
+		//imagePanel.setNewFoto((BufferedImage)bi);
+		hoofdPanel.add(imagePanel,BorderLayout.CENTER);
+		getContentPane().add(hoofdPanel);
+		setPreferredSize(new Dimension(500,500));
+		pack();
+	}
 	    public boolean checkExtension(File f) {
 	    	boolean found=false;
 	        String ext = null;

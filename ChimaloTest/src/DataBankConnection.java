@@ -233,12 +233,12 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr FROM Object ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed , Geschiedenis, Link FROM Object ");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in));
+        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
         		terugTeGevenItems.add(i);
         	}
         	
@@ -335,13 +335,13 @@ public class DataBankConnection {
 		Connection conn = null;
         try {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoed , Geschiedenis, Link FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in));
+        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
         		terugTeGevenItems.add(i);
         	}
         	
@@ -378,7 +378,7 @@ public class DataBankConnection {
         	
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in));
+        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
         		terugTeGevenItems.add(i);
         	}
         	
@@ -408,14 +408,14 @@ public class DataBankConnection {
         	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,Erfgoed,Geschiedenis,Link FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in));
+        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
         		terugTeGevenItems.add(i);
         	}
         	
@@ -744,6 +744,78 @@ public class DataBankConnection {
      }
      return 1;
 	}
+public ArrayList<Erfgoed> getErfGoeden() {
+	 Connection conn = null;
+     try {
+     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+     	ArrayList<Erfgoed> result=new ArrayList<Erfgoed>();
+         
+     	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
+     	ResultSet rs= erfgoed.executeQuery();
+     	while (rs.next()){
+     		Erfgoed e = new Erfgoed( rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"));
+     		result.add(e);
+     		
+     	}
+     	return result;
+     } catch (SQLException ex) {
+         for (Throwable t : ex) {
+             t.printStackTrace();
+         }
+     }
+     finally {
+     	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }
+     return new ArrayList<Erfgoed>();
+}
+public void schrijfNieuwItem(Item i) {
+	
+	 Connection conn = null;
+     try {
+     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+     	    
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Geschiedenis,Link) VALUES (?,?,?,?,?,?,?,?,?)");
+     	
+    	BufferedImage im = i.getFoto(); 
+    	ByteArrayOutputStream os = new ByteArrayOutputStream();
+    	ImageIO.write(im, "gif", os);
+    	InputStream is = new ByteArrayInputStream(os.toByteArray());     	
+     	newItem.setString(1,i.getTitel());
+     	newItem.setDate(2,i.getInzendDatum());
+     	newItem.setString(3,i.getText());
+     	newItem.setBinaryStream(4, is,is.available());
+     	newItem.setInt(5, zoekGebruikerNr(i.getAuteur()));
+     	newItem.setString(6,"Keurlijst");
+     	newItem.setString(7, i.getErfgoed());
+     	newItem.setString(8, i.getGeschiedenis());
+     	newItem.setString(9, i.getLink());
+     	
+     	newItem.executeUpdate();
+     	
+ 
+     } catch (SQLException ex) {
+         for (Throwable t : ex) {
+             t.printStackTrace();
+         }
+     } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+     finally {
+     	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }
+    
+}
 
 }
 	
