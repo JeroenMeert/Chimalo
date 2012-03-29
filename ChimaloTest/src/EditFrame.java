@@ -94,7 +94,7 @@ public class EditFrame extends JFrame{
 		ParentFrame=nif;
 		parent=this;
 		btnPanel = new JPanel();
-		imagePanel=new ImagePanel("/NoFoto.png");
+		imagePanel=new ImagePanel();
 		//imagePanel.setNewFoto("/NoFoto.png");
 		btnWijzig = new JButton("Wijzigen");
 		parent=this;
@@ -116,7 +116,7 @@ public class EditFrame extends JFrame{
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						//parent.repaint();
+						parent.repaint();
 					}
 					else {
 						JOptionPane.showMessageDialog(null, "Het bestand dat u probeerde te openen heeft geen geldige extensie om als afbeelding toegevoegd te worden");

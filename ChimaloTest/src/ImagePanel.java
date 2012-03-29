@@ -26,7 +26,6 @@ this.imageFile = image;
 public ImagePanel(BufferedImage bi){
 	super();
 	image = bi;
-	
 }
 
 public ImagePanel(LayoutManager layout)
@@ -47,6 +46,7 @@ public Image getFoto(){
 	return image; }
 }
 
+@Override
 public void paintComponent(Graphics g)
 {
 /*create image icon to get image*/
