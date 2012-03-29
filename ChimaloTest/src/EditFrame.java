@@ -95,6 +95,7 @@ public class EditFrame extends JFrame{
 		parent=this;
 		btnPanel = new JPanel();
 		imagePanel=new ImagePanel();
+		//imagePanel.setNewFoto("/NoFoto.png");
 		btnWijzig = new JButton("Wijzigen");
 		parent=this;
 		model=m;

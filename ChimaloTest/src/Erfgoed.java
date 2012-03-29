@@ -11,7 +11,10 @@ public class Erfgoed {
 		setLocatie(l);
 		setType(t);
 	}
-
+	@Override
+	public String toString(){
+		return naam;
+	}
 	
 
 	public String getNaam() {

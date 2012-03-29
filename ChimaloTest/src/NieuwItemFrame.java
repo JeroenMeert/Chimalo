@@ -138,12 +138,13 @@ public class NieuwItemFrame extends JFrame {
 		contentPane.add(cbStatuut);
 		
 		String [] e = new String [model.getErfgoeden().size()];
-		for (int i = 0;i<model.getErfgoeden().size();i++){
-			e[i]=model.getErfgoeden().get(i).getNaam();
-			i++;
-		}
-		cbErfgoed = new JComboBox(e);
+
+		cbErfgoed = new JComboBox();
 		cbErfgoed.setBounds(21, 97, 228, 20);
+		cbErfgoed.addItem("--Kies een erfgoed--");
+		for (int i = 0;i<model.getErfgoeden().size();i++){
+			cbErfgoed.addItem( model.getErfgoeden().get(i));
+		}
 		contentPane.add(cbErfgoed);
 		
 		txtTitel = new JTextField();
