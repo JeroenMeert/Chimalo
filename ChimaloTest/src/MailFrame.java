@@ -49,7 +49,11 @@ public class MailFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MailFrame frame = new MailFrame(new Model("Anthony"));
+					Calendar cal = new GregorianCalendar() ;
+					java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
+					Model model = new Model("Anthony");
+					model.setActiveItem(new Item("testtitel", "Van Dooren", jsqlD, "dit is een test item", "Afgekeurd", 1, null, "", "", ""));
+					MailFrame frame = new MailFrame(model);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 				    
@@ -74,8 +78,9 @@ public class MailFrame extends JFrame {
 	public MailFrame(Model m) {
 		super("Mailsysteem");
 		this.m = m;
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		System.out.println(item);
+		item = m.getActiveItem();
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -152,10 +157,6 @@ public class MailFrame extends JFrame {
 	
 	public void preloader()
 	{
-		Calendar cal = new GregorianCalendar() ;
-		java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
-		item = new Item("testtitel", "Van Dooren", jsqlD, "dit is een test item", "Goedgekeurd", 1, null, "", "", "");
-		//m.setActiveItem("Van Dooren", "test", "03/01/1991", "testtitel");
 		html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"),item, m);
 		editorPane.setText(html.getText());
 	}

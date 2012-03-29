@@ -75,6 +75,7 @@ public class Model {
 	public void wijzigStatus(String s){
 		dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
 		items=dbc.leesItems();
+		activeItem.setStatus(s);
 		notifyChangeListeners();
 	}
 	public Item getActiveItem(){
@@ -185,5 +186,10 @@ public class Model {
 	public void schrijfNieuwItem(Item i) {
 		dbc.schrijfNieuwItem(i);
 		
+	}
+	
+	public void setActiveItem(Item m)
+	{
+		this.activeItem =m;
 	}
 }

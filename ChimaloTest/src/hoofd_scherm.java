@@ -282,6 +282,22 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 			public void actionPerformed(ActionEvent arg0) {
 				model.wijzigStatus("Afgekeurd");
 				model.leesOpStatus(state);
+				try {
+					MailFrame frame = new MailFrame(model);
+					frame.setVisible(true);
+					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+				    
+				    // bereken het midden van je scherm
+				    int w = frame.getSize().width;
+				    int h = frame.getSize().height;
+				    int x = (size.width-w)/2;
+				    int y = (size.height-h)/2;
+				    
+				    // verplaats de GUI
+				    frame.setLocation(x, y);  
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				refreshItems();
 				clearActive();
 				refreshForState();
@@ -303,6 +319,22 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 				model.getActiveItem().setText(activeBeschrijving.getText());
 				model.wijzigStatus("Goedgekeurd");
 				model.leesOpStatus(state);
+				try {
+					MailFrame frame = new MailFrame(model);
+					frame.setVisible(true);
+					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+				    
+				    // bereken het midden van je scherm
+				    int w = frame.getSize().width;
+				    int h = frame.getSize().height;
+				    int x = (size.width-w)/2;
+				    int y = (size.height-h)/2;
+				    
+				    // verplaats de GUI
+				    frame.setLocation(x, y);  
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				refreshItems();
 				clearActive();
 				refreshForState();

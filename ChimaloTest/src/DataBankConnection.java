@@ -523,6 +523,7 @@ public class DataBankConnection {
 		    }
 		    finally {
 	        	try {
+	        		if(conn != null)
 					conn.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
