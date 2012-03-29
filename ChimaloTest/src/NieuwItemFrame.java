@@ -83,7 +83,7 @@ public class NieuwItemFrame extends JFrame {
 		lblFoto.setBounds(21, 300, 46, 14);
 		contentPane.add(lblFoto);
 		
-		FotoPanel = new ImagePanel("/search-icon.png");
+		FotoPanel = new ImagePanel("/fotoToevoegen.png");
 		FotoPanel.addMouseListener(new MouseListener(){
 
 			@Override
@@ -291,6 +291,7 @@ public class NieuwItemFrame extends JFrame {
 		});
 		FotoPanel.setBounds(21, 325, 228, 295);
 		contentPane.add(FotoPanel);
+		
 		contentPane.repaint();
 		
 	}
