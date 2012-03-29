@@ -252,6 +252,40 @@ public class DataBankConnection {
         }
 		return result;
 	}
+	
+	public Gebruiker getGebruiker(String gebruikersnaam)
+	{
+		Gebruiker result=null;
+		Connection conn = null;
+        try {
+        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+			
+            Statement stat = conn.createStatement();
+        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam =? ");
+        	haalGebruikerOp.setString(1, gebruikersnaam);
+        	ResultSet rs = haalGebruikerOp.executeQuery();
+        	if (rs.next()){
+        		 result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"), rs.getString("Wachtwoord"), rs.getString("Type"), rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
+        	}
+        	
+        	
+
+
+        } catch (SQLException ex) {
+            for (Throwable t : ex) {
+                t.printStackTrace();
+            }
+        }
+        finally {
+        	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+		return result;
+	}
 	public BufferedImage getFoto() {
 		BufferedImage image= new BufferedImage(1,1,1);
 		Connection conn = null;
@@ -472,7 +506,7 @@ public class DataBankConnection {
         		String type = rs.getString("Type");
         		if(type.equals("Beheerder") || type.equals("Administrator"))
         		{
-        		Gebruiker i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"));
+        		Gebruiker i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
         		gebruikers.add(i);
         		}
         	}
@@ -667,18 +701,77 @@ public class DataBankConnection {
 		return type;
 	}
 	public String md5(String md5) {
-		   try {
-		        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-		        byte[] array = md.digest(md5.getBytes());
-		        StringBuffer sb = new StringBuffer();
-		        for (int i = 0; i < array.length; ++i) {
-		          sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-		       }
-		        return sb.toString();
+	   try {
+	        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+	        byte[] array = md.digest(md5.getBytes());
+	        StringBuffer sb = new StringBuffer();
+	        for (int i = 0; i < array.length; ++i) {
+	        	sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+	        }
+	        return sb.toString();
 		    } catch (java.security.NoSuchAlgorithmException e) {
-		    }
+	    }
 		    return null;
-		}
+	}
+	
+	
+	public void setMailText(String soort, String txt)
+	{
+		Connection conn = null;
+        try {
+        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+
+            //Statement stat = conn.createStatement();
+        	PreparedStatement wijzig = conn.prepareStatement("UPDATE Standaardtekst SET Tekst = ? WHERE Soort = ?");
+        	
+        	wijzig.setString(1, txt);
+        	wijzig.setString(2, soort);
+        	wijzig.executeUpdate();
+        } catch (SQLException ex) {
+            for (Throwable t : ex) {
+                t.printStackTrace();
+            }
+        }
+        finally {
+        	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+	}
+	
+	public String getMailText(String soort)
+	{
+		Connection conn = null;
+		String result = null;
+        try {
+        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+		       
+		    	PreparedStatement read = conn.prepareStatement("SELECT Tekst FROM Standaardtekst WHERE Soort=?");
+		    	read.setString(1, soort);
+		    	ResultSet rs = read.executeQuery();
+		    	
+             if (rs.next()) {
+                 result = rs.getString("Tekst");
+             } else {
+                 System.out.println("Standaardtekst niet gevonden in databank.");
+             }
+		    }catch(Exception e ){
+		    	
+		    }
+		    finally {
+	        	try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+        return result;
+	}
+	
 
 }
 	

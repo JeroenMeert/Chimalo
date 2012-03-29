@@ -90,7 +90,7 @@ public class ItemPanel extends JPanel {
 		lbTypeGebruiker.setBounds(10, 42, 84, 14);
 		add(lbTypeGebruiker);
 		
-		JLabel naam = new JLabel(g.getNaam());
+		JLabel naam = new JLabel(g.getGebruikersnaam());
 		naam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		naam.setBounds(140, 11, 130, 14);
 		add(naam);
@@ -105,7 +105,7 @@ public class ItemPanel extends JPanel {
 		lblVoornaam.setBounds(10, 27, 107, 14);
 		add(lblVoornaam);
 		
-		JLabel voornaam = new JLabel(g.getVoornaam());
+		JLabel voornaam = new JLabel(g.getNaam());
 		voornaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		voornaam.setBounds(140, 27, 130, 14);
 		add(voornaam);

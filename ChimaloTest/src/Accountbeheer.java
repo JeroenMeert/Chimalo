@@ -294,8 +294,8 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 
 		for (final Gebruiker i :gebruikers){
 			final ItemPanel ip =new ItemPanel(i);
-			final String naam= i.getNaam();
-			final String voornaam = i.getVoornaam();
+			final String naam= i.getGebruikersnaam();
+			final String voornaam = i.getNaam();
 			final String type = i.getType();
 			ip.addMouseListener(new MouseListener(){
 			

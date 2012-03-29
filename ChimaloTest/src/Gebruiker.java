@@ -1,33 +1,35 @@
 
 public class Gebruiker {
+	private String gebruikersnaam;
 	private String naam;
-	private String voornaam;
 	private String wachtwoord;
 	private String type;
+	private String email;
 	private int gebruikersnummer;
 	private boolean actief;
 	
-	public Gebruiker(String naam, String voornaam, String wachtwoord,
-			String type, int nummer, boolean actief) {
+	public Gebruiker(String gebruikersnaam, String naam, String wachtwoord,
+			String type, int nummer, boolean actief, String email) {
 		super();
+		this.gebruikersnaam = gebruikersnaam;
 		this.naam = naam;
-		this.voornaam = voornaam;
 		setWachtwoord(wachtwoord);
 		this.type = type;
 		this.gebruikersnummer = nummer;
 		this.actief = actief;
+		this.email = email;
+	}
+	public String getGebruikersnaam() {
+		return gebruikersnaam;
+	}
+	public void setGebruikersnaam(String naam) {
+		this.gebruikersnaam = naam;
 	}
 	public String getNaam() {
 		return naam;
 	}
-	public void setNaam(String naam) {
-		this.naam = naam;
-	}
-	public String getVoornaam() {
-		return voornaam;
-	}
-	public void setVoornaam(String voornaam) {
-		this.voornaam = voornaam;
+	public void setNaam(String voornaam) {
+		this.naam = voornaam;
 	}
 	public String getWachtwoord() {
 		return wachtwoord;
@@ -58,4 +60,19 @@ public class Gebruiker {
 	public void setActief(boolean actief) {
 		this.actief = actief;
 	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	@Override
+	public String toString() {
+		return "Gebruiker [gebruikersnaam=" + gebruikersnaam + ", naam=" + naam
+				+ ", wachtwoord=" + wachtwoord + ", type=" + type + ", email="
+				+ email + ", gebruikersnummer=" + gebruikersnummer
+				+ ", actief=" + actief + "]";
+	}
+	
+	
 }
