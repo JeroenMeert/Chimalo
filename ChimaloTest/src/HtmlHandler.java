@@ -18,6 +18,7 @@ public class HtmlHandler {
 	private String contents;
 	private Item item;
 	private Model m;
+	private String texthtml;
 
 	public HtmlHandler(InputStream aFile, Item item, Model m) {
 		this.aFile = aFile;
@@ -78,6 +79,7 @@ public class HtmlHandler {
 		contents = getHtml();
 		contents = contents.replaceAll("&title", "Uw item " + item.getTitel() + " werd " + item.getStatus().toLowerCase());
 		contents = contents.replaceAll("&text", m.getMailText(item.getStatus()) + "<br/>");
+		texthtml = contents;
 		return contents;
 	}
 	
@@ -85,4 +87,9 @@ public class HtmlHandler {
 	{
 		m.setMailText(item.getStatus(), text);
 	}
+
+	public String getTexthtml() {
+		return texthtml;
+	}
+	
 }

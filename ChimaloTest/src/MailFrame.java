@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +30,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 
-public class mailFrame extends JFrame {
+public class MailFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JEditorPane  editorPane;
@@ -38,6 +40,7 @@ public class mailFrame extends JFrame {
 	private String standaardTekst;
 	private Model m;
 	private Item item;
+	private HtmlHandler html;
 
 	/**
 	 * Launch the application.
@@ -46,7 +49,7 @@ public class mailFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					mailFrame frame = new mailFrame(new Model("Anthony"), null);
+					MailFrame frame = new MailFrame(new Model("Anthony"));
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 				    
@@ -68,10 +71,9 @@ public class mailFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public mailFrame(Model m, Item item) {
+	public MailFrame(Model m) {
 		super("Mailsysteem");
 		this.m = m;
-		this.item = item;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -116,6 +118,14 @@ public class mailFrame extends JFrame {
 		
 		JMenuItem mntmStandaardTekstBewerken = new JMenuItem("Standaard tekst bewerken");
 		mnOpties.add(mntmStandaardTekstBewerken);
+		mntmStandaardTekstBewerken.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				standaardbewerken();
+				
+			}
+		});
 		contentPane = new ImagePanel("mail.jpg");
 		contentPane.setPreferredSize(new Dimension(600,600));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -142,7 +152,11 @@ public class mailFrame extends JFrame {
 	
 	public void preloader()
 	{
-		HtmlHandler html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"), m.getActiveItem(), m);
+		Calendar cal = new GregorianCalendar() ;
+		java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
+		item = new Item("testtitel", "Van Dooren", jsqlD, "dit is een test item", "Goedgekeurd", 1, null, "", "", "");
+		//m.setActiveItem("Van Dooren", "test", "03/01/1991", "testtitel");
+		html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"),item, m);
 		editorPane.setText(html.getText());
 	}
 	
@@ -152,7 +166,6 @@ public class mailFrame extends JFrame {
 		String content = editorPane.getText();
 		content = content.replaceAll("\"", "'");
 		String patternStr = "<td(\\s\\w+?[^=]*?='[^']*?')*?\\s+?class='(\\S+?\\s)*?titlecell(\\s\\S+?)*?'.*?>(.*?)</td>";
-		JOptionPane.showMessageDialog(null, new JTextArea(content));
 		// Compile and use regular expression
 		Pattern pattern = Pattern.compile(patternStr, Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(content);
@@ -161,11 +174,23 @@ public class mailFrame extends JFrame {
 		if (matchFound) {
 		        title = matcher.group(4);
 		}
-		System.out.println(title.trim());
+		title = title.trim();
 		
 		//contents
-		
-		
+		String patternStr1 = "<td(\\s\\w+?[^=]*?='[^']*?')*?\\s+?class='(\\S+?\\s)*?contentscell(\\s\\S+?)*?'.*?>(.*?)</td>";
+		// Compile and use regular expression
+		Pattern pattern1 = Pattern.compile(patternStr1, Pattern.DOTALL);
+		Matcher matcher1 = pattern1.matcher(content);
+		boolean matchFound1 = matcher1.find();
+		String contents ="";
+		if (matchFound1) {
+		        contents = matcher1.group(4);
+		}
+		contents = contents.trim().replaceAll("\r\n          ","");
+		HtmlHandler htmltext = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"),item, m);
+		content = htmltext.getHtml();
+		content = content.replaceAll("&title", title);
+		content = content.replaceAll("&text", contents);
 		content = content.replaceAll("&amp;", "&");
 		content = content.replaceAll("&lt;", "<");
 		content = content.replaceAll("&gt;", ">");
@@ -173,9 +198,9 @@ public class mailFrame extends JFrame {
 		//content = content.replaceFirst("padding-bottom: 0;", "font-weight: bold; color: #FFFFFF;padding-bottom: 0;");
 		content = content.replaceAll("&titel", item.getTitel());
 		content = content.replaceAll("&auteur", item.getAuteur());
-		//content = content.replaceAll("&inzenddatum", item.getInzendDatum().toString());
+		content = content.replaceAll("&inzenddatum", item.getInzendDatum().toString());
 		content = content.replaceAll("&beschrijving", item.getText());
-		//content = content.replaceAll("&admin", m.getUser());
+		content = content.replaceAll("&admin", m.getUser());
 		JEditorPane htmlcontent = new JEditorPane();
 		htmlcontent.setContentType("text/html");
 		htmlcontent.setEditable(false);
@@ -200,6 +225,23 @@ public class mailFrame extends JFrame {
 	
 	public void standaardbewerken()
 	{
-		
+		Object[] possibleValues = { "Goedgekeurd", "Afgekeurd"};
+		Object selectedValue = JOptionPane.showInputDialog(this, "Kies welke standaardtekst je wilt bewerken", "Mail", JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
+		if(selectedValue != null) {
+			String content = editorPane.getText();
+			content = content.replaceAll("\"", "'");
+			
+			String patternStr1 = "<td(\\s\\w+?[^=]*?='[^']*?')*?\\s+?class='(\\S+?\\s)*?contentscell(\\s\\S+?)*?'.*?>(.*?)</td>";
+			// Compile and use regular expression
+			Pattern pattern1 = Pattern.compile(patternStr1, Pattern.DOTALL);
+			Matcher matcher1 = pattern1.matcher(content);
+			boolean matchFound1 = matcher1.find();
+			String contents ="";
+			if (matchFound1) {
+			        contents = matcher1.group(4);
+			}
+			contents = contents.trim().replaceAll("\r\n          ","");
+		m.setMailText(selectedValue.toString(), contents);
+		}
 	}
 }

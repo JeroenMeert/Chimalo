@@ -12,12 +12,12 @@ public class Model {
 	private DataBankConnection dbc;
 	private ArrayList<ChangeListener> listeners;
 	private Item activeItem;
-	private String mailUsername = "erfgoedbankherzele@gmail.com";
-	private String mailPassword = "eenbankalsgeenander";
-	private String smtpHost = "smtp.gmail.com";
-	private int smtpPort = 587;
+	private String mailUsername = "002113av";
+	private String mailPassword = "5sdaje7";
+	private String smtpHost = "mail-out.hogent.be";
+	private int smtpPort = 25;
 	
-	private String mailFrom = "info@chimalo.org";
+	private String mailFrom = "ErfgoedHerzele";
 	
 	public Model(String activeUser){
 		listeners = new ArrayList<ChangeListener>();
