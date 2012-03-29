@@ -142,8 +142,7 @@ public class mailFrame extends JFrame {
 	
 	public void preloader()
 	{
-		item = new Item("testtitel", "Van Dooren", null, "dit is een test item", "Goedgekeurd", 1, null);
-		HtmlHandler html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"), item, m);
+		HtmlHandler html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"), m.getActiveItem(), m);
 		editorPane.setText(html.getText());
 	}
 	

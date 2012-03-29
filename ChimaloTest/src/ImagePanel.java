@@ -39,6 +39,14 @@ public void setNewFoto(BufferedImage b){
 	repaint();
 }
 
+public Image getFoto(){
+	if(image!=null)
+		return image;
+	else{ ImageIcon imageIcon = new ImageIcon(getClass().getResource(imageFile));
+	image = imageIcon.getImage();
+	return image; }
+}
+
 public void paintComponent(Graphics g)
 {
 /*create image icon to get image*/
