@@ -94,7 +94,7 @@ public class EditFrame extends JFrame{
 		ParentFrame=nif;
 		parent=this;
 		btnPanel = new JPanel();
-		imagePanel=new ImagePanel();
+		imagePanel=new ImagePanel("/NoFoto.png");
 		//imagePanel.setNewFoto("/NoFoto.png");
 		btnWijzig = new JButton("Wijzigen");
 		parent=this;
@@ -142,7 +142,7 @@ public class EditFrame extends JFrame{
 		//imagePanel.setNewFoto((BufferedImage)bi);
 		hoofdPanel.add(imagePanel,BorderLayout.CENTER);
 		getContentPane().add(hoofdPanel);
-		setPreferredSize(new Dimension(500,500));
+		setPreferredSize(new Dimension(450,490));
 		pack();
 	}
 	    public boolean checkExtension(File f) {
