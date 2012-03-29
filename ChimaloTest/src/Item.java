@@ -119,6 +119,14 @@ public class Item {
 	public void setFoto(BufferedImage foto) {
 		this.foto = foto;
 	}
-
+	@Override
+	public String toString() {
+		return "Item [foto=" + foto + ", id=" + id + ", titel=" + titel
+				+ ", text=" + text + ", auteur=" + auteur + ", inzendDatum="
+				+ inzendDatum + ", erfgoed=" + erfgoed + ", geschiedenis="
+				+ geschiedenis + ", link=" + link + ", status=" + status + "]";
+	}
+	
+	
 
 }
