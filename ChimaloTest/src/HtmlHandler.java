@@ -77,7 +77,7 @@ public class HtmlHandler {
 	public String getText()
 	{
 		contents = getHtml();
-		contents = contents.replaceAll("&title", "Uw item " + item.getTitel() + " werd " + item.getStatus().toLowerCase());
+		contents = contents.replaceAll("&title", "Uw inzending van " + item.getInzendDatum().toString() + " met als titel "+ item.getTitel() + " werd " + item.getStatus().toLowerCase());
 		contents = contents.replaceAll("&text", m.getMailText(item.getStatus()) + "<br/>");
 		texthtml = contents;
 		return contents;

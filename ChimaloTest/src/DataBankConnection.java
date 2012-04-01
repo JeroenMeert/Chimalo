@@ -70,6 +70,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -103,6 +104,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -133,6 +135,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -177,6 +180,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -217,6 +221,7 @@ public class DataBankConnection {
 		}
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -251,6 +256,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -283,6 +289,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -317,6 +324,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -354,6 +362,7 @@ public class DataBankConnection {
 	        }
 	        finally {
 	        	try {
+	        		if(conn != null)
 					conn.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -388,6 +397,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -425,6 +435,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -462,6 +473,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -489,6 +501,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -560,6 +573,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -596,6 +610,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -645,6 +660,7 @@ public class DataBankConnection {
             }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// 0TODO Auto-generated catch block
@@ -677,6 +693,7 @@ public class DataBankConnection {
             }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 				verwijderGebruiker(nr);
 			} catch (SQLException e) {
@@ -704,6 +721,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -730,6 +748,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -774,6 +793,7 @@ public class DataBankConnection {
         }
         finally {
         	try {
+        		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -803,6 +823,7 @@ public class DataBankConnection {
 		    }
 		    finally {
 	        	try {
+	        		if(conn != null)
 					conn.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -859,6 +880,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
      }
      finally {
      	try {
+     		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -902,6 +924,7 @@ public void schrijfNieuwItem(Item i) {
 	}
      finally {
      	try {
+     		if(conn != null)
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

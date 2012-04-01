@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -56,7 +58,6 @@ public class MailFrame extends JFrame {
 					MailFrame frame = new MailFrame(model);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-				    
 				    // bereken het midden van je scherm
 				    int w = frame.getSize().width;
 				    int h = frame.getSize().height;
