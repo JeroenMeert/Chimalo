@@ -37,8 +37,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class hoofd_scherm extends JFrame implements ChangeListener{
-	private ImagePanel contentPane;
+public class hoofd_scherm extends JFrame {
+	private JPanel contentPane;
 	private JTextField activeTitel;
 	private JTextField activeAuteur;
 	private JTextField activeDatum;
@@ -49,7 +49,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 	private Model model;
 	private JRadioButton rdbtnAfgekeurde;
 	private JScrollPane scrollPane;
-	private JFrame parent;
+	
 	private JRadioButton rdbtnGoedgekeurd;
 	private JRadioButton rdbtnKeurlijst;
 	private ItemPanel ip;
@@ -61,6 +61,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 	private JComboBox zoekBox ;
 	private JLabel lblTeller;
 	private ImagePanel activePhoto;
+	private hoofd_scherm parent;
 
 	/**
 	 * Launch the application.
@@ -98,9 +99,6 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		parent=this;
 		model = m;
 		state="Keuzelijst";
-		
-		m.subscribe(this);
-		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -148,6 +146,28 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		});
 		mnAccountManagement.add(mntmNieuw);
 		
+		
+		
+		
+		
+		
+		JMenuItem mntmErfgoeden = new JMenuItem("Overzicht erfgoeden");
+		mntmErfgoeden.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				newPanel(new ErfgoedLijstPanel(model,parent));
+			}
+			
+		});
+		mnAccountManagement.add(mntmErfgoeden);
+		
+		
+		
+		
+		
+		
+		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.WHITE);
 		separator.setBackground(Color.WHITE);
@@ -185,8 +205,10 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		});
 		mnGebruiker.add(mntmUitloggen);
 		
-		
-		contentPane = new ImagePanel("background.jpg");
+		contentPane=new DashbordPanel(model,this);
+		getContentPane().add(contentPane);
+		pack();
+		/*contentPane = new ImagePanel("background.jpg");
 		contentPane.setPreferredSize(new Dimension(1000,539));
 		contentPane.setBackground(UIManager.getColor("Button.disabledShadow"));
 		setContentPane(contentPane);
@@ -226,7 +248,7 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 		/*panel_1.setLayout(new GridBagLayout());
 		GridBagConstraints c= new GridBagConstraints();
 		c.gridx=0;
-		c.gridy=0;*/
+		c.gridy=0;
 		//contentPane.add(panel_1);
 		panel_1.setLayout(new GridLayout(100, 0));
 		scrollPane = new JScrollPane();
@@ -622,5 +644,13 @@ public class hoofd_scherm extends JFrame implements ChangeListener{
 				slecht++;
 		}
 		lblTeller.setText("Keurlijst : "+keur+" Goedgekeurd : "+goed+" Afgekeurd : "+slecht);
+	}*/}
+	public void newPanel(JPanel p){
+		remove(contentPane);
+		contentPane=p;
+		getContentPane().add(contentPane);
+		
+		pack();
+		repaint();
 	}
 }

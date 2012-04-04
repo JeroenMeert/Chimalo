@@ -16,7 +16,7 @@ public class Model {
 	private String mailPassword = "5sdaje7";
 	private String smtpHost = "mail-out.hogent.be";
 	private int smtpPort = 25;
-	
+	private Erfgoed activeErfgoed;
 	private String mailFrom = "ErfgoedHerzele";
 	
 	public Model(String activeUser){
@@ -185,5 +185,31 @@ public class Model {
 	public void schrijfNieuwItem(Item i) {
 		dbc.schrijfNieuwItem(i);
 		
+	}
+
+	public boolean magErfgoedVerwijderdWorden(Erfgoed e) {
+		// TODO Auto-generated method stub
+		if(e!=null){
+		return dbc.magErfgoedVerwijderdWorden( e);
+		}
+		else return false;
+	}
+
+	public void removeErfgoed(Erfgoed e) {
+		dbc.removeErfgoed(e);
+		
+	}
+
+	public void setActiveErfgoed(Erfgoed erfgoed) {
+		this.activeErfgoed=erfgoed;
+		notifyChangeListeners();
+	}
+	public Erfgoed getActiveErfgoed(){
+		return activeErfgoed;
+	}
+
+	public void schrijfNieuwErfgoed(Erfgoed er) {
+		dbc.schrijfNieuwerfgoed(er);
+		notifyChangeListeners();
 	}
 }

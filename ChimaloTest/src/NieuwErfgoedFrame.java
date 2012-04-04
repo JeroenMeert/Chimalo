@@ -5,16 +5,26 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class NieuwErfgoedFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-
+	private JTextField txtNaam;
+	private JTextField txtLocatie;
+	private JTextField txtLink;
+	private String [] typ ={"--Kies een type--","Landschap","Dorpsgezicht","Gebouw","Archeologische site", "andere"};
+	private Model model ; 
+	private JTextArea textArea;
+	private JTextArea textArea_1;
+	private JComboBox cbType;
 	/**
 	 * Launch the application.
 	 */
@@ -22,7 +32,7 @@ public class NieuwErfgoedFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					NieuwErfgoedFrame frame = new NieuwErfgoedFrame();
+					NieuwErfgoedFrame frame = new NieuwErfgoedFrame(new Model("Jeroen"));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -34,10 +44,11 @@ public class NieuwErfgoedFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public NieuwErfgoedFrame() {
+	public NieuwErfgoedFrame(Model m) {
 		setTitle("Nieuw erfgoed");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 505, 257);
+		model = m;
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 864, 388);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -55,18 +66,61 @@ public class NieuwErfgoedFrame extends JFrame {
 		lblType.setBounds(24, 129, 46, 14);
 		contentPane.add(lblType);
 		
-		textField = new JTextField();
-		textField.setBounds(90, 37, 376, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		txtNaam = new JTextField();
+		txtNaam.setBounds(90, 37, 212, 20);
+		contentPane.add(txtNaam);
+		txtNaam.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(90, 80, 376, 20);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		txtLocatie = new JTextField();
+		txtLocatie.setBounds(90, 80, 212, 20);
+		contentPane.add(txtLocatie);
+		txtLocatie.setColumns(10);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(90, 126, 376, 20);
-		contentPane.add(comboBox);
+		cbType = new JComboBox(typ);
+		cbType.setBounds(90, 126, 212, 20);
+		contentPane.add(cbType);
+		
+		JButton btnBewaar = new JButton("Bewaar");
+		btnBewaar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(txtLink.getText()!=""&&txtLocatie.getText()!=""&&txtNaam.getText()!=""&&cbType.getSelectedIndex()!=0&&textArea.getText()!=""&&textArea_1.getText()!=""){
+				Erfgoed er = new Erfgoed(txtNaam.getText(),txtLocatie.getText(),String.valueOf(cbType.getSelectedItem()),txtLink.getText(),textArea.getText(),textArea_1.getText());
+				model.schrijfNieuwErfgoed(er);
+				}
+				else
+					JOptionPane.showMessageDialog(null,"U moet alle velden invullen om een nieuw erfgoed op te slaan");
+			}
+		});
+		btnBewaar.setBounds(24, 269, 113, 23);
+		contentPane.add(btnBewaar);
+		
+		JButton btnWis = new JButton("Wissen");
+		btnWis.setBounds(174, 269, 129, 23);
+		contentPane.add(btnWis);
+		
+		JLabel lblGeschiedenis = new JLabel("Geschiedenis");
+		lblGeschiedenis.setBounds(341, 21, 145, 14);
+		contentPane.add(lblGeschiedenis);
+		
+		JLabel lblNuttigeInfo = new JLabel("Nuttige info");
+		lblNuttigeInfo.setBounds(595, 21, 262, 14);
+		contentPane.add(lblNuttigeInfo);
+		
+		textArea = new JTextArea();
+		textArea.setBounds(340, 40, 217, 279);
+		contentPane.add(textArea);
+		
+		textArea_1 = new JTextArea();
+		textArea_1.setBounds(595, 40, 217, 279);
+		contentPane.add(textArea_1);
+		
+		JLabel lblLink = new JLabel("Link");
+		lblLink.setBounds(24, 171, 46, 14);
+		contentPane.add(lblLink);
+		
+		txtLink = new JTextField();
+		txtLink.setBounds(90, 168, 212, 20);
+		contentPane.add(txtLink);
+		txtLink.setColumns(10);
 	}
 }

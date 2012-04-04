@@ -846,7 +846,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
      	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
      	ResultSet rs= erfgoed.executeQuery();
      	while (rs.next()){
-     		Erfgoed e = new Erfgoed( rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"));
+     		Erfgoed e = new Erfgoed( rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"));
      		result.add(e);
      		
      	}
@@ -908,6 +908,97 @@ public void schrijfNieuwItem(Item i) {
 			}
      }
     
+}
+public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
+	 Connection conn = null;
+	 Boolean b = true;
+     try {
+     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+     	    
+     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Object WHERE Erfgoed = ?");
+     	
+     	magweg.setString(1,er.getNaam());
+     	
+     	ResultSet rs =magweg.executeQuery();
+     	if (rs.next()){
+     		b=false;
+     	}
+ 
+     } catch (SQLException ex) {
+         for (Throwable t : ex) {
+             t.printStackTrace();
+         }
+     }
+     finally {
+     	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }
+     return b;
+}
+public void removeErfgoed(Erfgoed er) {
+	// TODO Auto-generated method stub
+	 Connection conn = null;
+    try {
+    	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+    	    
+    	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE Naam =?");
+    	
+    	weg.setString(1,er.getNaam());
+    	weg.executeUpdate();
+
+    } catch (SQLException ex) {
+        for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+    finally {
+    	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }
+}
+public void schrijfNieuwerfgoed(Erfgoed er) {
+	 Connection conn = null;
+     try {
+     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+     	    
+     	PreparedStatement newE = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link ,Geschiedenis ,Info) VALUES (?,?,?,?,?,?)");
+     	
+    	   	
+     	newE.setString(1,er.getNaam());
+     	newE.setString(2,er.getLocatie());
+     	newE.setString(3,er.getType());
+     	newE.setString(4,er.getLink());
+     	newE.setString(5,er.getGeschiedenis());
+     	newE.setString(6,er.getInfo());
+
+     	
+     	
+     	newE.executeUpdate();
+     	
+ 
+     } catch (SQLException ex) {
+         for (Throwable t : ex) {
+             t.printStackTrace();
+         }
+     } 
+     finally {
+     	try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }
+    
+	
 }
 
 }
