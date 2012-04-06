@@ -79,7 +79,6 @@ public class MailFrame extends JFrame {
 	public MailFrame(Model m) {
 		super("Mailsysteem");
 		this.m = m;
-		System.out.println(item);
 		item = m.getActiveItem();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);

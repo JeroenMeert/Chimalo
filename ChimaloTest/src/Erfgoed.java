@@ -5,11 +5,35 @@ public class Erfgoed {
 	private String naam;
 	private String locatie;
 	private String type;
+	private String link;
+	private String geschiedenis;
+	private String info;
 	
-	public Erfgoed(String n , String l, String t){
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public String getGeschiedenis() {
+		return geschiedenis;
+	}
+	public void setGeschiedenis(String geschiedenis) {
+		this.geschiedenis = geschiedenis;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	public Erfgoed(String n , String l, String t,String link, String h, String i){
 		setNaam(n);
 		setLocatie(l);
 		setType(t);
+		setLink(link);
+		setGeschiedenis(h);
+		setInfo(i);
 	}
 	@Override
 	public String toString(){
