@@ -43,6 +43,7 @@ public class MailFrame extends JFrame {
 	private Model m;
 	private Item item;
 	private HtmlHandler html;
+	private boolean wijzigen = false;
 
 	/**
 	 * Launch the application.
@@ -54,8 +55,8 @@ public class MailFrame extends JFrame {
 					Calendar cal = new GregorianCalendar() ;
 					java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
 					Model model = new Model("Anthony");
-					model.setActiveItem(new Item("testtitel", "Van Dooren", jsqlD, "dit is een test item", "Afgekeurd", 1, null, "", "", ""));
-					MailFrame frame = new MailFrame(model);
+					model.setActiveItem(new Item(null, "testtitel", "dit is een test item", "Van Dooren", jsqlD, "", "", "","","", "Afgekeurd", ""));
+					MailFrame frame = new MailFrame(model, false);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 				    // bereken het midden van je scherm
@@ -76,10 +77,24 @@ public class MailFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MailFrame(Model m) {
+	public MailFrame(Model m, Boolean wijzigen) {
 		super("Mailsysteem");
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+	    
+	    // bereken het midden van je scherm
+	    int w = getSize().width;
+	    int h = getSize().height;
+	    int x = (size.width-w)/2;
+	    int y = (size.height-h)/2;
+	    
+	    // verplaats de GUI
+	    setLocation(x, y);
 		this.m = m;
+		this.wijzigen = wijzigen;
 		item = m.getActiveItem();
+		if(wijzigen) {
+			item.setStatus("Gewijzigd");
+		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		JMenuBar menuBar = new JMenuBar();
@@ -87,7 +102,6 @@ public class MailFrame extends JFrame {
 		
 		JMenu mnOpties = new JMenu("Opties");
 		menuBar.add(mnOpties);
-		
 		JMenuItem mntmVerzenden = new JMenuItem("Verzenden");
 		mnOpties.add(mntmVerzenden);
 		mntmVerzenden.addActionListener(new ActionListener() {
@@ -157,7 +171,7 @@ public class MailFrame extends JFrame {
 	
 	public void preloader()
 	{
-		html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"),item, m);
+		html = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase() +".html"),item, m);
 		editorPane.setText(html.getText());
 	}
 	
@@ -226,7 +240,7 @@ public class MailFrame extends JFrame {
 	
 	public void standaardbewerken()
 	{
-		Object[] possibleValues = { "Goedgekeurd", "Afgekeurd"};
+		Object[] possibleValues = { "Goedgekeurd", "Afgekeurd", "Gewijzigd"};
 		Object selectedValue = JOptionPane.showInputDialog(this, "Kies welke standaardtekst je wilt bewerken", "Mail", JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
 		if(selectedValue != null) {
 			String content = editorPane.getText();
@@ -242,7 +256,7 @@ public class MailFrame extends JFrame {
 			        contents = matcher1.group(4);
 			}
 			contents = contents.trim().replaceAll("\r\n          ","");
-		m.setMailText(selectedValue.toString(), contents);
+		m.setMailText(selectedValue.toString().toLowerCase(), contents);
 		}
 	}
 }

@@ -8,6 +8,9 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
 
 
 public class ItemPanel extends JPanel {
@@ -15,66 +18,107 @@ public class ItemPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	
+	/**
+	 * 
+	 * @wbp.parser.constructor 
+	 */
 	private Item item;
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public ItemPanel(Item i) {
 		item=i;
-		setLayout(null);
 
 		this.setBackground(Color.white);
 
 		
 		this.setBorder(BorderFactory.createEtchedBorder(Color.DARK_GRAY,Color.lightGray ));
 		setPreferredSize(new Dimension(280,120));
-		JLabel lblTitel = new JLabel("Titel :");
-		lblTitel.setBounds(83, 11, 46, 14);
-		add(lblTitel);
+		setLayout(new GridLayout(0, 1, 0, 0));
 		
-		JLabel lblAuteur = new JLabel("Auteur:");
-		lblAuteur.setBounds(83, 24, 46, 14);
-		add(lblAuteur);
-		
-		JLabel lblIngezondenOp = new JLabel("Datum :");
-		lblIngezondenOp.setBounds(83, 36, 84, 14);
-		add(lblIngezondenOp);
-		
-		JLabel lblBeschrijving = new JLabel("Beschrijving :");
-		lblBeschrijving.setBounds(83, 49, 84, 14);
-		add(lblBeschrijving);
+		ImagePanel panel = new ImagePanel("itempanel.jpg");
+		add(panel);
+		panel.setLayout(null);
 		
 		ImagePanel imagePanel = new ImagePanel(item.getFoto());
-		imagePanel.setBounds(10, 11, 63, 58);
-		add(imagePanel);
+		imagePanel.setBounds(10, 26, 79, 79);
+		panel.add(imagePanel);
 		
-		JLabel titel = new JLabel(i.getTitel());
-		titel.setBounds(175, 11, 105, 14);
-		add(titel);
+		JLabel lblErfgoed = new JLabel("Auteur:");
+		lblErfgoed.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblErfgoed.setBounds(107, 26, 46, 14);
+		panel.add(lblErfgoed);
 		
-		JLabel auteur = new JLabel(i.getAuteur());
-		auteur.setBounds(175, 24, 105, 14);
-		add(auteur);
+		JLabel lblErfgoed_1 = new JLabel("Erfgoed:");
+		lblErfgoed_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblErfgoed_1.setBounds(107, 42, 46, 14);
+		panel.add(lblErfgoed_1);
 		
-		JLabel datum = new JLabel(String.valueOf(i.getInzendDatum()));
-		datum.setBounds(175, 36, 95, 14);
-		add(datum);
+		JLabel lblLocatie = new JLabel("Locatie:");
+		lblLocatie.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblLocatie.setBounds(107, 58, 46, 14);
+		panel.add(lblLocatie);
 		
-		JTextArea text = new JTextArea(i.getText());
-		text.setLineWrap(true);
-		text.setWrapStyleWord(true);
-		text.setEditable(false);
-		text.setBackground(Color.WHITE);
-		text.setBounds(83, 61, 187, 46);
-		add(text);
+		JLabel lblGemeente = new JLabel("Gemeente:");
+		lblGemeente.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblGemeente.setBounds(107, 74, 61, 14);
+		panel.add(lblGemeente);
+		
+		JLabel lblDatum = new JLabel("Datum:");
+		lblDatum.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblDatum.setBounds(107, 91, 46, 14);
+		panel.add(lblDatum);
+		
+		JLabel auteur = new JLabel("New label");
+		auteur.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		auteur.setBounds(174, 26, 102, 14);
+		panel.add(auteur);
+		
+		JLabel erfgoed = new JLabel("New label");
+		erfgoed.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		erfgoed.setBounds(174, 42, 104, 14);
+		panel.add(erfgoed);
+		
+		JLabel locatie = new JLabel("New label");
+		locatie.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		locatie.setBounds(174, 58, 102, 14);
+		panel.add(locatie);
+		
+		JLabel gemeente = new JLabel("New label");
+		gemeente.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		gemeente.setBounds(174, 74, 102, 14);
+		panel.add(gemeente);
+		
+		JLabel datum = new JLabel("New label");
+		datum.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		datum.setBounds(174, 91, 102, 14);
+		panel.add(datum);
+		auteur.setText(i.getAuteur());
+		locatie.setText(i.getLocatie());
+		gemeente.setText(i.getGemeente());
+		datum.setText(String.valueOf(i.getInzendDatum()));
+		erfgoed.setText(i.getErfgoed());
+		
+		ImagePanel panel_1 = new ImagePanel("itembar.jpg");
+		panel_1.setBounds(0, 0, 403, 18);
+		panel.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel lblTitel = new JLabel("titel");
+		lblTitel.setBounds(5, 2, 403, 14);
+		panel_1.add(lblTitel);
+		lblTitel.setForeground(Color.GRAY);
+		lblTitel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		
+		//opvullen
+		lblTitel.setText(i.getTitel());
 		
 		
 	}
 	public Item getItem(){
 		return item;
 	}
-	/**
-	 * 
-	 * @wbp.parser.constructor 
-	 */
+	
 	public ItemPanel(Gebruiker g) {
 		setLayout(null);
 		this.setBackground(Color.white);

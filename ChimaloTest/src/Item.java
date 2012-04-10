@@ -6,55 +6,84 @@ import java.sql.Time;
 public class Item {
 
 	private BufferedImage foto;
-	private int id;
+	private int id = -1;
 	private String titel;
 	private String text;
 	private String auteur; 
 	private Date inzendDatum;
 	private String erfgoed;
-	private String geschiedenis;
 	private String link;
-	//private Time inzendTijd;
+	private String historiek;
+	private String gemeente;
+	private String locatie;
 	private String status;
+	private String extentie;
 	
-	public Item(String titel, String auteur , Date inzendDatum, String text, String status, int id, BufferedImage img, String erfgoed, String history, String link ){
-		this.geschiedenis=history;
-		this.erfgoed=erfgoed;
-		this.link=link;
-		this.titel=titel;
-		this.auteur= auteur;
+	public Item(BufferedImage foto, int id, String titel, String text,
+			String auteur, Date inzendDatum, String erfgoed, String link,
+			String historiek, String gemeente, String locatie, String status,
+			String extentie) {
+		super();
+		this.foto = foto;
+		this.id = id;
+		this.titel = titel;
+		this.text = text;
+		this.auteur = auteur;
 		this.inzendDatum = inzendDatum;
-		this.text=text;
+		this.erfgoed = erfgoed;
+		this.link = link;
+		this.historiek = historiek;
+		this.gemeente = gemeente;
+		this.locatie = locatie;
 		this.status = status;
-		this.id=id;
-		setFoto(img);
-	}
-	public Item(String titel, String auteur , Date inzendDatum, String text, String status, BufferedImage img, String erfgoed, String history, String link ){
-		this.geschiedenis=history;
-		this.erfgoed=erfgoed;
-		this.link=link;
-		this.titel=titel;
-		this.auteur= auteur;
-		this.inzendDatum = inzendDatum;
-		this.text=text;
-		this.status = status;
-		setFoto(img);
+		this.extentie = extentie;
 	}
 	
+	public Item()
+	{
+		
+	}
+	
+
+	public Item(BufferedImage foto, String titel, String text, String auteur,
+			Date inzendDatum, String erfgoed, String link, String historiek,
+			String gemeente, String locatie, String status, String extentie) {
+		super();
+		this.foto = foto;
+		this.titel = titel;
+		this.text = text;
+		this.auteur = auteur;
+		this.inzendDatum = inzendDatum;
+		this.erfgoed = erfgoed;
+		this.link = link;
+		this.historiek = historiek;
+		this.gemeente = gemeente;
+		this.locatie = locatie;
+		this.status = status;
+		this.extentie = extentie;
+	}
+
+
+
+	public String getExtentie() {
+		return extentie;
+	}
+
+
+	public void setExtentie(String extentie) {
+		this.extentie = extentie;
+	}
+
+
+
 	public String getErfgoed() {
 		return erfgoed;
 	}
 
+
+
 	public void setErfgoed(String erfgoed) {
 		this.erfgoed = erfgoed;
-	}
-
-	public String getGeschiedenis() {
-		return geschiedenis;
-	}
-
-	public void setGeschiedenis(String geschiedenis) {
-		this.geschiedenis = geschiedenis;
 	}
 
 	public String getLink() {
@@ -119,14 +148,42 @@ public class Item {
 	public void setFoto(BufferedImage foto) {
 		this.foto = foto;
 	}
+
+	public String getHistoriek() {
+		return historiek;
+	}
+
+	public String getGemeente() {
+		return gemeente;
+	}
+
+	public String getLocatie() {
+		return locatie;
+	}
+
+	public void setHistoriek(String historiek) {
+		this.historiek = historiek;
+	}
+
+	public void setGemeente(String gemeente) {
+		this.gemeente = gemeente;
+	}
+
+	public void setLocatie(String locatie) {
+		this.locatie = locatie;
+	}
+
+
+
 	@Override
 	public String toString() {
 		return "Item [foto=" + foto + ", id=" + id + ", titel=" + titel
 				+ ", text=" + text + ", auteur=" + auteur + ", inzendDatum="
-				+ inzendDatum + ", erfgoed=" + erfgoed + ", geschiedenis="
-				+ geschiedenis + ", link=" + link + ", status=" + status + "]";
+				+ inzendDatum + ", erfgoed=" + erfgoed + ", link=" + link
+				+ ", historiek=" + historiek + ", gemeente=" + gemeente
+				+ ", locatie=" + locatie + ", status=" + status + ", extentie="
+				+ extentie + "]";
 	}
 	
 	
-
 }

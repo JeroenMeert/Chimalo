@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -18,6 +19,7 @@ public class Model {
 	private int smtpPort = 25;
 	private Erfgoed activeErfgoed;
 	private String mailFrom = "ErfgoedHerzele";
+	private hoofd_scherm hoofdframe;
 	
 	public Model(String activeUser){
 		listeners = new ArrayList<ChangeListener>();
@@ -60,17 +62,6 @@ public class Model {
 		
 		items=dbc.leesItemsOpStatus(status);
 		notifyChangeListeners();
-	}
-	public void setActiveItem(String auteur,String beschrijving,String datum, String titel){
-		for (Item it : items){
-			if (it.getAuteur().equals(auteur)&&it.getText().equals(beschrijving)&&it.getTitel().equals(titel)){
-				activeItem=it;
-				return;
-			}
-			 
-		}
-		activeItem=null;
-		System.out.println("Notfound");
 	}
 	public void wijzigStatus(String s){
 		dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
@@ -177,6 +168,7 @@ public class Model {
 	}
 	public void overschrijfActive(){
 		dbc.overschrijfItem(activeItem);
+		notifyChangeListeners();
 	}
 	
 	public ArrayList<Erfgoed> getErfgoeden(){
@@ -216,5 +208,33 @@ public class Model {
 	public void schrijfNieuwErfgoed(Erfgoed er) {
 		dbc.schrijfNieuwerfgoed(er);
 		notifyChangeListeners();
+	}
+	
+	public ArrayList<String> getGemeenten()
+	{
+		return dbc.getGemeenten();
+	}
+	
+	public void nieuwItem()
+	{
+		activeItem = new Item();
+		notifyChangeListeners();
+	}
+
+	public hoofd_scherm getHoofdframe() {
+		return hoofdframe;
+	}
+
+	public void setHoofdframe(hoofd_scherm hoofdframe) {
+		this.hoofdframe = hoofdframe;
+	}
+	
+	public void sluitConnectie()
+	{
+		dbc.sluitConnectie();
+	}
+	public void herstartConnectie()
+	{
+		dbc.herstartConnectie();
 	}
 }

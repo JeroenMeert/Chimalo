@@ -56,10 +56,10 @@ public class Mail {
  
 			Transport.send(message);
  
-			JOptionPane.showMessageDialog(null, "De email is successvol verzonden");
+			JOptionPane.showMessageDialog(null, "De email is successvol verzonden aan " + to);
  
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			JOptionPane.showMessageDialog(null, "De mail kon niet verzonden worden aan " + to + "\n Foutmelding: " + e.getMessage());
 		}
 	}
 }

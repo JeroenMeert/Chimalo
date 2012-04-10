@@ -14,6 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -24,20 +27,30 @@ public class DataBankConnection {
 	private BufferedImage image;
 	private Model m;
 	private String type = "Administrator";
+	private Connection conn;
 	
 	public DataBankConnection(Model m) {
+		try {
+			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+		} catch (SQLException ex) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+		}
 		this.m = m;
 	}
 	public DataBankConnection() {
-		
+		try {
+			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+		} catch (SQLException ex) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+		}
 	}
 
 
 	public boolean checkAccount (String name, String pass) {
 
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             Statement stat = conn.createStatement();
         	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
@@ -64,62 +77,35 @@ public class DataBankConnection {
            
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
       
 		return false;
        
     }
 	public boolean hasDuplicates(String Gebruikersnaam) {
-		Connection conn= null;
 		try {
-			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
     		int count = 0;
     		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS rowcount FROM Gebruiker WHERE Gebruikersnaam =? ");
     		haalItemsOp.setString(1,Gebruikersnaam);
     		ResultSet r = haalItemsOp.executeQuery();
     		r.next();
     		count = r.getInt("rowcount") ;
-    		r.close() ;
     		if(count > 0)
     			return true;
     		else
     			return false;
     		
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 		return false;
 	}
 	
 	
 	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type){
-		Connection conn = null;
 		if(!hasDuplicates(Gebruikersnaam)) {
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
         	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief) VALUES (?,?,?,?,?)");
         	voegBeheerderToe.setString(1, Gebruikersnaam);
         	voegBeheerderToe.setString(2, Naam);
@@ -133,24 +119,13 @@ public class DataBankConnection {
                 t.printStackTrace();
             }
         }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-        }
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "Een gebruiker met deze Gebruikersnaam bestaat al, kies een andere!");
 		}
 	}
 	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type){
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
         	if(!pass.equals(""))
         	{
         		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
@@ -174,127 +149,100 @@ public class DataBankConnection {
 
            
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 	}
 	public void overschrijfItem(Item i){
-		
-
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
         	BufferedImage im = i.getFoto(); 
         	ByteArrayOutputStream os = new ByteArrayOutputStream();
-        	ImageIO.write(im, "gif", os);
+        	ImageIO.write(im, i.getExtentie(), os);
         	InputStream is = new ByteArrayInputStream(os.toByteArray());
         	if (is == null)
         		System.out.println("kak");
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, Gemeente = ?, Locatie = ?, Erfgoed = ?, Link = ?, Geschiedenis = ?, Extentie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
         	overschrijf.setBinaryStream(4,is,is.available());
         	overschrijf.setInt(5,zoekGebruikerNr(i.getAuteur()));
-        	overschrijf.setString(6,"Keurlijst");
-        	overschrijf.setInt(7, i.getId());
+        	overschrijf.setString(6,i.getStatus());
+        	overschrijf.setString(7, i.getGemeente());
+        	overschrijf.setString(8, i.getLocatie());
+        	overschrijf.setString(9, i.getErfgoed());
+        	overschrijf.setString(10, i.getLink());
+        	overschrijf.setString(11, i.getHistoriek());
+        	overschrijf.setString(12, i.getExtentie());
+        	overschrijf.setInt(13, i.getId());
         	overschrijf.executeUpdate();
 
         } catch (SQLException ex) {
             for (Throwable t : ex) {
                 t.printStackTrace();
             }
-        } catch (IOException e) {
+        } catch (IOException ex) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
 		}
         finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         }
 	}
 	public ArrayList<Item> leesItems(){
 		
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-		Connection conn = null;
+		ResultSet rs = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
-            Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed , Geschiedenis, Link FROM Object ");
-        	ResultSet rs = haalItemsOp.executeQuery();
-        	
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object");
+        	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
+        		String titel = rs.getString(2);
+        		String tekst = rs.getString("Tekst");
+        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		String erfgoed = rs.getString("Erfgoed");
+        		String historiek = rs.getString("Geschiedenis");
+        		String link = rs.getString("Link");
+        		String locatie = rs.getString("Locatie");
+        		String gemeente = rs.getString("Gemeente");
+        		String status = rs.getString("Status");
+        		BufferedImage foto = haalFotoOp(in);
+        		String extentie = rs.getString("Extentie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
         finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	if(rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         }
         return terugTeGevenItems;
 	}
 	private String haalGebruikerOp(int userNr){
 		String result="";
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-			
-            Statement stat = conn.createStatement();
-        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT Gebruikersnaam, Naam FROM Gebruiker WHERE GebruikerNr =? ");
+        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT Gebruikersnaam FROM Gebruiker WHERE GebruikerNr =? ");
         	haalGebruikerOp.setInt(1, userNr);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
-        		 result = rs.getString("Naam")+" "+ rs.getString("Gebruikersnaam");
+        		 result = rs.getString("Gebruikersnaam");
         	}
         	
         	
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 		return result;
 	}
@@ -302,10 +250,7 @@ public class DataBankConnection {
 	public Gebruiker getGebruiker(String gebruikersnaam)
 	{
 		Gebruiker result=null;
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-			
             Statement stat = conn.createStatement();
         	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam =? ");
         	haalGebruikerOp.setString(1, gebruikersnaam);
@@ -318,27 +263,13 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 		return result;
 	}
 	public BufferedImage getFoto() {
 		BufferedImage image= new BufferedImage(1,1,1);
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
 	            Statement stat = conn.createStatement();
 	        	PreparedStatement getFoto = conn.prepareStatement("SELECT foto FROM Object WHERE ObjectNr = 1");
 	        	
@@ -357,17 +288,8 @@ public class DataBankConnection {
 	           
 	        } catch (Exception ex) {
 	        
-	                ex.printStackTrace();
+	        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
 	            
-	        }
-	        finally {
-	        	try {
-	        		if(conn != null)
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 	        }
 		 return image;
 	}
@@ -375,72 +297,73 @@ public class DataBankConnection {
 		
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoed , Geschiedenis, Link FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoed , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
+        		String titel = rs.getString("Naam");
+        		String tekst = rs.getString("Tekst");
+        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		String erfgoed = rs.getString("Erfgoed");
+        		String historiek = rs.getString("Geschiedenis");
+        		String link = rs.getString("Link");
+        		String locatie = rs.getString("Locatie");
+        		String gemeente = rs.getString("Gemeente");
+        		String status = rs.getString("Status");
+        		BufferedImage foto = haalFotoOp(in);
+        		String extentie = rs.getString("Extentie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
         return terugTeGevenItems;
 	}
 
 	public ArrayList<Item> leesItemsOpStatus(String status){
-		
-		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-		Connection conn = null;
+		PreparedStatement haalItemsOp =null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
-            Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT * FROM Object WHERE Status = ?");
+        	haalItemsOp = conn.prepareStatement("SELECT * FROM Object WHERE Status = ?");
         	haalItemsOp.setString(1, status);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
+        		String titel = rs.getString(2);
+        		String tekst = rs.getString("Tekst");
+        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		String erfgoed = rs.getString("Erfgoed");
+        		String historiek = rs.getString("Geschiedenis");
+        		String link = rs.getString("Link");
+        		String locatie = rs.getString("Locatie");
+        		String gemeente = rs.getString("Gemeente");
+        		String status1 = rs.getString("Status");
+        		BufferedImage foto = haalFotoOp(in);
+        		String extentie = rs.getString("Extentie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status1, extentie);
         		terugTeGevenItems.add(i);
         	}
-        	
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
         finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	if(haalItemsOp != null)
+				try {
+					haalItemsOp.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         }
         return terugTeGevenItems;
 	}
@@ -448,45 +371,38 @@ public class DataBankConnection {
 		
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
-            Statement stat = conn.createStatement();
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,Erfgoed,Geschiedenis,Link FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,Erfgoed,Geschiedenis,Link, Locatie, Gemeente, Extentie FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
         		
         		int in = rs.getInt("ObjectNr");
-        		Item i = new Item(rs.getString("Naam"), haalGebruikerOp(rs.getInt("GebruikerNr")),rs.getDate("Tijdstip"),rs.getString("Tekst"),rs.getString("Status"),in,haalFotoOp(in),rs.getString("Erfgoed"),rs.getString("Geschiedenis"),rs.getString("Link"));
+        		String titel = rs.getString("Naam");
+        		String tekst = rs.getString("Tekst");
+        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		String erfgoed = rs.getString("Erfgoed");
+        		String historiek = rs.getString("Geschiedenis");
+        		String link = rs.getString("Link");
+        		String locatie = rs.getString("Locatie");
+        		String gemeente = rs.getString("Gemeente");
+        		String status = rs.getString("Status");
+        		BufferedImage foto = haalFotoOp(in);
+        		String extentie = rs.getString("Extentie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
         return terugTeGevenItems;
 	}
 	public void wijzigStatus(String status,int i, String titel, String beschrijving){
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Object SET Naam = ? ,Tekst = ?,Status = ?  WHERE ObjectNr = ?");
         	wijzigStatus.setString(1 ,titel);
@@ -495,27 +411,13 @@ public class DataBankConnection {
         	wijzigStatus.setInt(4, i);
         	wijzigStatus.executeUpdate();
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 	}
 
 	
 	public BufferedImage haalFotoOp(int userID){
-		Connection conn = null;
-        try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-		       
+        try {     
 		    	PreparedStatement readImage = conn.prepareStatement("SELECT Foto FROM Object WHERE ObjectNr=?");
 		    	readImage.setInt(1, userID);
 		    	ResultSet rs = readImage.executeQuery();
@@ -531,27 +433,15 @@ public class DataBankConnection {
              } else {
                  System.out.println("Afbeelding niet gevonden in databank."+userID);
              }
-		    }catch(Exception e ){
-		    	
+		    }catch(Exception ex ){
+		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
 		    }
-		    finally {
-	        	try {
-	        		if(conn != null)
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
-		   
 		return image;
 	}
 	
 	public ArrayList<Gebruiker> getGebruikers() {
-		Connection conn = null;
 		ArrayList<Gebruiker> gebruikers= new ArrayList<Gebruiker>();
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
         	PreparedStatement geb = conn.prepareStatement("SELECT * FROM Gebruiker");
         	ResultSet rs = geb.executeQuery();
         	
@@ -567,29 +457,15 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
         return gebruikers;
 	}
 	
 	public boolean verwijderGebruiker(int nr)
 	{
-		Connection conn = null;
 		ResultSet rs = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-            
         	Statement stmt = conn.createStatement(
                     ResultSet.TYPE_FORWARD_ONLY,
                     ResultSet.CONCUR_UPDATABLE);
@@ -603,30 +479,16 @@ public class DataBankConnection {
               }
             
         } catch (SQLException ex) {
-        	for (Throwable t : ex) {
-                t.printStackTrace();
-            }
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         	return false;
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         }
         return true;
 	}
 	
 	public boolean controleOpVerwijderen(int nr)
 	{
-		Connection conn = null;
 		ResultSet rs = null;
-        try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-            
+        try {   
         	Statement stmt = conn.createStatement(
                     (ResultSet.TYPE_FORWARD_ONLY),
                     ResultSet.CONCUR_UPDATABLE);
@@ -654,29 +516,16 @@ public class DataBankConnection {
         	}
             
         } catch (SQLException ex) {
-        	for (Throwable t : ex) 
-                t.printStackTrace();
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         	return false;
             }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// 0TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
         return true;
 	}
 	
 	public void gebruikersBerichtenVerwijderen(int nr)
 	{
-		Connection conn = null;
 		ResultSet rs = null;
-        try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-            
+        try {     
         	Statement stmt = conn.createStatement(
                     (ResultSet.TYPE_FORWARD_ONLY),
                     ResultSet.CONCUR_UPDATABLE);
@@ -688,26 +537,13 @@ public class DataBankConnection {
                 }
         	}
         } catch (SQLException ex) {
-        	for (Throwable t : ex) 
-                t.printStackTrace();
-            }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-				verwijderGebruiker(nr);
-			} catch (SQLException e) {
-				// 0TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 	}
 	
 	public void maakGebruikerInactief(int nr)
 	{
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
@@ -719,41 +555,18 @@ public class DataBankConnection {
                 t.printStackTrace();
             }
         }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
 	}
 	
 	public void maakGebruikerActief(int nr)
 	{
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
         	wijzigStatus.setBoolean(1, true);
         	wijzigStatus.setInt(2 ,nr);
         	wijzigStatus.executeUpdate();
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 	}
 	public String getType() {
@@ -776,10 +589,7 @@ public class DataBankConnection {
 	
 	public void setMailText(String soort, String txt)
 	{
-		Connection conn = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzig = conn.prepareStatement("UPDATE Standaardtekst SET Tekst = ? WHERE Soort = ?");
         	
@@ -787,28 +597,14 @@ public class DataBankConnection {
         	wijzig.setString(2, soort);
         	wijzig.executeUpdate();
         } catch (SQLException ex) {
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	try {
-        		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
         }
 	}
 	
 	public String getMailText(String soort)
 	{
-		Connection conn = null;
 		String result = null;
         try {
-        	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-		       
 		    	PreparedStatement read = conn.prepareStatement("SELECT Tekst FROM Standaardtekst WHERE Soort=?");
 		    	read.setString(1, soort);
 		    	ResultSet rs = read.executeQuery();
@@ -818,53 +614,34 @@ public class DataBankConnection {
              } else {
                  System.out.println("Standaardtekst niet gevonden in databank.");
              }
-		    }catch(Exception e ){
-		    	
+		    }catch(Exception ex ){
+		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
 		    }
-		    finally {
-	        	try {
-	        		if(conn != null)
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	        }
         return result;
 	}
 	
  private int zoekGebruikerNr(String naam){
-	 Connection conn = null;
      try {
-     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-
          //Statement stat = conn.createStatement();
+    	 Pattern p = Pattern.compile("\\((.*?)\\)");
+    	 Matcher m = p.matcher(naam);
+
+    	 if (m.find()) {
+    	     naam = m.group(1);
+    	 }
      	PreparedStatement findNr = conn.prepareStatement("SELECT GebruikerNr FROM Gebruiker WHERE Gebruikersnaam =?");
      	findNr.setString(1,naam);
      	ResultSet rs= findNr.executeQuery();
      	if (rs.next())     	
      	return rs.getInt(1);
      } catch (SQLException ex) {
-         for (Throwable t : ex) {
-             t.printStackTrace();
-         }
-     }
-     finally {
-     	try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
      }
      return 1;
 	}
 public ArrayList<Erfgoed> getErfGoeden() {
-	 Connection conn = null;
-     try {
-     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+     try { 	
      	ArrayList<Erfgoed> result=new ArrayList<Erfgoed>();
-         
      	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
      	ResultSet rs= erfgoed.executeQuery();
      	while (rs.next()){
@@ -874,71 +651,45 @@ public ArrayList<Erfgoed> getErfGoeden() {
      	}
      	return result;
      } catch (SQLException ex) {
-         for (Throwable t : ex) {
-             t.printStackTrace();
-         }
-     }
-     finally {
-     	try {
-     		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
      }
      return new ArrayList<Erfgoed>();
 }
 public void schrijfNieuwItem(Item i) {
-	
-	 Connection conn = null;
-     try {
-     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-     	    
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Geschiedenis,Link) VALUES (?,?,?,?,?,?,?,?,?)");
+     try {	    
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Geschiedenis,Link, Locatie, Gemeente, Extentie) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
      	
     	BufferedImage im = i.getFoto(); 
     	ByteArrayOutputStream os = new ByteArrayOutputStream();
-    	ImageIO.write(im, "gif", os);
+    	ImageIO.write(im, i.getExtentie(), os);
     	InputStream is = new ByteArrayInputStream(os.toByteArray());     	
      	newItem.setString(1,i.getTitel());
      	newItem.setDate(2,i.getInzendDatum());
      	newItem.setString(3,i.getText());
      	newItem.setBinaryStream(4, is,is.available());
      	newItem.setInt(5, zoekGebruikerNr(i.getAuteur()));
-     	newItem.setString(6,"Keurlijst");
+     	newItem.setString(6,"Goedgekeurd");
      	newItem.setString(7, i.getErfgoed());
-     	newItem.setString(8, i.getGeschiedenis());
+     	newItem.setString(8, i.getHistoriek());
      	newItem.setString(9, i.getLink());
+     	newItem.setString(10, i.getLocatie());
+     	newItem.setString(11, i.getGemeente());
+     	newItem.setString(12, i.getExtentie());
      	
      	newItem.executeUpdate();
      	
  
      } catch (SQLException ex) {
-         for (Throwable t : ex) {
-             t.printStackTrace();
-         }
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
      } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-     finally {
-     	try {
-     		if(conn != null)
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-     }
     
 }
 public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
-	 Connection conn = null;
 	 Boolean b = true;
-     try {
-     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-     	    
+     try { 	    
      	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Object WHERE Erfgoed = ?");
      	
      	magweg.setString(1,er.getNaam());
@@ -949,50 +700,24 @@ public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
      	}
  
      } catch (SQLException ex) {
-         for (Throwable t : ex) {
-             t.printStackTrace();
-         }
-     }
-     finally {
-     	try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
      }
      return b;
 }
 public void removeErfgoed(Erfgoed er) {
 	// TODO Auto-generated method stub
-	 Connection conn = null;
     try {
-    	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-    	    
     	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE Naam =?");
     	
     	weg.setString(1,er.getNaam());
     	weg.executeUpdate();
 
     } catch (SQLException ex) {
-        for (Throwable t : ex) {
-            t.printStackTrace();
-        }
-    }
-    finally {
-    	try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
     }
 }
 public void schrijfNieuwerfgoed(Erfgoed er) {
-	 Connection conn = null;
-     try {
-     	conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-     	    
+     try {   
      	PreparedStatement newE = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link ,Geschiedenis ,Info) VALUES (?,?,?,?,?,?)");
      	
     	   	
@@ -1009,21 +734,58 @@ public void schrijfNieuwerfgoed(Erfgoed er) {
      	
  
      } catch (SQLException ex) {
-         for (Throwable t : ex) {
-             t.printStackTrace();
-         }
-     } 
-     finally {
-     	try {
-				conn.close();
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+     }
+}
+
+public ArrayList<String> getGemeenten() {
+	ArrayList<String> gemeenten = new ArrayList<String>();
+	try {
+     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Gemeente");
+     	
+     	ResultSet rs =magweg.executeQuery();
+     	while (rs.next()){
+     		gemeenten.add(rs.getString("Gemeente"));
+     	}
+     	
+     } catch (SQLException ex) {
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+     }
+	finally {
+		return gemeenten;
+	}
+}
+
+public void sluitConnectie()
+{
+	try {
+		if(conn != null)
+		conn.close();
+	} catch (SQLException ex) {
+		// TODO Auto-generated catch block
+		JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+	}
+}
+
+public void herstartConnectie()
+{
+	if(conn != null)
+	{
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-     }
-    
-	
+		}
+	}
 }
-
 }
 	

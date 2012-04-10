@@ -10,8 +10,15 @@ import javax.swing.JPanel;
 public class ImagePanel extends JPanel
 {
 /*the default image to use*/
-String imageFile = null;
-Image image=null;
+private String imageFile = null;
+private Image image=null;
+private boolean used = false;
+
+
+public boolean isUsed() {
+	return used;
+}
+
 public ImagePanel()
 {
 super();
@@ -36,6 +43,10 @@ super(layout);
 public void setNewFoto(BufferedImage b){
 	image = b;
 	repaint();
+	if(b != null)
+	{
+		used = true;
+	}
 }
 
 public Image getFoto(){
@@ -45,6 +56,12 @@ public Image getFoto(){
 	image = imageIcon.getImage();
 	return image; }
 }
+public ImageIcon getIcon() {
+	if(imageFile != null)
+	return new ImageIcon(getClass().getResource(imageFile));
+	else
+		return new ImageIcon(image);
+}
 
 @Override
 public void paintComponent(Graphics g)
@@ -53,7 +70,6 @@ public void paintComponent(Graphics g)
 if (imageFile != null){
 ImageIcon imageicon = new ImageIcon(getClass().getResource(imageFile));
 image = imageicon.getImage();
-
 }
 /*Draw image on the panel*/
 super.paintComponent(g);
@@ -64,3 +80,5 @@ g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
 }
 }
+
+

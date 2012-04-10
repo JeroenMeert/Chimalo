@@ -166,8 +166,8 @@ public class NieuwItemFrame extends JFrame {
 				Calendar cal = new GregorianCalendar() ;
 				java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
 					
-				Item i = new Item(txtTitel.getText(),model.getUser(),jsqlD,txtNuttigeInfo.getText(),String.valueOf(cbStatuut.getSelectedItem()),(BufferedImage)FotoPanel.getFoto(),String.valueOf(cbErfgoed.getSelectedItem()),txtGeschiedenis.getText(),txtLink.getText());
-				model.schrijfNieuwItem(i);
+				//Item i = new Item((BufferedImage)FotoPanel.getFoto(), txtTitel.getText(),model.getUser(),jsqlD,txtNuttigeInfo.getText(),String.valueOf(cbStatuut.getSelectedItem()),String.valueOf(cbErfgoed.getSelectedItem()),txtGeschiedenis.getText(),txtLink.getText());
+				//model.schrijfNieuwItem(i);
 				parent.dispose();}
 				else
 					JOptionPane.showMessageDialog(null,"Alle verplichte velden moeten ingevuld zijn voor dat u een nieuw item kan aanmaken");
@@ -381,8 +381,8 @@ public class NieuwItemFrame extends JFrame {
 				Calendar cal = new GregorianCalendar() ;
 				java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
 					
-				Item i = new Item(txtTitel.getText(),model.getUser(),jsqlD,txtNuttigeInfo.getText(),String.valueOf(cbStatuut.getSelectedItem()),(BufferedImage)FotoPanel.getFoto(),String.valueOf(cbErfgoed.getSelectedItem()),txtGeschiedenis.getText(),txtLink.getText());
-				model.schrijfNieuwItem(i);
+				//Item i = new Item(txtTitel.getText(),model.getUser(),jsqlD,txtNuttigeInfo.getText(),String.valueOf(cbStatuut.getSelectedItem()),(BufferedImage)FotoPanel.getFoto(),String.valueOf(cbErfgoed.getSelectedItem()),txtGeschiedenis.getText(),txtLink.getText());
+				//model.schrijfNieuwItem(i);
 				parent.dispose();}
 				else
 					JOptionPane.showMessageDialog(null,"Alle verplichte velden moeten ingevuld zijn voor dat u een nieuw item kan aanmaken");
