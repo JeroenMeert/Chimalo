@@ -9,19 +9,16 @@ public class Item {
 	private int id = -1;
 	private String titel;
 	private String text;
-	private String auteur; 
+	private Gebruiker auteur; 
 	private Date inzendDatum;
 	private String erfgoed;
 	private String link;
-	private String historiek;
-	private String gemeente;
-	private String locatie;
 	private String status;
 	private String extentie;
 	
 	public Item(BufferedImage foto, int id, String titel, String text,
-			String auteur, Date inzendDatum, String erfgoed, String link,
-			String historiek, String gemeente, String locatie, String status,
+			Gebruiker auteur, Date inzendDatum, String erfgoed, String link,
+			String status,
 			String extentie) {
 		super();
 		this.foto = foto;
@@ -32,22 +29,12 @@ public class Item {
 		this.inzendDatum = inzendDatum;
 		this.erfgoed = erfgoed;
 		this.link = link;
-		this.historiek = historiek;
-		this.gemeente = gemeente;
-		this.locatie = locatie;
 		this.status = status;
 		this.extentie = extentie;
 	}
-	
-	public Item()
-	{
-		
-	}
-	
 
-	public Item(BufferedImage foto, String titel, String text, String auteur,
-			Date inzendDatum, String erfgoed, String link, String historiek,
-			String gemeente, String locatie, String status, String extentie) {
+	public Item(BufferedImage foto, String titel, String text, Gebruiker auteur,
+			Date inzendDatum, String erfgoed, String link, String status, String extentie) {
 		super();
 		this.foto = foto;
 		this.titel = titel;
@@ -56,14 +43,14 @@ public class Item {
 		this.inzendDatum = inzendDatum;
 		this.erfgoed = erfgoed;
 		this.link = link;
-		this.historiek = historiek;
-		this.gemeente = gemeente;
-		this.locatie = locatie;
 		this.status = status;
 		this.extentie = extentie;
 	}
 
-
+	public Item()
+	{
+		
+	}
 
 	public String getExtentie() {
 		return extentie;
@@ -113,11 +100,13 @@ public class Item {
 		this.text = text;
 	}
 
-	public String getAuteur() {
+	
+
+	public Gebruiker getAuteur() {
 		return auteur;
 	}
 
-	public void setAuteur(String auteur) {
+	public void setAuteur(Gebruiker auteur) {
 		this.auteur = auteur;
 	}
 
@@ -149,41 +138,14 @@ public class Item {
 		this.foto = foto;
 	}
 
-	public String getHistoriek() {
-		return historiek;
-	}
-
-	public String getGemeente() {
-		return gemeente;
-	}
-
-	public String getLocatie() {
-		return locatie;
-	}
-
-	public void setHistoriek(String historiek) {
-		this.historiek = historiek;
-	}
-
-	public void setGemeente(String gemeente) {
-		this.gemeente = gemeente;
-	}
-
-	public void setLocatie(String locatie) {
-		this.locatie = locatie;
-	}
-
-
-
 	@Override
 	public String toString() {
 		return "Item [foto=" + foto + ", id=" + id + ", titel=" + titel
 				+ ", text=" + text + ", auteur=" + auteur + ", inzendDatum="
 				+ inzendDatum + ", erfgoed=" + erfgoed + ", link=" + link
-				+ ", historiek=" + historiek + ", gemeente=" + gemeente
-				+ ", locatie=" + locatie + ", status=" + status + ", extentie="
-				+ extentie + "]";
+				+ ", status=" + status + ", extentie=" + extentie + "]";
 	}
+	
 	
 	
 }

@@ -54,8 +54,8 @@ public class MailFrame extends JFrame {
 				try {
 					Calendar cal = new GregorianCalendar() ;
 					java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
-					Model model = new Model("Anthony");
-					model.setActiveItem(new Item(null, "testtitel", "dit is een test item", "Van Dooren", jsqlD, "", "", "","","", "Afgekeurd", ""));
+					Model model = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
+					model.setActiveItem(new Item(null, "testtitel", "dit is een test item", new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"), jsqlD,"","", "Afgekeurd", ""));
 					MailFrame frame = new MailFrame(model, false);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -212,10 +212,10 @@ public class MailFrame extends JFrame {
 		//content = content.replaceAll("border-bottom-color: #FF0000;", "font-family: Arial;border-bottom-color: #FF0000;");
 		//content = content.replaceFirst("padding-bottom: 0;", "font-weight: bold; color: #FFFFFF;padding-bottom: 0;");
 		content = content.replaceAll("&titel", item.getTitel());
-		content = content.replaceAll("&auteur", item.getAuteur());
+		content = content.replaceAll("&auteur", item.getAuteur().getNaam());
 		content = content.replaceAll("&inzenddatum", item.getInzendDatum().toString());
 		content = content.replaceAll("&beschrijving", item.getText());
-		content = content.replaceAll("&admin", m.getUser());
+		content = content.replaceAll("&admin", m.getAdmin().getNaam());
 		JEditorPane htmlcontent = new JEditorPane();
 		htmlcontent.setContentType("text/html");
 		htmlcontent.setEditable(false);
@@ -232,7 +232,7 @@ public class MailFrame extends JFrame {
 		String content = compile();
 		if(content != null)
 		{
-		Gebruiker gebruiker = m.getGebruiker(item.getAuteur());
+		Gebruiker gebruiker = item.getAuteur();
 		Mail mail = new Mail(m, gebruiker.getEmail(), "[Erfgoedbank Herzele] uw item werd " + item.getStatus().toLowerCase(), content);
 		mail.send();
 		}

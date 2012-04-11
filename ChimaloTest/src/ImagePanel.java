@@ -66,19 +66,23 @@ public ImageIcon getIcon() {
 @Override
 public void paintComponent(Graphics g)
 {
+super.paintComponent(g);
 /*create image icon to get image*/
+if(image == null)
+{
 if (imageFile != null){
 ImageIcon imageicon = new ImageIcon(getClass().getResource(imageFile));
 image = imageicon.getImage();
 }
+}
 /*Draw image on the panel*/
-super.paintComponent(g);
 
 if (image != null)
 g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
 
 }
+
 }
 
 

@@ -44,44 +44,44 @@ public class DataBankConnection {
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+			for (Throwable t : ex) {
+                t.printStackTrace();
+            }
 		}
 	}
 
 
-	public boolean checkAccount (String name, String pass) {
-
+	public Gebruiker checkAccount (String name, String pass) {
+		Gebruiker result = null;
         try {
-
+        	
             Statement stat = conn.createStatement();
         	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
 
         	zoekLogin.setString(1, name);
         	zoekLogin.setString(2, pass);
         	zoekLogin.setBoolean(3, true);
-
-           ResultSet rs = zoekLogin.executeQuery();
+        	
+        	ResultSet rs = zoekLogin.executeQuery();
             if (rs.next())
             {
             	String status = rs.getString("Type");
             	if(status.equals("Beheerder") || status.equals("Administrator"))
             	{
+            		result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
             		type = status;
-            		return true; 
             	}
-            	else
-            		return false;
             }
-            else   
-            	return false;
             
-           
-
+            
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
       
-		return false;
-       
+        return result;
     }
 	public boolean hasDuplicates(String Gebruikersnaam) {
 		try {
@@ -98,20 +98,24 @@ public class DataBankConnection {
     		
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
 		return false;
 	}
 	
 	
-	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type){
+	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type, String email){
 		if(!hasDuplicates(Gebruikersnaam)) {
         try {
-        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief) VALUES (?,?,?,?,?)");
+        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Email) VALUES (?,?,?,?,?,?)");
         	voegBeheerderToe.setString(1, Gebruikersnaam);
         	voegBeheerderToe.setString(2, Naam);
         	voegBeheerderToe.setString(3, pass);
         	voegBeheerderToe.setString(4, type);
         	voegBeheerderToe.setBoolean(5, true);
+        	voegBeheerderToe.setString(6, email);
 
            voegBeheerderToe.executeUpdate();
         } catch (SQLException ex) {
@@ -124,26 +128,28 @@ public class DataBankConnection {
 			JOptionPane.showMessageDialog(null, "Een gebruiker met deze Gebruikersnaam bestaat al, kies een andere!");
 		}
 	}
-	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type){
+	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type, String email){
         try {
         	if(!pass.equals(""))
         	{
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ?, Email = ? WHERE gebruikerNr = ?");
         		voegBeheerderToe.setString(1, Gebruikersnaam);
         		voegBeheerderToe.setString(2, Naam);
         		voegBeheerderToe.setString(3, pass);
         		voegBeheerderToe.setString(4, type);
         		voegBeheerderToe.setBoolean(5, true);
-        		voegBeheerderToe.setInt(6, nr);
+        		voegBeheerderToe.setString(6, email);
+        		voegBeheerderToe.setInt(7, nr);
         		voegBeheerderToe.executeUpdate();
         	}
         	else {
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ?, Email= ? WHERE gebruikerNr = ?");
             	voegBeheerderToe.setString(1, Gebruikersnaam);
             	voegBeheerderToe.setString(2, Naam);
             	voegBeheerderToe.setString(3, type);
             	voegBeheerderToe.setBoolean(4, true);
-            	voegBeheerderToe.setInt(5, nr);
+            	voegBeheerderToe.setString(5, email);
+            	voegBeheerderToe.setInt(6, nr);
             	voegBeheerderToe.executeUpdate();
         	}
 
@@ -154,26 +160,21 @@ public class DataBankConnection {
 	}
 	public void overschrijfItem(Item i){
         try {
-        	BufferedImage im = i.getFoto(); 
+        	BufferedImage im = i.getFoto();
         	ByteArrayOutputStream os = new ByteArrayOutputStream();
         	ImageIO.write(im, i.getExtentie(), os);
         	InputStream is = new ByteArrayInputStream(os.toByteArray());
-        	if (is == null)
-        		System.out.println("kak");
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, Gemeente = ?, Locatie = ?, Erfgoed = ?, Link = ?, Geschiedenis = ?, Extentie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, Erfgoed = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
         	overschrijf.setBinaryStream(4,is,is.available());
-        	overschrijf.setInt(5,zoekGebruikerNr(i.getAuteur()));
+        	overschrijf.setInt(5,i.getAuteur().getGebruikersnummer());
         	overschrijf.setString(6,i.getStatus());
-        	overschrijf.setString(7, i.getGemeente());
-        	overschrijf.setString(8, i.getLocatie());
-        	overschrijf.setString(9, i.getErfgoed());
-        	overschrijf.setString(10, i.getLink());
-        	overschrijf.setString(11, i.getHistoriek());
-        	overschrijf.setString(12, i.getExtentie());
-        	overschrijf.setInt(13, i.getId());
+        	overschrijf.setString(7, i.getErfgoed());
+        	overschrijf.setString(8, i.getLink());
+        	overschrijf.setString(9, i.getExtentie());
+        	overschrijf.setInt(10, i.getId());
         	overschrijf.executeUpdate();
 
         } catch (SQLException ex) {
@@ -187,28 +188,47 @@ public class DataBankConnection {
         finally {
         }
 	}
+	public void overschrijfItemZonderAfbeelding(Item i){
+        try {
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, Erfgoed = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
+        	overschrijf.setString(1, i.getTitel());
+        	overschrijf.setDate(2,i.getInzendDatum());
+        	overschrijf.setString(3,i.getText());
+        	overschrijf.setInt(4,i.getAuteur().getGebruikersnummer());
+        	overschrijf.setString(5,i.getStatus());
+        	overschrijf.setString(6, i.getErfgoed());
+        	overschrijf.setString(7, i.getLink());
+        	overschrijf.setString(8, i.getExtentie());
+        	overschrijf.setInt(9, i.getId());
+        	overschrijf.executeUpdate();
+
+        } catch (SQLException ex) {
+            for (Throwable t : ex) {
+                t.printStackTrace();
+            }
+        }
+        finally {
+        }
+	}
 	public ArrayList<Item> leesItems(){
 		
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed, Link, Extentie FROM Object");
         	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
         		String titel = rs.getString(2);
         		String tekst = rs.getString("Tekst");
-        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
         		String erfgoed = rs.getString("Erfgoed");
-        		String historiek = rs.getString("Geschiedenis");
         		String link = rs.getString("Link");
-        		String locatie = rs.getString("Locatie");
-        		String gemeente = rs.getString("Gemeente");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -216,6 +236,9 @@ public class DataBankConnection {
 
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
         finally {
         	if(rs != null)
@@ -228,23 +251,26 @@ public class DataBankConnection {
         }
         return terugTeGevenItems;
 	}
-	private String haalGebruikerOp(int userNr){
-		String result="";
+	private Gebruiker haalGebruikerOp(int userNr){
+		Gebruiker i = null;
         try {
-        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT Gebruikersnaam FROM Gebruiker WHERE GebruikerNr =? ");
+        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE GebruikerNr =? ");
         	haalGebruikerOp.setInt(1, userNr);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
-        		 result = rs.getString("Gebruikersnaam");
+        		i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
         	}
-        	
-        	
-
-
+        	else
+        	{
+        		JOptionPane.showMessageDialog(null, "Geen gebruiker gevonden!");
+        	}
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
-		return result;
+		return i;
 	}
 	
 	public Gebruiker getGebruiker(String gebruikersnaam)
@@ -264,6 +290,9 @@ public class DataBankConnection {
 
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
 		return result;
 	}
@@ -289,7 +318,6 @@ public class DataBankConnection {
 	        } catch (Exception ex) {
 	        
 	        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
-	            
 	        }
 		 return image;
 	}
@@ -306,16 +334,13 @@ public class DataBankConnection {
         		int in = rs.getInt("ObjectNr");
         		String titel = rs.getString("Naam");
         		String tekst = rs.getString("Tekst");
-        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
         		String erfgoed = rs.getString("Erfgoed");
-        		String historiek = rs.getString("Geschiedenis");
         		String link = rs.getString("Link");
-        		String locatie = rs.getString("Locatie");
-        		String gemeente = rs.getString("Gemeente");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -323,6 +348,9 @@ public class DataBankConnection {
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+            for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
         return terugTeGevenItems;
 	}
@@ -339,22 +367,22 @@ public class DataBankConnection {
         		int in = rs.getInt("ObjectNr");
         		String titel = rs.getString(2);
         		String tekst = rs.getString("Tekst");
-        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
         		String erfgoed = rs.getString("Erfgoed");
-        		String historiek = rs.getString("Geschiedenis");
         		String link = rs.getString("Link");
-        		String locatie = rs.getString("Locatie");
-        		String gemeente = rs.getString("Gemeente");
         		String status1 = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status1, extentie);
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, extentie);
         		terugTeGevenItems.add(i);
         	}
 
 
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
         finally {
         	if(haalItemsOp != null)
@@ -381,16 +409,13 @@ public class DataBankConnection {
         		int in = rs.getInt("ObjectNr");
         		String titel = rs.getString("Naam");
         		String tekst = rs.getString("Tekst");
-        		String gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
+        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
         		String erfgoed = rs.getString("Erfgoed");
-        		String historiek = rs.getString("Geschiedenis");
         		String link = rs.getString("Link");
-        		String locatie = rs.getString("Locatie");
-        		String gemeente = rs.getString("Gemeente");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, historiek, gemeente, locatie, status, extentie);
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -398,6 +423,9 @@ public class DataBankConnection {
 
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
         return terugTeGevenItems;
 	}
@@ -435,6 +463,7 @@ public class DataBankConnection {
              }
 		    }catch(Exception ex ){
 		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+	                ex.printStackTrace();
 		    }
 		return image;
 	}
@@ -458,6 +487,9 @@ public class DataBankConnection {
 
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
         return gebruikers;
 	}
@@ -480,6 +512,9 @@ public class DataBankConnection {
             
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         	return false;
         }
         return true;
@@ -517,6 +552,9 @@ public class DataBankConnection {
             
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         	return false;
             }
         return true;
@@ -538,6 +576,9 @@ public class DataBankConnection {
         	}
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
 	}
 	
@@ -567,6 +608,9 @@ public class DataBankConnection {
         	wijzigStatus.executeUpdate();
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
 	}
 	public String getType() {
@@ -598,6 +642,9 @@ public class DataBankConnection {
         	wijzig.executeUpdate();
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+        	for (Throwable t : ex) {
+                t.printStackTrace();
+            }
         }
 	}
 	
@@ -619,26 +666,6 @@ public class DataBankConnection {
 		    }
         return result;
 	}
-	
- private int zoekGebruikerNr(String naam){
-     try {
-         //Statement stat = conn.createStatement();
-    	 Pattern p = Pattern.compile("\\((.*?)\\)");
-    	 Matcher m = p.matcher(naam);
-
-    	 if (m.find()) {
-    	     naam = m.group(1);
-    	 }
-     	PreparedStatement findNr = conn.prepareStatement("SELECT GebruikerNr FROM Gebruiker WHERE Gebruikersnaam =?");
-     	findNr.setString(1,naam);
-     	ResultSet rs= findNr.executeQuery();
-     	if (rs.next())     	
-     	return rs.getInt(1);
-     } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
-     }
-     return 1;
-	}
 public ArrayList<Erfgoed> getErfGoeden() {
      try { 	
      	ArrayList<Erfgoed> result=new ArrayList<Erfgoed>();
@@ -652,12 +679,15 @@ public ArrayList<Erfgoed> getErfGoeden() {
      	return result;
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	 for (Throwable t : ex) {
+             t.printStackTrace();
+         }
      }
      return new ArrayList<Erfgoed>();
 }
 public void schrijfNieuwItem(Item i) {
      try {	    
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Geschiedenis,Link, Locatie, Gemeente, Extentie) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Link, Extentie) VALUES (?,?,?,?,?,?,?,?,?)");
      	
     	BufferedImage im = i.getFoto(); 
     	ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -667,26 +697,51 @@ public void schrijfNieuwItem(Item i) {
      	newItem.setDate(2,i.getInzendDatum());
      	newItem.setString(3,i.getText());
      	newItem.setBinaryStream(4, is,is.available());
-     	newItem.setInt(5, zoekGebruikerNr(i.getAuteur()));
+     	newItem.setInt(5, i.getAuteur().getGebruikersnummer());
      	newItem.setString(6,"Goedgekeurd");
      	newItem.setString(7, i.getErfgoed());
-     	newItem.setString(8, i.getHistoriek());
-     	newItem.setString(9, i.getLink());
-     	newItem.setString(10, i.getLocatie());
-     	newItem.setString(11, i.getGemeente());
-     	newItem.setString(12, i.getExtentie());
+     	newItem.setString(8, i.getLink());
+     	newItem.setString(9, i.getExtentie());
      	
      	newItem.executeUpdate();
      	
  
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	 for (Throwable t : ex) {
+             t.printStackTrace();
+         }
      } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
     
 }
+
+public void schrijfNieuwItemZonderAfbeelding(Item i) {
+    try {	    
+    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,Erfgoed,Link, Extentie) VALUES (?,?,?,?,?,?,?,?)");
+    	newItem.setString(1,i.getTitel());
+    	newItem.setDate(2,i.getInzendDatum());
+    	newItem.setString(3,i.getText());
+    	newItem.setInt(4, i.getAuteur().getGebruikersnummer());
+    	newItem.setString(5,"Goedgekeurd");
+    	newItem.setString(6, i.getErfgoed());
+    	newItem.setString(7, i.getLink());
+    	newItem.setString(8, i.getExtentie());
+    	
+    	newItem.executeUpdate();
+    	
+
+    } catch (SQLException ex) {
+   	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+   	 for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+   
+}
+
 public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
 	 Boolean b = true;
      try { 	    
@@ -701,6 +756,9 @@ public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
  
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	 for (Throwable t : ex) {
+             t.printStackTrace();
+         }
      }
      return b;
 }
@@ -714,6 +772,9 @@ public void removeErfgoed(Erfgoed er) {
 
     } catch (SQLException ex) {
     	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
     }
 }
 public void schrijfNieuwerfgoed(Erfgoed er) {
@@ -735,6 +796,9 @@ public void schrijfNieuwerfgoed(Erfgoed er) {
  
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	 for (Throwable t : ex) {
+             t.printStackTrace();
+         }
      }
 }
 
@@ -750,6 +814,9 @@ public ArrayList<String> getGemeenten() {
      	
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	 for (Throwable t : ex) {
+             t.printStackTrace();
+         }
      }
 	finally {
 		return gemeenten;
@@ -764,6 +831,9 @@ public void sluitConnectie()
 	} catch (SQLException ex) {
 		// TODO Auto-generated catch block
 		JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+		for (Throwable t : ex) {
+            t.printStackTrace();
+        }
 	}
 }
 

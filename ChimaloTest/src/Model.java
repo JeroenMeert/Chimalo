@@ -1,14 +1,13 @@
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
 public class Model {
 
-	private String activeUser;
-	private String activeType;
 	private ArrayList<Item>items;
 	private DataBankConnection dbc;
 	private ArrayList<ChangeListener> listeners;
@@ -20,21 +19,14 @@ public class Model {
 	private Erfgoed activeErfgoed;
 	private String mailFrom = "ErfgoedHerzele";
 	private hoofd_scherm hoofdframe;
+	private Gebruiker admin;
+	private ChangeListener activePanel;
 	
-	public Model(String activeUser){
+	public Model(Gebruiker admin){
 		listeners = new ArrayList<ChangeListener>();
 		dbc = new DataBankConnection(this);
-		items = dbc.leesItemsOpStatus("KeurLijst");
-		this.activeUser=activeUser;
-	}
-	
-	public Model(String activeUser, String type)
-	{
-		listeners = new ArrayList<ChangeListener>();
-		dbc = new DataBankConnection(this);
-		items = dbc.leesItemsOpStatus("KeurLijst");
-		this.activeUser=activeUser;
-		this.activeType = type;
+		this.admin = admin;
+		items = dbc.leesItems();
 	}
 	
 	public void subscribe(ChangeListener c){
@@ -52,9 +44,7 @@ public class Model {
 	public ArrayList<Item> getItems(){
 		return items;
 	}
-	public String getUser(){
-		return activeUser;
-	}
+
 	public ArrayList<Item> alleItems(){
 		return dbc.leesItems();
 	}
@@ -94,17 +84,13 @@ public class Model {
 		dbc.maakGebruikerActief(nr);
 		notifyChangeListeners();
 	}
-	public void voegToe(String naam, String voornaam, String pass, String type){
-		dbc.voegToe(naam, voornaam, pass, type);
+	public void voegToe(String naam, String voornaam, String pass, String type, String email){
+		dbc.voegToe(naam, voornaam, pass, type,email);
 		notifyChangeListeners();
 	}
-	public void updateGebruiker(int nr, String naam, String voornaam, String pass, String type){
-		dbc.updateGebruiker(nr, naam, voornaam, pass, type);
+	public void updateGebruiker(int nr, String naam, String voornaam, String pass, String type, String email){
+		dbc.updateGebruiker(nr, naam, voornaam, pass, type, email);
 		notifyChangeListeners();
-	}
-
-	public String getActiveType() {
-		return activeType;
 	}
 	
 	public String getMd5(String woord)
@@ -236,5 +222,32 @@ public class Model {
 	public void herstartConnectie()
 	{
 		dbc.herstartConnectie();
+	}
+
+	public Gebruiker getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Gebruiker admin) {
+		this.admin = admin;
+	}
+	
+	public void overschrijfItemZonderAfbeelding(Item i)
+	{
+		dbc.overschrijfItemZonderAfbeelding(i);
+	}
+	
+	public void schrijfNieuwItemZonderAfbeelding(Item i)
+	{
+		dbc.schrijfNieuwItemZonderAfbeelding(i);
+	}
+	
+	public void setActivePanel(ChangeListener p){
+		activePanel = p;
+	}
+	
+	public ChangeListener getActiveJPanel()
+	{
+		return activePanel;
 	}
 }

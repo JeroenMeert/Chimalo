@@ -72,7 +72,7 @@ public class hoofd_scherm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Model m = new Model("Van Dooren", "Administrator");
+					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
 					hoofd_scherm frame = new hoofd_scherm(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -120,7 +120,7 @@ public class hoofd_scherm extends JFrame {
 		menuBar.add(opties);
 		
 		JMenuItem mntmBeheerdersBeheren = new JMenuItem("Account beheer");
-		if(model.getActiveType().equals("Beheerder"))
+		if(model.getAdmin().getType().equals("Beheerder"))
 		{
 			mntmBeheerdersBeheren.setEnabled(false);
 		}
@@ -128,8 +128,9 @@ public class hoofd_scherm extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+						model.unsubscribe(model.getActiveJPanel());
 						parent.dispose();
-						Accountbeheer frame = new Accountbeheer(new Model(model.getUser()));
+						Accountbeheer frame = new Accountbeheer(model);
 						frame.setVisible(true);
 						Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 					    
@@ -165,6 +166,7 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				model.unsubscribe(model.getActiveJPanel());
 				newPanel(new DashbordPanel(model, new Parameter("nieuw", "")));
 			}
 			
@@ -181,6 +183,7 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				model.unsubscribe(model.getActiveJPanel());
 				newPanel(new ErfgoedLijstPanel(model,parent));
 			}
 			
@@ -197,7 +200,7 @@ public class hoofd_scherm extends JFrame {
 		lblUBentAangemeld.setHorizontalAlignment(SwingConstants.CENTER);
 		menuBar.add(lblUBentAangemeld);
 		
-		JMenu mnGebruiker = new JMenu(model.getUser());
+		JMenu mnGebruiker = new JMenu(model.getAdmin().getNaam());
 		menuBar.add(mnGebruiker);
 		
 		JMenuItem mntmUitloggen = new JMenuItem("Uitloggen");
@@ -205,8 +208,9 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				model.unsubscribe(model.getActiveJPanel());
 				parent.dispose();
-				Chimalo frame = new Chimalo(model.getUser());
+				Chimalo frame = new Chimalo(model.getAdmin().getGebruikersnaam());
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			    
@@ -233,10 +237,10 @@ public class hoofd_scherm extends JFrame {
 		pack();
 	}
 	public void newPanel(JPanel p){
+		hoofdpanel.setVisible(false);
 		remove(hoofdpanel);
 		hoofdpanel=p;
 		getContentPane().add(hoofdpanel);
-		pack();
-		repaint();
+		hoofdpanel.setVisible(true);
 	}
 }

@@ -18,10 +18,7 @@ public class ItemPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	/**
-	 * 
-	 * @wbp.parser.constructor 
-	 */
+
 	private Item item;
 	/**
 	 * @wbp.parser.constructor
@@ -54,19 +51,9 @@ public class ItemPanel extends JPanel {
 		lblErfgoed_1.setBounds(107, 42, 46, 14);
 		panel.add(lblErfgoed_1);
 		
-		JLabel lblLocatie = new JLabel("Locatie:");
-		lblLocatie.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblLocatie.setBounds(107, 58, 46, 14);
-		panel.add(lblLocatie);
-		
-		JLabel lblGemeente = new JLabel("Gemeente:");
-		lblGemeente.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblGemeente.setBounds(107, 74, 61, 14);
-		panel.add(lblGemeente);
-		
 		JLabel lblDatum = new JLabel("Datum:");
 		lblDatum.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblDatum.setBounds(107, 91, 46, 14);
+		lblDatum.setBounds(107, 58, 46, 14);
 		panel.add(lblDatum);
 		
 		JLabel auteur = new JLabel("New label");
@@ -79,23 +66,11 @@ public class ItemPanel extends JPanel {
 		erfgoed.setBounds(174, 42, 104, 14);
 		panel.add(erfgoed);
 		
-		JLabel locatie = new JLabel("New label");
-		locatie.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		locatie.setBounds(174, 58, 102, 14);
-		panel.add(locatie);
-		
-		JLabel gemeente = new JLabel("New label");
-		gemeente.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		gemeente.setBounds(174, 74, 102, 14);
-		panel.add(gemeente);
-		
 		JLabel datum = new JLabel("New label");
 		datum.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		datum.setBounds(174, 91, 102, 14);
+		datum.setBounds(174, 58, 102, 14);
 		panel.add(datum);
-		auteur.setText(i.getAuteur());
-		locatie.setText(i.getLocatie());
-		gemeente.setText(i.getGemeente());
+		auteur.setText(i.getAuteur().getGebruikersnaam());
 		datum.setText(String.valueOf(i.getInzendDatum()));
 		erfgoed.setText(i.getErfgoed());
 		
@@ -119,11 +94,12 @@ public class ItemPanel extends JPanel {
 		return item;
 	}
 	
+
 	public ItemPanel(Gebruiker g) {
 		setLayout(null);
 		this.setBackground(Color.white);
 		this.setBorder(BorderFactory.createEtchedBorder(Color.DARK_GRAY,Color.lightGray ));
-		setPreferredSize(new Dimension(280, 79));
+		setPreferredSize(new Dimension(280, 95));
 		JLabel lblNaam = new JLabel("Gebruikersnaam:");
 		lblNaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblNaam.setBounds(10, 11, 120, 14);
@@ -136,12 +112,12 @@ public class ItemPanel extends JPanel {
 		
 		JLabel naam = new JLabel(g.getGebruikersnaam());
 		naam.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		naam.setBounds(140, 11, 130, 14);
+		naam.setBounds(112, 11, 168, 14);
 		add(naam);
 		
 		JLabel type = new JLabel(g.getType());
 		type.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		type.setBounds(140, 42, 95, 14);
+		type.setBounds(112, 42, 168, 14);
 		add(type);
 		
 		JLabel lblVoornaam = new JLabel("Naam:");
@@ -151,7 +127,7 @@ public class ItemPanel extends JPanel {
 		
 		JLabel voornaam = new JLabel(g.getNaam());
 		voornaam.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		voornaam.setBounds(140, 27, 130, 14);
+		voornaam.setBounds(112, 27, 168, 14);
 		add(voornaam);
 		
 		JLabel lblUitgeschakeld = new JLabel("Uitgeschakeld");
@@ -160,9 +136,18 @@ public class ItemPanel extends JPanel {
 		{
 			lblUitgeschakeld.setVisible(true);
 		}
-		lblUitgeschakeld.setBounds(90, 60, 84, 14);
+		lblUitgeschakeld.setBounds(91, 75, 84, 14);
 		add(lblUitgeschakeld);
 		
+		JLabel lblEmail = new JLabel("Email:");
+		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblEmail.setBounds(10, 57, 84, 14);
+		add(lblEmail);
+		
+		JLabel email = new JLabel(g.getEmail());
+		email.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		email.setBounds(112, 57, 168, 14);
+		add(email);
 		
 	}
 }

@@ -110,8 +110,11 @@ public class Chimalo extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				DataBankConnection dbc = new DataBankConnection();
-				if (dbc.checkAccount(user.getText(), dbc.md5(pass.getText()))){
-					hoofd_scherm scherm = new hoofd_scherm(new Model(user.getText(), dbc.getType()));
+				try {
+					Gebruiker admin = dbc.checkAccount(user.getText(), dbc.md5(pass.getText()));
+					
+				if (admin != null){
+					hoofd_scherm scherm = new hoofd_scherm(new Model(admin));
 					scherm.setVisible(true);
 					parent.dispose();
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -126,10 +129,13 @@ public class Chimalo extends JFrame {
 				    scherm.setLocation(x, y);
 					
 				}
-				else 
+				else {
 					JOptionPane.showMessageDialog(null, "Ongeldige gegevens of de gebruiker heeft geen toegang tot het dashboard");
 					user.setText("");
 					pass.setText("");
+				}
+			}
+			finally {dbc.sluitConnectie();}
 			}
 			
 		});

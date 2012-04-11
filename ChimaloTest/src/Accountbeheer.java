@@ -26,6 +26,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	private JFrame parent;
 	private JButton activate;
 	private ChangeListener accountbeheer;
+	private JTextField emailveld;
 	/**
 	 * Launch the application.
 	 */
@@ -33,7 +34,8 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Accountbeheer frame = new Accountbeheer(new Model("Van Dooren"));
+					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
+					Accountbeheer frame = new Accountbeheer(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 					
@@ -81,7 +83,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				parent.dispose();
-				hoofd_scherm frame = new hoofd_scherm(new Model(m.getUser(), "Administrator"));
+				hoofd_scherm frame = new hoofd_scherm(m);
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			    
@@ -118,7 +120,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		lblUBentAangemeld.setHorizontalAlignment(SwingConstants.CENTER);
 		menuBar.add(lblUBentAangemeld);
 		
-		JMenu mnGebruiker = new JMenu(m.getUser());
+		JMenu mnGebruiker = new JMenu(m.getAdmin().getNaam());
 		menuBar.add(mnGebruiker);
 		
 		JMenuItem mntmUitloggen = new JMenuItem("Uitloggen");
@@ -129,7 +131,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			public void actionPerformed(ActionEvent arg0) {
 				parent.dispose();
 				m.unsubscribe(accountbeheer);
-				Chimalo frame = new Chimalo(m.getUser());
+				Chimalo frame = new Chimalo(m.getAdmin().getGebruikersnaam());
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			    
@@ -173,7 +175,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		
 		naamVeld = new JTextField();
 		naamVeld.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		naamVeld.setBounds(200, 163, 123, 20);
+		naamVeld.setBounds(181, 163, 142, 20);
 		contentPane.add(naamVeld);
 		naamVeld.setColumns(10);
 		
@@ -184,7 +186,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		
 		wachtwoordVeld = new JPasswordField();
 		wachtwoordVeld.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		wachtwoordVeld.setBounds(200, 205, 123, 20);
+		wachtwoordVeld.setBounds(181, 205, 142, 20);
 		contentPane.add(wachtwoordVeld);
 		wachtwoordVeld.setColumns(10);
 		panel_1_1 = GetGebruikerLijst(gebruikers);
@@ -210,7 +212,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		typeBox = new JComboBox();
 		typeBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		typeBox.setModel(new DefaultComboBoxModel(new String[] {"Beheerder", "Administrator"}));
-		typeBox.setBounds(200, 227, 123, 20);
+		typeBox.setBounds(181, 227, 142, 20);
 		contentPane.add(typeBox);
 		
 		JLabel lblVoornaam = new JLabel("Naam:");
@@ -220,14 +222,14 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		
 		voornaamVeld = new JTextField();
 		voornaamVeld.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		voornaamVeld.setBounds(200, 184, 123, 20);
+		voornaamVeld.setBounds(181, 184, 142, 20);
 		contentPane.add(voornaamVeld);
 		voornaamVeld.setColumns(10);
 		
 		activate = new JButton("Activeer");
 		activate.setVisible(false);
 		activate.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		activate.setBounds(245, 255, 78, 23);
+		activate.setBounds(245, 281, 78, 23);
 		contentPane.add(activate);
 		activate.addActionListener(new ActionListener() {
 			
@@ -240,25 +242,35 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		
 		JButton btnOpslaan = new JButton("Opslaan");
 		btnOpslaan.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		btnOpslaan.setBounds(67, 255, 78, 23);
+		btnOpslaan.setBounds(67, 281, 78, 23);
 		contentPane.add(btnOpslaan);
 		btnOpslaan.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(activeGebruiker == -1) {
-					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString());
+					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
 				}
 				else
-					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString());
+					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
 				nieuw();
 			}
 		});
 		
 		JButton btnVerwijderen = new JButton("Verwijderen");
 		btnVerwijderen.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		btnVerwijderen.setBounds(147, 255, 95, 23);
+		btnVerwijderen.setBounds(147, 281, 95, 23);
 		contentPane.add(btnVerwijderen);
+		
+		JLabel lblEmail = new JLabel("Email:");
+		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblEmail.setBounds(67, 253, 113, 14);
+		contentPane.add(lblEmail);
+		
+		emailveld = new JTextField();
+		emailveld.setBounds(181, 250, 142, 20);
+		contentPane.add(emailveld);
+		emailveld.setColumns(10);
 		btnVerwijderen.addActionListener(new ActionListener() {
 			
 			@Override
@@ -297,6 +309,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			final String naam= i.getGebruikersnaam();
 			final String voornaam = i.getNaam();
 			final String type = i.getType();
+			final String email = i.getEmail();
 			ip.addMouseListener(new MouseListener(){
 			
 				@Override
@@ -306,6 +319,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 					voornaamVeld.setText(voornaam);
 					typeBox.setSelectedItem(type);
 					activeGebruiker = i.getGebruikersnummer();
+					emailveld.setText(email);
 					if(i.isActief()) {
 						activate.setVisible(false);
 					}
@@ -347,6 +361,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		wachtwoordVeld.setText("");
 		voornaamVeld.setText("");
 		typeBox.setSelectedIndex(0);
+		emailveld.setText("");
 		activeGebruiker = -1;
 		activate.setVisible(false);
 	}
