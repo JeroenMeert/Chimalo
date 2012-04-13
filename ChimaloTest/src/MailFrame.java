@@ -55,7 +55,7 @@ public class MailFrame extends JFrame {
 					Calendar cal = new GregorianCalendar() ;
 					java.sql.Date jsqlD = new java.sql.Date( cal.getTime().getTime());
 					Model model = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
-					model.setActiveItem(new Item(null, "testtitel", "dit is een test item", new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"), jsqlD,"","", "Afgekeurd", ""));
+					model.setActiveItem(new Item(null, "testtitel", "dit is een test item", new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"), jsqlD,new Erfgoed(),"", "Afgekeurd", ""));
 					MailFrame frame = new MailFrame(model, false);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();

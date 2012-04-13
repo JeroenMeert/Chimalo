@@ -164,14 +164,14 @@ public class DataBankConnection {
         	ByteArrayOutputStream os = new ByteArrayOutputStream();
         	ImageIO.write(im, i.getExtentie(), os);
         	InputStream is = new ByteArrayInputStream(os.toByteArray());
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, Erfgoed = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
         	overschrijf.setBinaryStream(4,is,is.available());
         	overschrijf.setInt(5,i.getAuteur().getGebruikersnummer());
         	overschrijf.setString(6,i.getStatus());
-        	overschrijf.setString(7, i.getErfgoed());
+        	overschrijf.setInt(7, i.getErfgoed().getErfgoedNr());
         	overschrijf.setString(8, i.getLink());
         	overschrijf.setString(9, i.getExtentie());
         	overschrijf.setInt(10, i.getId());
@@ -190,13 +190,13 @@ public class DataBankConnection {
 	}
 	public void overschrijfItemZonderAfbeelding(Item i){
         try {
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, Erfgoed = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
         	overschrijf.setInt(4,i.getAuteur().getGebruikersnummer());
         	overschrijf.setString(5,i.getStatus());
-        	overschrijf.setString(6, i.getErfgoed());
+        	overschrijf.setInt(6, i.getErfgoed().getErfgoedNr());
         	overschrijf.setString(7, i.getLink());
         	overschrijf.setString(8, i.getExtentie());
         	overschrijf.setInt(9, i.getId());
@@ -216,14 +216,14 @@ public class DataBankConnection {
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, Erfgoed, Link, Extentie FROM Object");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extentie FROM Object");
         	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
         		String titel = rs.getString(2);
         		String tekst = rs.getString("Tekst");
         		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		String erfgoed = rs.getString("Erfgoed");
+        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
@@ -326,7 +326,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoed , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
@@ -335,7 +335,7 @@ public class DataBankConnection {
         		String titel = rs.getString("Naam");
         		String tekst = rs.getString("Tekst");
         		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		String erfgoed = rs.getString("Erfgoed");
+        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
@@ -368,7 +368,7 @@ public class DataBankConnection {
         		String titel = rs.getString(2);
         		String tekst = rs.getString("Tekst");
         		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		String erfgoed = rs.getString("Erfgoed");
+        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
         		String link = rs.getString("Link");
         		String status1 = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
@@ -400,7 +400,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,Erfgoed,Geschiedenis,Link, Locatie, Gemeente, Extentie FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extentie FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -410,7 +410,7 @@ public class DataBankConnection {
         		String titel = rs.getString("Naam");
         		String tekst = rs.getString("Tekst");
         		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		String erfgoed = rs.getString("Erfgoed");
+        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
@@ -672,7 +672,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
      	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
      	ResultSet rs= erfgoed.executeQuery();
      	while (rs.next()){
-     		Erfgoed e = new Erfgoed( rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"));
+     		Erfgoed e = new Erfgoed(rs.getInt("ErfgoedNr"), rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"), rs.getString("Kenmerken"), rs.getString("Statuut"), rs.getString("Gemeente"));
      		result.add(e);
      		
      	}
@@ -687,7 +687,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
 }
 public void schrijfNieuwItem(Item i) {
      try {	    
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,Erfgoed,Link, Extentie) VALUES (?,?,?,?,?,?,?,?,?)");
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extentie) VALUES (?,?,?,?,?,?,?,?,?)");
      	
     	BufferedImage im = i.getFoto(); 
     	ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -699,7 +699,7 @@ public void schrijfNieuwItem(Item i) {
      	newItem.setBinaryStream(4, is,is.available());
      	newItem.setInt(5, i.getAuteur().getGebruikersnummer());
      	newItem.setString(6,"Goedgekeurd");
-     	newItem.setString(7, i.getErfgoed());
+     	newItem.setInt(7, i.getErfgoed().getErfgoedNr());
      	newItem.setString(8, i.getLink());
      	newItem.setString(9, i.getExtentie());
      	
@@ -720,13 +720,13 @@ public void schrijfNieuwItem(Item i) {
 
 public void schrijfNieuwItemZonderAfbeelding(Item i) {
     try {	    
-    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,Erfgoed,Link, Extentie) VALUES (?,?,?,?,?,?,?,?)");
+    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extentie) VALUES (?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
     	newItem.setDate(2,i.getInzendDatum());
     	newItem.setString(3,i.getText());
     	newItem.setInt(4, i.getAuteur().getGebruikersnummer());
     	newItem.setString(5,"Goedgekeurd");
-    	newItem.setString(6, i.getErfgoed());
+    	newItem.setInt(6, i.getErfgoed().getErfgoedNr());
     	newItem.setString(7, i.getLink());
     	newItem.setString(8, i.getExtentie());
     	
@@ -745,9 +745,9 @@ public void schrijfNieuwItemZonderAfbeelding(Item i) {
 public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
 	 Boolean b = true;
      try { 	    
-     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Object WHERE Erfgoed = ?");
+     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Object WHERE ErfgoedNr = ?");
      	
-     	magweg.setString(1,er.getNaam());
+     	magweg.setInt(1,er.getErfgoedNr());
      	
      	ResultSet rs =magweg.executeQuery();
      	if (rs.next()){
@@ -765,9 +765,9 @@ public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
 public void removeErfgoed(Erfgoed er) {
 	// TODO Auto-generated method stub
     try {
-    	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE Naam =?");
+    	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE ErfgoedNr =?");
     	
-    	weg.setString(1,er.getNaam());
+    	weg.setInt(1,er.getErfgoedNr());
     	weg.executeUpdate();
 
     } catch (SQLException ex) {
@@ -777,21 +777,22 @@ public void removeErfgoed(Erfgoed er) {
         }
     }
 }
-public void schrijfNieuwerfgoed(Erfgoed er) {
+public void schrijfErfgoed(Erfgoed g) {
      try {   
-     	PreparedStatement newE = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link ,Geschiedenis ,Info) VALUES (?,?,?,?,?,?)");
+     	PreparedStatement newItem = conn.prepareStatement("UPDATE Erfgoed SET Naam = ? , Locatie = ?, Type = ?, Link = ?, Geschiedenis = ?, Info = ?, Kenmerken = ?, Statuut = ?, Gemeente = ? WHERE ErfgoedNr = ?");
+     	newItem.setString(1,g.getNaam());
+    	newItem.setString(2,g.getLocatie());
+    	newItem.setString(3,g.getType());
+    	newItem.setString(4, g.getLink());
+    	newItem.setString(5,g.getGeschiedenis());
+    	newItem.setString(6, g.getInfo());
+    	newItem.setString(7, g.getKenmerken());
+    	newItem.setString(8, g.getStatuut());
+    	newItem.setString(9, g.getGemeente());
+    	newItem.setInt(10, g.getErfgoedNr());
      	
-    	   	
-     	newE.setString(1,er.getNaam());
-     	newE.setString(2,er.getLocatie());
-     	newE.setString(3,er.getType());
-     	newE.setString(4,er.getLink());
-     	newE.setString(5,er.getGeschiedenis());
-     	newE.setString(6,er.getInfo());
-
      	
-     	
-     	newE.executeUpdate();
+     	newItem.executeUpdate();
      	
  
      } catch (SQLException ex) {
@@ -802,14 +803,14 @@ public void schrijfNieuwerfgoed(Erfgoed er) {
      }
 }
 
-public ArrayList<String> getGemeenten() {
-	ArrayList<String> gemeenten = new ArrayList<String>();
+public ArrayList<String> getStatuten() {
+	ArrayList<String> statuut = new ArrayList<String>();
 	try {
-     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Gemeente");
+     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Statuut");
      	
      	ResultSet rs =magweg.executeQuery();
      	while (rs.next()){
-     		gemeenten.add(rs.getString("Gemeente"));
+     		statuut.add(rs.getString("Statuut"));
      	}
      	
      } catch (SQLException ex) {
@@ -819,7 +820,7 @@ public ArrayList<String> getGemeenten() {
          }
      }
 	finally {
-		return gemeenten;
+		return statuut;
 	}
 }
 
@@ -856,6 +857,53 @@ public void herstartConnectie()
 			}
 		}
 	}
+}
+
+public void schrijfNieuwErfgoed(Erfgoed g) {
+    try {
+    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link,Geschiedenis,Info,Kenmerken, Statuut, Gemeente) VALUES (?,?,?,?,?,?,?,?,?)");
+    	newItem.setString(1,g.getNaam());
+    	newItem.setString(2,g.getLocatie());
+    	newItem.setString(3,g.getType());
+    	newItem.setString(4, g.getLink());
+    	newItem.setString(5,g.getGeschiedenis());
+    	newItem.setString(6, g.getInfo());
+    	newItem.setString(7, g.getKenmerken());
+    	newItem.setString(8, g.getStatuut());
+    	newItem.setString(9, g.getGemeente());
+    	
+    	newItem.executeUpdate();
+    	
+
+    } catch (SQLException ex) {
+   	 JOptionPane.showMessageDialog(null, "Er is een fout opgetreden bij het opslaan van een nieuw erfgoed. Controlleer de naam van het erfgoed en probeer opnieuw.\n Foutmelding: " +ex.toString());
+   	 for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+   
+}
+
+public Erfgoed getErfgoed(int erfgoednr) {
+	Erfgoed i = null;
+    try {
+    	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Erfgoed WHERE ErfgoedNr =? ");
+    	haalGebruikerOp.setInt(1, erfgoednr);
+    	ResultSet rs = haalGebruikerOp.executeQuery();
+    	if (rs.next()){
+    		i = new Erfgoed(rs.getInt("ErfgoedNr"), rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"), rs.getString("Kenmerken"), rs.getString("Statuut"), rs.getString("Gemeente"));
+    	}
+    	else
+    	{
+    		JOptionPane.showMessageDialog(null, "Geen Erfgoed gevonden!");
+    	}
+    } catch (SQLException ex) {
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+	return i;
 }
 }
 	

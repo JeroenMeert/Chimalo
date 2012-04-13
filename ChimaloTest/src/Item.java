@@ -11,13 +11,13 @@ public class Item {
 	private String text;
 	private Gebruiker auteur; 
 	private Date inzendDatum;
-	private String erfgoed;
+	private Erfgoed erfgoed;
 	private String link;
 	private String status;
 	private String extentie;
 	
 	public Item(BufferedImage foto, int id, String titel, String text,
-			Gebruiker auteur, Date inzendDatum, String erfgoed, String link,
+			Gebruiker auteur, Date inzendDatum, Erfgoed erfgoed, String link,
 			String status,
 			String extentie) {
 		super();
@@ -34,7 +34,7 @@ public class Item {
 	}
 
 	public Item(BufferedImage foto, String titel, String text, Gebruiker auteur,
-			Date inzendDatum, String erfgoed, String link, String status, String extentie) {
+			Date inzendDatum, Erfgoed erfgoed, String link, String status, String extentie) {
 		super();
 		this.foto = foto;
 		this.titel = titel;
@@ -61,15 +61,11 @@ public class Item {
 		this.extentie = extentie;
 	}
 
-
-
-	public String getErfgoed() {
+	public Erfgoed getErfgoed() {
 		return erfgoed;
 	}
 
-
-
-	public void setErfgoed(String erfgoed) {
+	public void setErfgoed(Erfgoed erfgoed) {
 		this.erfgoed = erfgoed;
 	}
 

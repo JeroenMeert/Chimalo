@@ -72,7 +72,7 @@ public class ItemPanel extends JPanel {
 		panel.add(datum);
 		auteur.setText(i.getAuteur().getGebruikersnaam());
 		datum.setText(String.valueOf(i.getInzendDatum()));
-		erfgoed.setText(i.getErfgoed());
+		erfgoed.setText(i.getErfgoed().getNaam());
 		
 		ImagePanel panel_1 = new ImagePanel("itembar.jpg");
 		panel_1.setBounds(0, 0, 403, 18);

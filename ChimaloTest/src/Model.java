@@ -48,6 +48,10 @@ public class Model {
 	public ArrayList<Item> alleItems(){
 		return dbc.leesItems();
 	}
+	
+	public void leesAlleItems() {
+		items = dbc.leesItems();
+	}
 	public void leesOpStatus(String status){
 		
 		items=dbc.leesItemsOpStatus(status);
@@ -192,13 +196,18 @@ public class Model {
 	}
 
 	public void schrijfNieuwErfgoed(Erfgoed er) {
-		dbc.schrijfNieuwerfgoed(er);
+		dbc.schrijfNieuwErfgoed(er);
+		notifyChangeListeners();
+	}
+	public void schrijfErfgoed(Erfgoed er)
+	{
+		dbc.schrijfErfgoed(er);
 		notifyChangeListeners();
 	}
 	
-	public ArrayList<String> getGemeenten()
+	public ArrayList<String> getStatuten()
 	{
-		return dbc.getGemeenten();
+		return dbc.getStatuten();
 	}
 	
 	public void nieuwItem()
@@ -246,7 +255,7 @@ public class Model {
 		activePanel = p;
 	}
 	
-	public ChangeListener getActiveJPanel()
+	public ChangeListener getActivePanel()
 	{
 		return activePanel;
 	}

@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -128,7 +129,7 @@ public class hoofd_scherm extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-						model.unsubscribe(model.getActiveJPanel());
+						model.unsubscribe(model.getActivePanel());
 						parent.dispose();
 						Accountbeheer frame = new Accountbeheer(model);
 						frame.setVisible(true);
@@ -166,11 +167,23 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.unsubscribe(model.getActiveJPanel());
+				model.unsubscribe(model.getActivePanel());
 				newPanel(new DashbordPanel(model, new Parameter("nieuw", "")));
 			}
 			
 		});
+		
+		JMenuItem mntmDashboard = new JMenuItem("Dashboard");
+		mntmDashboard.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				model.unsubscribe(model.getActivePanel());
+				newPanel(new DashbordPanel(model, new Parameter()));
+				
+			}
+		});
+		opties.add(mntmDashboard);
 		opties.add(mntmNieuw);
 		
 		
@@ -183,8 +196,12 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.unsubscribe(model.getActiveJPanel());
-				newPanel(new ErfgoedLijstPanel(model,parent));
+				model.unsubscribe(model.getActivePanel());
+				ArrayList<Erfgoed> erfgoeden = model.getErfgoeden();
+				Erfgoed input = (Erfgoed) JOptionPane.showInputDialog(null,
+						"Selecteer het erfgoed dat je wilt bewerken","Erfgoedbeheer", JOptionPane.INFORMATION_MESSAGE, 
+						null, erfgoeden.toArray(),"Tennis");
+				newPanel(new ErfgoedPanel(model,new Parameter(input)));
 			}
 			
 		});
@@ -208,7 +225,7 @@ public class hoofd_scherm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				model.unsubscribe(model.getActiveJPanel());
+				model.unsubscribe(model.getActivePanel());
 				parent.dispose();
 				Chimalo frame = new Chimalo(model.getAdmin().getGebruikersnaam());
 				frame.setVisible(true);

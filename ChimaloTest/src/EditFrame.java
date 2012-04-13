@@ -28,7 +28,6 @@ public class EditFrame extends JFrame{
 	 public final static String jpg = "jpg";
 	 public final static String gif = "gif";
 	 public final static String png = "png";
-	 private NieuwItemFrame ParentFrame;
 	 private String [] acceptableExtensions= new String[]{"jpeg","jpg","gif","png"};
 	 private JFileChooser kiesFile;
 	 private Model model;

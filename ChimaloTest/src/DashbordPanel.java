@@ -66,9 +66,11 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	private ImagePanel activePhoto;
 	private JTextField activeLink;
 	private JLabel lblErfgoed;
-	private JComboBox<String> activeErfgoed;
+	private JComboBox<Erfgoed> activeErfgoed;
 	private JLabel lblBewerken;
 	private MemberPanel panel;
+	private JLabel lblNaarErfgoed;
+	private int itemCount = 0;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -205,7 +207,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		activePhoto.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		activePhoto.setBounds(67, 75, 240, 240);
 		activePhoto.addMouseListener(new MouseListener(){
-
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(activeTitel.isEnabled())
@@ -358,7 +360,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						model.getActiveItem().setText(activeBeschrijving.getText());
 						model.getActiveItem().setTitel(activeTitel.getText());
 						model.getActiveItem().setLink(activeLink.getText());
-						model.getActiveItem().setErfgoed(activeErfgoed.getSelectedItem().toString());
+						model.getActiveItem().setErfgoed((Erfgoed) activeErfgoed.getSelectedItem());
 						model.getActiveItem().setStatus("Goedgekeurd");
 						if(!(model.getActiveItem().getId() == -1))
 						{
@@ -416,22 +418,16 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		saveWijziging.setBounds(475, 441, 118, 23);
 		this.add(saveWijziging);
 		
-		JLabel lblNaarErfgoed = new JLabel("Naar Erfgoed >>");
-		lblNaarErfgoed.setBounds(495, 40, 112, 14);
+		lblNaarErfgoed = new JLabel("Naar Erfgoed >>");
+		lblNaarErfgoed.setBounds(495, 39, 112, 14);
+		lblNaarErfgoed.setVisible(false);
 		lblNaarErfgoed.addMouseListener(new MouseListener(){
-
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (model.getActiveItem()!=null){
+				if (model.getActiveItem().getId()!=-1){
 					model.unsubscribe(parent);
-					int i=0;
-					while (  i<model.getErfgoeden().size()){
-						if (model.getErfgoeden().get(i).getNaam().equals(model.getActiveItem().getErfgoed())){
-							break;
-						}
-						i++;
-					}
-					parentPanel.newPanel(new ErfgoedPanel(model,parentPanel,model.getErfgoeden().get(i)));
+					parentPanel.newPanel(new ErfgoedPanel(model,new Parameter(model.getActiveItem().getErfgoed())));
 					}
 			}
 
@@ -475,12 +471,12 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		lblErfgoed.setBounds(317, 105, 46, 14);
 		add(lblErfgoed);
 		
-		activeErfgoed = new JComboBox<String>();
+		activeErfgoed = new JComboBox<Erfgoed>();
 		ArrayList<Erfgoed> erfgoeden = model.getErfgoeden();
 		activeErfgoed.removeAllItems();
 		for(Erfgoed e : erfgoeden)
 		{
-			activeErfgoed.addItem(e.getNaam());
+			activeErfgoed.addItem(e);
 		}
 		activeErfgoed.setBounds(405, 102, 188, 20);
 		add(activeErfgoed);
@@ -489,7 +485,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				refreshItems();
-				
+				model.notifyChangeListeners();
 			}
 		});
 		model.nieuwItem();
@@ -507,6 +503,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	}
 	
 	private void refreshItems(){
+			itemCount = 0;
 			panel_1.setVisible(false);
 			panel_1.removeAll();
 		for (final Item i : model.getItems()){
@@ -515,7 +512,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			final String tekst = i.getText();
 			final String auteur = i.getAuteur().getGebruikersnaam();
 			final String datum = String.valueOf(i.getInzendDatum());
-			final String erfgoed = i.getErfgoed();
+			final Erfgoed erfgoed = i.getErfgoed();
 			final String link = i.getLink();
 			ip.addMouseListener(new MouseListener(){
 			
@@ -525,11 +522,18 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					activeBeschrijving.setText(tekst);
 					activeLink.setText(link);
 					lblBewerken.setText(titel.toUpperCase() + " (" + datum + ")");
-					activeErfgoed.setSelectedItem(erfgoed);
+					for(int i = 0; i<activeErfgoed.getItemCount(); i++)
+					{
+						if(erfgoed.getErfgoedNr() == activeErfgoed.getItemAt(i).getErfgoedNr())
+						{
+							activeErfgoed.setSelectedIndex(i);
+						}
+					}
 					model.setActiveItem(new Item(i.getFoto(), i.getId(), i.getTitel(), i.getText(), i.getAuteur(), i.getInzendDatum(), i.getErfgoed(), i.getLink(), i.getStatus(), i.getExtentie()));
 					activePhoto.setNewFoto(i.getFoto());
 					activePanel(false);
 					btnWijzigen.setVisible(true);
+					lblNaarErfgoed.setVisible(true);
 					state= i.getStatus();
 					panel.setGebruiker(i.getAuteur());
 					refreshForState();
@@ -559,31 +563,46 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				
 			});
 			
-			if (!zoekVeld.getText().isEmpty()){
+			if (!zoekVeld.getText().isEmpty())
+			{
 				if (String.valueOf(zoekBox.getSelectedItem())=="Titel"){
 				
 					if (i.getTitel().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					{
 						panel_1.add(ip);
+						itemCount++;
+					}
 				}
 				if (String.valueOf(zoekBox.getSelectedItem())=="Auteur"){
 
 					if (i.getAuteur().getGebruikersnaam().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					{
 						panel_1.add(ip);
+						itemCount++;
+					}
 				}
 				if (String.valueOf(zoekBox.getSelectedItem())=="Datum"){
 
 					if (String.valueOf(i.getInzendDatum()).toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					{
 						panel_1.add(ip);
+						itemCount++;
+					}
 					
 				}
 				if (String.valueOf(zoekBox.getSelectedItem())=="Erfgoed"){
 
 					if (String.valueOf(i.getErfgoed()).toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					{
 						panel_1.add(ip);
+						itemCount++;
+					}
 					
 				}
-			}else
+			}else {
 			panel_1.add(ip);
+			itemCount++;
+			}
 		}
 		panel_1.repaint();
 		panel_1.setVisible(true);
@@ -595,10 +614,10 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		refreshItems();
 		}
 		finally {
-			if(model.getItems().size() == 0)
+			if(itemCount == 0)
 				panel_1.setLayout(new GridLayout(1, 0));
 			else
-				panel_1.setLayout(new GridLayout(model.getItems().size(), 0));
+				panel_1.setLayout(new GridLayout(itemCount, 0));
 		}
 		ArrayList<Erfgoed> erfgoeden = null;
 		try {
@@ -608,7 +627,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		activeErfgoed.removeAllItems();
 		for(Erfgoed e : erfgoeden)
 		{
-			activeErfgoed.addItem(e.getNaam());
+			activeErfgoed.addItem(e);
 		}
 		}
 		if(model.getActiveItem() != null)
@@ -621,6 +640,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	}
 	private void clearActive(){
 		model.nieuwItem();
+		lblNaarErfgoed.setVisible(false);
 		lblBewerken.setText("");
 		activeBeschrijving.setText("");
 		activeTitel.setText("");
@@ -694,6 +714,36 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				lblBewerken.setText("Nieuw Item");
 				btnWijzigen.setEnabled(true);
 				clearActive();
+			}
+		}
+		if(para.getObject() != null)
+		{
+			if(para.getObject() instanceof Erfgoed)
+			{
+				if(para.getSoort().equals("nieuw")) {
+					lblBewerken.setText("Nieuw Item");
+					btnWijzigen.setEnabled(true);
+					clearActive();
+					Erfgoed erfgoed = (Erfgoed) para.getObject();
+					for(int i = 0; i<activeErfgoed.getItemCount(); i++)
+					{
+						if(erfgoed.getErfgoedNr() == activeErfgoed.getItemAt(i).getErfgoedNr())
+						{
+							activeErfgoed.setSelectedIndex(i);
+						}
+					}
+				}
+				else
+				{
+					if(para.getSoort().equals("zoeken"))
+					{
+						Erfgoed erfgoed = (Erfgoed) para.getObject();
+						zoekVeld.setText(erfgoed.getNaam());
+						zoekBox.setSelectedItem("Erfgoed");
+						refreshItems();
+						model.notifyChangeListeners();
+					}
+				}
 			}
 		}
 	}
