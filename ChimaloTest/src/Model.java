@@ -205,11 +205,6 @@ public class Model {
 		notifyChangeListeners();
 	}
 	
-	public ArrayList<String> getStatuten()
-	{
-		return dbc.getStatuten();
-	}
-	
 	public void nieuwItem()
 	{
 		activeItem = new Item();

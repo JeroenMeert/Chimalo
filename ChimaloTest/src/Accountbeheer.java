@@ -249,11 +249,24 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(activeGebruiker == -1) {
+					if(wachtwoordVeld.getText().equals(""))
+					{
 					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
+					nieuw();
+					}
+					else
+						JOptionPane.showMessageDialog(null, "Je moet een wachtwoord opgeven om een nieuwe gebruiker op te slaan");
 				}
 				else
-					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
-				nieuw();
+				{
+					String wachtwoord = "";
+					if(!wachtwoordVeld.getText().equals(""))
+					{
+						wachtwoord = m.getMd5(wachtwoordVeld.getText());
+					}
+					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), wachtwoord, typeBox.getSelectedItem().toString(), emailveld.getText());
+					nieuw();
+				}
 			}
 		});
 		

@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -20,18 +21,18 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
 public class DataBankConnection {
 	private BufferedImage image;
 	private Model m;
-	private String type = "Administrator";
 	private Connection conn;
 	
 	public DataBankConnection(Model m) {
 		try {
-			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
@@ -40,7 +41,7 @@ public class DataBankConnection {
 	}
 	public DataBankConnection() {
 		try {
-			conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
+			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
@@ -55,7 +56,6 @@ public class DataBankConnection {
 		Gebruiker result = null;
         try {
         	
-            Statement stat = conn.createStatement();
         	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
 
         	zoekLogin.setString(1, name);
@@ -66,10 +66,9 @@ public class DataBankConnection {
             if (rs.next())
             {
             	String status = rs.getString("Type");
-            	if(status.equals("Beheerder") || status.equals("Administrator"))
+            	if((status.equals("Beheerder")) || (status.equals("Administrator")))
             	{
-            		result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
-            		type = status;
+            		result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),status, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Emailadres"));
             	}
             }
             
@@ -86,7 +85,7 @@ public class DataBankConnection {
 	public boolean hasDuplicates(String Gebruikersnaam) {
 		try {
     		int count = 0;
-    		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS rowcount FROM Gebruiker WHERE Gebruikersnaam =? ");
+    		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS [rowcount] FROM Gebruiker WHERE Gebruikersnaam =? ");
     		haalItemsOp.setString(1,Gebruikersnaam);
     		ResultSet r = haalItemsOp.executeQuery();
     		r.next();
@@ -106,16 +105,16 @@ public class DataBankConnection {
 	}
 	
 	
-	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type, String email){
+	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
 		if(!hasDuplicates(Gebruikersnaam)) {
         try {
-        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Email) VALUES (?,?,?,?,?,?)");
+        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Emailadres) VALUES (?,?,?,?,?,?)");
         	voegBeheerderToe.setString(1, Gebruikersnaam);
         	voegBeheerderToe.setString(2, Naam);
         	voegBeheerderToe.setString(3, pass);
         	voegBeheerderToe.setString(4, type);
         	voegBeheerderToe.setBoolean(5, true);
-        	voegBeheerderToe.setString(6, email);
+        	voegBeheerderToe.setString(6, Emailadres);
 
            voegBeheerderToe.executeUpdate();
         } catch (SQLException ex) {
@@ -128,27 +127,27 @@ public class DataBankConnection {
 			JOptionPane.showMessageDialog(null, "Een gebruiker met deze Gebruikersnaam bestaat al, kies een andere!");
 		}
 	}
-	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type, String email){
+	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
         try {
         	if(!pass.equals(""))
         	{
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ?, Email = ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ?, Emailadres = ? WHERE gebruikerNr = ?");
         		voegBeheerderToe.setString(1, Gebruikersnaam);
         		voegBeheerderToe.setString(2, Naam);
         		voegBeheerderToe.setString(3, pass);
         		voegBeheerderToe.setString(4, type);
         		voegBeheerderToe.setBoolean(5, true);
-        		voegBeheerderToe.setString(6, email);
+        		voegBeheerderToe.setString(6, Emailadres);
         		voegBeheerderToe.setInt(7, nr);
         		voegBeheerderToe.executeUpdate();
         	}
         	else {
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ?, Email= ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ?, Emailadres= ? WHERE gebruikerNr = ?");
             	voegBeheerderToe.setString(1, Gebruikersnaam);
             	voegBeheerderToe.setString(2, Naam);
             	voegBeheerderToe.setString(3, type);
             	voegBeheerderToe.setBoolean(4, true);
-            	voegBeheerderToe.setString(5, email);
+            	voegBeheerderToe.setString(5, Emailadres);
             	voegBeheerderToe.setInt(6, nr);
             	voegBeheerderToe.executeUpdate();
         	}
@@ -160,15 +159,24 @@ public class DataBankConnection {
 	}
 	public void overschrijfItem(Item i){
         try {
-        	BufferedImage im = i.getFoto();
-        	ByteArrayOutputStream os = new ByteArrayOutputStream();
-        	ImageIO.write(im, i.getExtentie(), os);
-        	InputStream is = new ByteArrayInputStream(os.toByteArray());
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
+        	BufferedImage duke = i.getFoto();
+        	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
+            Blob dukeBlob = conn.createBlob();
+            
+            // We vragen aan de blob een OutputStream waarmee we bytes naar de blob kunnen schrijven.
+            // Het argument 1 geeft aan dat we de blob willen schrijven vanaf de eerste byte (en niet ergens halverwege).
+            OutputStream dukeBlobStream = dukeBlob.setBinaryStream(1);
+            
+            // We maken gebruik van de methode ImageIO.write() om de afbeelding weg te schrijven naar de OutputStream.
+            // Het tweede argument van deze methode geeft aan om welk type afbeelding het gaat.
+            // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
+            // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
+            ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
-        	overschrijf.setBinaryStream(4,is,is.available());
+        	overschrijf.setBlob(4, dukeBlob);
         	overschrijf.setInt(5,i.getAuteur().getGebruikersnummer());
         	overschrijf.setString(6,i.getStatus());
         	overschrijf.setInt(7, i.getErfgoed().getErfgoedNr());
@@ -190,7 +198,7 @@ public class DataBankConnection {
 	}
 	public void overschrijfItemZonderAfbeelding(Item i){
         try {
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extentie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
@@ -216,7 +224,7 @@ public class DataBankConnection {
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extentie FROM Object");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extensie FROM Object");
         	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
@@ -227,8 +235,8 @@ public class DataBankConnection {
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
-        		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
+        		String Extensie = rs.getString("Extensie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -258,7 +266,7 @@ public class DataBankConnection {
         	haalGebruikerOp.setInt(1, userNr);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
-        		i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
+        		i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),rs.getString("Type"), rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Emailadres"));
         	}
         	else
         	{
@@ -282,7 +290,7 @@ public class DataBankConnection {
         	haalGebruikerOp.setString(1, gebruikersnaam);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
-        		 result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"), rs.getString("Wachtwoord"), rs.getString("Type"), rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
+        		 result = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"), rs.getString("Wachtwoord"), rs.getString("Type"), rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Emailadres"));
         	}
         	
         	
@@ -296,37 +304,12 @@ public class DataBankConnection {
         }
 		return result;
 	}
-	public BufferedImage getFoto() {
-		BufferedImage image= new BufferedImage(1,1,1);
-        try {
-	            Statement stat = conn.createStatement();
-	        	PreparedStatement getFoto = conn.prepareStatement("SELECT foto FROM Object WHERE ObjectNr = 1");
-	        	
-	           ResultSet rs = getFoto.executeQuery();
-	          // byte aByteArray[];
-	           //Blob b = rs.getBlob(1);
-	           if (rs.next()){
-	        	   System.out.println("gevonden");
-	           //aByteArray = new byte[b.getBinaryStream()];
-	           //aByteArray = rs.getBytes(1);
-	           image = ImageIO.read(rs.getBinaryStream(1)); 
-	           //ImageIcon ii = new ImageIcon(aByteArray);
-	           
-	           
-	           }
-	           
-	        } catch (Exception ex) {
-	        
-	        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
-	        }
-		 return image;
-	}
 	public ArrayList<Item> leesItemsOpDatum(){
 		
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extentie FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
@@ -339,8 +322,8 @@ public class DataBankConnection {
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
-        		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
+        		String Extensie = rs.getString("Extensie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -372,8 +355,8 @@ public class DataBankConnection {
         		String link = rs.getString("Link");
         		String status1 = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
-        		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, extentie);
+        		String Extensie = rs.getString("Extensie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, Extensie);
         		terugTeGevenItems.add(i);
         	}
 
@@ -400,7 +383,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extentie FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -414,8 +397,8 @@ public class DataBankConnection {
         		String link = rs.getString("Link");
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
-        		String extentie = rs.getString("Extentie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, extentie);
+        		String Extensie = rs.getString("Extensie");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -445,22 +428,28 @@ public class DataBankConnection {
 
 	
 	public BufferedImage haalFotoOp(int userID){
+		JFrame f = new JFrame();
         try {     
 		    	PreparedStatement readImage = conn.prepareStatement("SELECT Foto FROM Object WHERE ObjectNr=?");
 		    	readImage.setInt(1, userID);
 		    	ResultSet rs = readImage.executeQuery();
 		    	
-             if (rs.next()) {
-                 
-                 // Om de afbeelding terug uit te lezen, volgen we een omgekeerde werkwijze.
-                 // We beginnen met het opvragen van een InputStream die de bytes uit het OLE Object veld opnieuw kan uitlezen.
-                 InputStream dbStream = rs.getBinaryStream("Foto");
-                 
-                 // We gebruiken de methode ImageIO.read() om de bytes uit de stream te lezen en deze om te zetten naar een BufferedImage.
-                 image = ImageIO.read(dbStream);
-             } else {
-                 System.out.println("Afbeelding niet gevonden in databank."+userID);
-             }
+		    	if (rs.next()) {
+                    // Om een blob uit te lezen, gebruiken we de methode getBlob().
+                    Blob imageBlob = rs.getBlob("Foto");
+                    if(imageBlob != null)
+                    {
+                    // We vragen aan de blob een InputStream waarmee we de bytes opnieuw kunnen uitlezen.
+                    InputStream imageBlobStream = imageBlob.getBinaryStream();
+                    
+                    // De methode ImageIO.read() kan deze InputStream gebruiken om de afbeelding uit te lezen.
+                    // De variabele image is nu gevuld met de afbeelding uit duke.png.
+                    image = ImageIO.read(imageBlobStream);
+                    }
+                    else {
+                    	image = (BufferedImage)f.createImage(25,25);
+                    }
+		    	}
 		    }catch(Exception ex ){
 		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
 	                ex.printStackTrace();
@@ -478,7 +467,7 @@ public class DataBankConnection {
         		String type = rs.getString("Type");
         		if(type.equals("Beheerder") || type.equals("Administrator"))
         		{
-        		Gebruiker i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Email"));
+        		Gebruiker i = new Gebruiker(rs.getString("Gebruikersnaam"), rs.getString("Naam"),rs.getString("Wachtwoord"),type, rs.getInt("GebruikerNr"), rs.getBoolean("Actief"), rs.getString("Emailadres"));
         		gebruikers.add(i);
         		}
         	}
@@ -613,9 +602,6 @@ public class DataBankConnection {
             }
         }
 	}
-	public String getType() {
-		return type;
-	}
 	public String md5(String md5) {
 	   try {
 	        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
@@ -686,23 +672,30 @@ public ArrayList<Erfgoed> getErfGoeden() {
      return new ArrayList<Erfgoed>();
 }
 public void schrijfNieuwItem(Item i) {
-     try {	    
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extentie) VALUES (?,?,?,?,?,?,?,?,?)");
-     	
-    	BufferedImage im = i.getFoto(); 
-    	ByteArrayOutputStream os = new ByteArrayOutputStream();
-    	ImageIO.write(im, i.getExtentie(), os);
-    	InputStream is = new ByteArrayInputStream(os.toByteArray());     	
+     try {
+    	BufferedImage duke = i.getFoto();
+     	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
+         Blob dukeBlob = conn.createBlob();
+         
+         // We vragen aan de blob een OutputStream waarmee we bytes naar de blob kunnen schrijven.
+         // Het argument 1 geeft aan dat we de blob willen schrijven vanaf de eerste byte (en niet ergens halverwege).
+         OutputStream dukeBlobStream = dukeBlob.setBinaryStream(1);
+         
+         // We maken gebruik van de methode ImageIO.write() om de afbeelding weg te schrijven naar de OutputStream.
+         // Het tweede argument van deze methode geeft aan om welk type afbeelding het gaat.
+         // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
+         // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
+         ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie) VALUES (?,?,?,?,?,?,?,?,?)");   	
      	newItem.setString(1,i.getTitel());
      	newItem.setDate(2,i.getInzendDatum());
      	newItem.setString(3,i.getText());
-     	newItem.setBinaryStream(4, is,is.available());
+     	newItem.setBlob(4, dukeBlob);
      	newItem.setInt(5, i.getAuteur().getGebruikersnummer());
      	newItem.setString(6,"Goedgekeurd");
      	newItem.setInt(7, i.getErfgoed().getErfgoedNr());
      	newItem.setString(8, i.getLink());
      	newItem.setString(9, i.getExtentie());
-     	
      	newItem.executeUpdate();
      	
  
@@ -720,7 +713,7 @@ public void schrijfNieuwItem(Item i) {
 
 public void schrijfNieuwItemZonderAfbeelding(Item i) {
     try {	    
-    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extentie) VALUES (?,?,?,?,?,?,?,?)");
+    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie) VALUES (?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
     	newItem.setDate(2,i.getInzendDatum());
     	newItem.setString(3,i.getText());
@@ -801,27 +794,6 @@ public void schrijfErfgoed(Erfgoed g) {
              t.printStackTrace();
          }
      }
-}
-
-public ArrayList<String> getStatuten() {
-	ArrayList<String> statuut = new ArrayList<String>();
-	try {
-     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Statuut");
-     	
-     	ResultSet rs =magweg.executeQuery();
-     	while (rs.next()){
-     		statuut.add(rs.getString("Statuut"));
-     	}
-     	
-     } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden tengevolge van een Timeout, overbelasting op de huidige connectie.\nDe connectie wordt automatisch herstart\n Probeer het opnieuw.\nFoutmelding: " + ex.toString());
-    	 for (Throwable t : ex) {
-             t.printStackTrace();
-         }
-     }
-	finally {
-		return statuut;
-	}
 }
 
 public void sluitConnectie()

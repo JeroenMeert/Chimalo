@@ -73,7 +73,7 @@ public class hoofd_scherm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
+					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 2, true, "anthonyvandooren@gmail.com"));
 					hoofd_scherm frame = new hoofd_scherm(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -121,9 +121,10 @@ public class hoofd_scherm extends JFrame {
 		menuBar.add(opties);
 		
 		JMenuItem mntmBeheerdersBeheren = new JMenuItem("Account beheer");
-		if(model.getAdmin().getType().equals("Beheerder"))
+		mntmBeheerdersBeheren.setVisible(false);
+		if(!model.getAdmin().getType().equals("Beheerder"))
 		{
-			mntmBeheerdersBeheren.setEnabled(false);
+			mntmBeheerdersBeheren.setVisible(true);
 		}
 		mntmBeheerdersBeheren.addActionListener(new ActionListener() {
 			
@@ -146,20 +147,6 @@ public class hoofd_scherm extends JFrame {
 			}
 						
 		});
-		
-		JMenuItem mntmHerstartConnectie = new JMenuItem("Herstart connectie");
-		mntmHerstartConnectie.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				model.herstartConnectie();
-				
-			}
-		});
-		opties.add(mntmHerstartConnectie);
-		
-		JSeparator separator_1 = new JSeparator();
-		opties.add(separator_1);
 		opties.add(mntmBeheerdersBeheren);
 		
 		JMenuItem mntmNieuw = new JMenuItem("Nieuw item maken");
