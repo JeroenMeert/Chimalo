@@ -13,6 +13,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +28,8 @@ public class Chimalo extends JFrame {
 	private JTextField pass;
 	private JPanel panel_1;
 	private JFrame parent;
-
+	private Model m;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -57,8 +60,10 @@ public class Chimalo extends JFrame {
 	 * Create the frame.
 	 */
 	public Chimalo(String naam) {
+		m = new Model();
 		parent=this;
 		setTitle("Chimalo");
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 741, 420);
 		
@@ -93,6 +98,28 @@ public class Chimalo extends JFrame {
 		panel_1.add(lblGebruikersnaam);
 		
 		user = new JTextField(naam);
+		user.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				if(e.getKeyChar() == e.VK_ENTER) {
+					pass.requestFocusInWindow(); 
+				}
+			}
+		});
 		panel_1.add(user);
 		user.setColumns(10);
 		
@@ -100,6 +127,51 @@ public class Chimalo extends JFrame {
 		panel_1.add(lblWachtwoord);
 		
 		pass = new JPasswordField();
+		pass.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyChar() == e.VK_ENTER) {
+						Gebruiker admin = m.checkAccount(user.getText(), m.getMd5(pass.getText()));
+						
+					if (admin != null){
+						m.setAdmin(admin);
+						hoofd_scherm scherm = new hoofd_scherm(m);
+						scherm.setVisible(true);
+						parent.dispose();
+						Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+						
+						// bereken het midden van je scherm
+					    int w = scherm.getSize().width;
+					    int h = scherm.getSize().height;
+					    int x = (size.width-w)/2;
+					    int y = (size.height-h)/2;
+					    
+					    // verplaats de GUI
+					    scherm.setLocation(x, y);
+						
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Ongeldige gegevens of de gebruiker heeft geen toegang tot het dashboard");
+						user.setText("");
+						pass.setText("");
+					}
+				}
+				
+			}
+		});
 		panel_1.add(pass);
 		pass.setColumns(10);
 		

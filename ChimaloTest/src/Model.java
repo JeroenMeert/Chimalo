@@ -29,6 +29,12 @@ public class Model {
 		items = dbc.leesItems();
 	}
 	
+	public Model() {
+		listeners = new ArrayList<ChangeListener>();
+		dbc = new DataBankConnection(this);
+		items = dbc.leesItems();
+	}
+	
 	public void subscribe(ChangeListener c){
 		listeners.add(c);
 	}
@@ -253,5 +259,8 @@ public class Model {
 	public ChangeListener getActivePanel()
 	{
 		return activePanel;
+	}
+	public Gebruiker checkAccount(String name, String pass) {
+		return dbc.checkAccount(name, pass);
 	}
 }
