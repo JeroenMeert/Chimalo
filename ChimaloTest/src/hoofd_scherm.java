@@ -213,6 +213,7 @@ public class hoofd_scherm extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				model.unsubscribe(model.getActivePanel());
+				model.sluitConnectie();
 				parent.dispose();
 				Chimalo frame = new Chimalo(model.getAdmin().getGebruikersnaam());
 				frame.setVisible(true);

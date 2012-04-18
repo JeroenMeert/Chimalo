@@ -131,6 +131,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			public void actionPerformed(ActionEvent arg0) {
 				parent.dispose();
 				m.unsubscribe(accountbeheer);
+				m.sluitConnectie();
 				Chimalo frame = new Chimalo(m.getAdmin().getGebruikersnaam());
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
