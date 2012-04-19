@@ -15,11 +15,12 @@ public class Item {
 	private String link;
 	private String status;
 	private String extentie;
+	private String type;
 	
 	public Item(BufferedImage foto, int id, String titel, String text,
 			Gebruiker auteur, Date inzendDatum, Erfgoed erfgoed, String link,
 			String status,
-			String extentie) {
+			String extentie, String type) {
 		super();
 		this.foto = foto;
 		this.id = id;
@@ -31,10 +32,11 @@ public class Item {
 		this.link = link;
 		this.status = status;
 		this.extentie = extentie;
+		this.type = type;
 	}
 
 	public Item(BufferedImage foto, String titel, String text, Gebruiker auteur,
-			Date inzendDatum, Erfgoed erfgoed, String link, String status, String extentie) {
+			Date inzendDatum, Erfgoed erfgoed, String link, String status, String extentie, String type) {
 		super();
 		this.foto = foto;
 		this.titel = titel;
@@ -45,6 +47,7 @@ public class Item {
 		this.link = link;
 		this.status = status;
 		this.extentie = extentie;
+		this.type = type;
 	}
 
 	public Item()
@@ -140,6 +143,14 @@ public class Item {
 				+ ", text=" + text + ", auteur=" + auteur + ", inzendDatum="
 				+ inzendDatum + ", erfgoed=" + erfgoed + ", link=" + link
 				+ ", status=" + status + ", extentie=" + extentie + "]";
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

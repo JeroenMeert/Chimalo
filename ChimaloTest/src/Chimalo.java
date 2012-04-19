@@ -62,7 +62,7 @@ public class Chimalo extends JFrame {
 	public Chimalo(String naam) {
 		m = new Model();
 		parent=this;
-		setTitle("Chimalo");
+		setTitle("Erfgoed Herzele - Powered by Chimalo");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 741, 420);
@@ -78,12 +78,7 @@ public class Chimalo extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 		Color aColor = new Color(0xDEE3E9);
-		BufferedImage img = null;
-		try {
-		    img = ImageIO.read(new File("logo.jpg"));
-		} catch (IOException e) {
-		}
-		ImageIcon image = new ImageIcon(getClass().getResource("logo.jpg"));
+		ImageIcon image = new ImageIcon(getClass().getResource("logo1.gif"));
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);

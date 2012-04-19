@@ -250,16 +250,16 @@ public class ErfgoedPanel extends ImagePanel  {
 		gemeente = new JComboBox(gemeentes);
 		gemeente.setBounds(70, 238, 149, 20);
 		add(gemeente);
-		String[] statuten = {"note to self", "wat", "zijn", "statuten" };
+		String[] statuten = {"Geklasseerd", "Andere" };
 		statuut = new JComboBox(statuten);
 		statuut.setBounds(70, 286, 149, 20);
 		add(statuut);
 		
-		JLabel lblTypeGebouw = new JLabel("Type Gebouw");
+		JLabel lblTypeGebouw = new JLabel("Type");
 		lblTypeGebouw.setBounds(70, 317, 103, 14);
 		add(lblTypeGebouw);
 		
-		String[] types = {"Markante Gebouwen", "Beschermde Gebouwen", "Molens", "Beschermde Dorpszichten", "Landschappen", "Dorpszichten", "Hoogste Punten" };
+		String[] types = {"Landschappen", "Dorpsgezichten", "Gebouwen", "Archeologische sites", "Andere" };
 		type = new JComboBox(types);
 		type.setBounds(70, 334, 149, 20);
 		add(type);

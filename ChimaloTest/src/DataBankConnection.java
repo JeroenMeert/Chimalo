@@ -172,7 +172,7 @@ public class DataBankConnection {
             // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
             // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
             ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type= ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
@@ -182,7 +182,8 @@ public class DataBankConnection {
         	overschrijf.setInt(7, i.getErfgoed().getErfgoedNr());
         	overschrijf.setString(8, i.getLink());
         	overschrijf.setString(9, i.getExtentie());
-        	overschrijf.setInt(10, i.getId());
+        	overschrijf.setInt(11, i.getId());
+        	overschrijf.setString(10, i.getType());
         	overschrijf.executeUpdate();
 
         } catch (SQLException ex) {
@@ -198,7 +199,7 @@ public class DataBankConnection {
 	}
 	public void overschrijfItemZonderAfbeelding(Item i){
         try {
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
@@ -207,7 +208,8 @@ public class DataBankConnection {
         	overschrijf.setInt(6, i.getErfgoed().getErfgoedNr());
         	overschrijf.setString(7, i.getLink());
         	overschrijf.setString(8, i.getExtentie());
-        	overschrijf.setInt(9, i.getId());
+        	overschrijf.setInt(10, i.getId());
+        	overschrijf.setString(9, i.getType());
         	overschrijf.executeUpdate();
 
         } catch (SQLException ex) {
@@ -224,7 +226,7 @@ public class DataBankConnection {
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extensie FROM Object");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extensie, Type FROM Object");
         	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
@@ -236,7 +238,8 @@ public class DataBankConnection {
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String Extensie = rs.getString("Extensie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
+        		String type = rs.getString("Type");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie, type);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -309,7 +312,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie, Type FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
@@ -323,7 +326,8 @@ public class DataBankConnection {
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String Extensie = rs.getString("Extensie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
+        		String type = rs.getString("Type");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie, type);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -356,7 +360,8 @@ public class DataBankConnection {
         		String status1 = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String Extensie = rs.getString("Extensie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, Extensie);
+        		String type = rs.getString("Type");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, Extensie, type);
         		terugTeGevenItems.add(i);
         	}
 
@@ -383,7 +388,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie, Type FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -398,7 +403,8 @@ public class DataBankConnection {
         		String status = rs.getString("Status");
         		BufferedImage foto = haalFotoOp(in);
         		String Extensie = rs.getString("Extensie");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie);
+        		String type = rs.getString("Type");
+        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie, type);
         		terugTeGevenItems.add(i);
         	}
         	
@@ -686,7 +692,7 @@ public void schrijfNieuwItem(Item i) {
          // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
          // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
          ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie) VALUES (?,?,?,?,?,?,?,?,?)");   	
+     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?,?)");   	
      	newItem.setString(1,i.getTitel());
      	newItem.setDate(2,i.getInzendDatum());
      	newItem.setString(3,i.getText());
@@ -696,6 +702,7 @@ public void schrijfNieuwItem(Item i) {
      	newItem.setInt(7, i.getErfgoed().getErfgoedNr());
      	newItem.setString(8, i.getLink());
      	newItem.setString(9, i.getExtentie());
+     	newItem.setString(10, i.getType());
      	newItem.executeUpdate();
      	
  
@@ -713,7 +720,7 @@ public void schrijfNieuwItem(Item i) {
 
 public void schrijfNieuwItemZonderAfbeelding(Item i) {
     try {	    
-    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie) VALUES (?,?,?,?,?,?,?,?)");
+    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
     	newItem.setDate(2,i.getInzendDatum());
     	newItem.setString(3,i.getText());
@@ -722,7 +729,7 @@ public void schrijfNieuwItemZonderAfbeelding(Item i) {
     	newItem.setInt(6, i.getErfgoed().getErfgoedNr());
     	newItem.setString(7, i.getLink());
     	newItem.setString(8, i.getExtentie());
-    	
+    	newItem.setString(9, i.getType());
     	newItem.executeUpdate();
     	
 

@@ -71,6 +71,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	private MemberPanel panel;
 	private JLabel lblNaarErfgoed;
 	private int itemCount = 0;
+	private JComboBox typebox;
 	
 	/**
 	 * @wbp.parser.constructor
@@ -98,10 +99,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		this.add(lblTitel);
 		activeBeschrijving = new JTextPane();
 		JScrollPane beschrijvingScroll = new JScrollPane(activeBeschrijving);
-		beschrijvingScroll.setBounds(317, 172, 276, 258);
+		beschrijvingScroll.setBounds(317, 202, 276, 228);
 		this.add(beschrijvingScroll);
 		
-		
+		String[] type = {"Foto", "Postkaart", "Geluid", "Video", "Brochure", "Prenten/Tekeningen", "Andere" };
+		typebox = new JComboBox(type);
+		typebox.setBounds(405, 152, 188, 20);
+		add(typebox);
 		
 		
 		
@@ -125,7 +129,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		this.add(scrollPane);
 		
 		JLabel lblBeschrijving = new JLabel("Beschrijving/Tekst");
-		lblBeschrijving.setBounds(317, 155, 129, 14);
+		lblBeschrijving.setBounds(317, 185, 129, 14);
 		this.add(lblBeschrijving);
 		
 		btnWijzigen = new JButton("Wijzigen");
@@ -314,7 +318,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		});
 		this.add(rdbtnAfgekeurde);
 		
-
+		
 		
 		ButtonGroup groep = new ButtonGroup();
 		groep.add(rdbtnKeurlijst);
@@ -333,7 +337,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		zoekVeld.setColumns(10);
 		
 		zoekBox = new JComboBox();
-		zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur", "Datum","Erfgoed"}));
+		zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
 		zoekBox.setSelectedIndex(0);
 		zoekBox.setBounds(849, 37, 79, 20);
 		this.add(zoekBox);
@@ -362,6 +366,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						model.getActiveItem().setLink(activeLink.getText());
 						model.getActiveItem().setErfgoed((Erfgoed) activeErfgoed.getSelectedItem());
 						model.getActiveItem().setStatus("Goedgekeurd");
+						model.getActiveItem().setType(typebox.getSelectedItem().toString());
 						if(!(model.getActiveItem().getId() == -1))
 						{
 							try {
@@ -499,6 +504,10 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		panel.setBorder(new LineBorder(Color.GRAY));
 		panel.setBounds(67, 320, 240, 110);
 		add(panel);
+		
+		JLabel lblType = new JLabel("Type");
+		lblType.setBounds(317, 155, 46, 14);
+		add(lblType);
 		processParameter(para);
 	}
 	
@@ -521,6 +530,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					activeTitel.setText(titel);
 					activeBeschrijving.setText(tekst);
 					activeLink.setText(link);
+					typebox.setSelectedItem(i.getType());
 					lblBewerken.setText(titel.toUpperCase() + " (" + datum + ")");
 					for(int i = 0; i<activeErfgoed.getItemCount(); i++)
 					{
@@ -529,7 +539,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 							activeErfgoed.setSelectedIndex(i);
 						}
 					}
-					model.setActiveItem(new Item(i.getFoto(), i.getId(), i.getTitel(), i.getText(), i.getAuteur(), i.getInzendDatum(), i.getErfgoed(), i.getLink(), i.getStatus(), i.getExtentie()));
+					model.setActiveItem(new Item(i.getFoto(), i.getId(), i.getTitel(), i.getText(), i.getAuteur(), i.getInzendDatum(), i.getErfgoed(), i.getLink(), i.getStatus(), i.getExtentie(), i.getType()));
 					activePhoto.setNewFoto(i.getFoto());
 					activePanel(false);
 					btnWijzigen.setVisible(true);
@@ -599,6 +609,15 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					}
 					
 				}
+				if (String.valueOf(zoekBox.getSelectedItem())=="Type"){
+
+					if (String.valueOf(i.getType()).toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					{
+						panel_1.add(ip);
+						itemCount++;
+					}
+					
+				}
 			}else {
 			panel_1.add(ip);
 			itemCount++;
@@ -645,6 +664,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		activeBeschrijving.setText("");
 		activeTitel.setText("");
 		activeErfgoed.setSelectedIndex(0);
+		typebox.setSelectedIndex(0);
 		activeLink.setText("http://");
 		activePhoto.setNewFoto(null);
 	}
@@ -750,6 +770,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	
 	public void activePanel(boolean b)
 	{
+		typebox.setEnabled(b);
 		activeErfgoed.setEnabled(b);
 		activeLink.setEnabled(b);
 		activeTitel.setEnabled(b);
