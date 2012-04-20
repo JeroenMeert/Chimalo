@@ -20,6 +20,8 @@ public class Model {
 	private String mailFrom = "ErfgoedHerzele";
 	private hoofd_scherm hoofdframe;
 	private Gebruiker admin;
+	private Boolean vensterOpen = false;
+	private Boolean nieuweAfbeelding = false;
 	private ChangeListener activePanel;
 	
 	public Model(Gebruiker admin){
@@ -263,4 +265,21 @@ public class Model {
 	public Gebruiker checkAccount(String name, String pass) {
 		return dbc.checkAccount(name, pass);
 	}
+
+	public Boolean getVensterOpen() {
+		return vensterOpen;
+	}
+
+	public void setVensterOpen(Boolean vensterOpen) {
+		this.vensterOpen = vensterOpen;
+	}
+
+	public Boolean getNieuweAfbeelding() {
+		return nieuweAfbeelding;
+	}
+
+	public void setNieuweAfbeelding(Boolean nieuweAfbeelding) {
+		this.nieuweAfbeelding = nieuweAfbeelding;
+	}
+	
 }

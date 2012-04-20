@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -101,6 +103,9 @@ public class hoofd_scherm extends JFrame {
 		super("Dashboard");
 		parent=this;
 		model = m;
+		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
+		Image image = imageIcon.getImage();
+		setIconImage(image);
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(WindowEvent winEvt) {
 		    	// om zeker te zijn dat de connectie wordt gesloten

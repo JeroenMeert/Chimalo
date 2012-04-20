@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -19,6 +20,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 
 public class EditFrame extends JFrame{
@@ -40,8 +43,55 @@ public class EditFrame extends JFrame{
 	 private String extentie;
 	 private BufferedImage img;
 	 
-	 public EditFrame(final Image bi, Model m){
+	 public EditFrame(final Image bi, Model m, String ext){
 		super("Afbeelding");
+		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
+		Image image = imageIcon.getImage();
+		setIconImage(image);
+		addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				model.setVensterOpen(false);
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		btnPanel = new JPanel();
 		imagePanel=new ImagePanel((BufferedImage)bi);
 		btnOpslaan = new JButton("Opslaan");
@@ -108,28 +158,9 @@ public class EditFrame extends JFrame{
 						try {
 							BufferedImage image = ImageIO.read(file);
 							extentie = getExtension(file);
-							imagePanel.setNewFoto(image);
-							setVisible(false);
-							int breedte = image.getWidth();
-							int hoogte = image.getHeight();
-							while((breedte > 1000) || (hoogte > 700))
-							{
-								breedte /= 1.5;
-								hoogte /= 1.5;
-							}
-							imagePanel.setPreferredSize(new Dimension(breedte, hoogte));
-							pack();
-							Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-							 
-							// Determine the new location of the window
-							int w = getSize().width;
-							int h = getSize().height;
-							int x = (dim.width-w)/2;
-							int y = (dim.height-h)/2;
-							 
-							// Move the window
-							setLocation(x, y);
-							setVisible(true);
+							parent.dispose();
+							EditFrame frame = new EditFrame(image,model, extentie);
+							frame.setVisible(true);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -149,8 +180,10 @@ public class EditFrame extends JFrame{
 				{
 					model.getActiveItem().setFoto((BufferedImage)imagePanel.getFoto());
 					model.getActiveItem().setExtentie(extentie);
+					model.setNieuweAfbeelding(true);
 					model.notifyChangeListeners();
 				}
+				model.setVensterOpen(false);
 				parent.dispose();
 			}
 		});

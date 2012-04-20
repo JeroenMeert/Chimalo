@@ -59,6 +59,9 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	 */
 	public Accountbeheer(Model mod) {
 		super("Account Beheer");
+		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
+		Image image = imageIcon.getImage();
+		setIconImage(image);
 		parent = this;
 		m = mod;
 		m.subscribe(this);

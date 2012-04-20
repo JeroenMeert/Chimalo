@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
@@ -63,7 +64,9 @@ public class Chimalo extends JFrame {
 		m = new Model();
 		parent=this;
 		setTitle("Erfgoed Herzele - Powered by Chimalo");
-		
+		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
+		Image image1 = imageIcon.getImage();
+		setIconImage(image1);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 741, 420);
 		

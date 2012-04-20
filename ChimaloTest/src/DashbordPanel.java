@@ -214,12 +214,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if(!model.getVensterOpen()) {
 				if(activeTitel.isEnabled())
 				{
 				if(model.getActiveItem()!=null){
 					if((model.getActiveItem().getId() != -1) && (model.getActiveItem().getFoto() != null) )
 					{
-						EditFrame frame = new EditFrame(activePhoto.getFoto(),model);
+						EditFrame frame = new EditFrame(activePhoto.getFoto(),model, null);
 						frame.setVisible(true);
 					}
 					else
@@ -227,13 +228,15 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						BufferedImage image;
 						try {
 							image = ImageIO.read(getClass().getResource("NoFoto.jpg"));
-							EditFrame frame = new EditFrame(image,model);
+							EditFrame frame = new EditFrame(image,model, null);
 							frame.setVisible(true);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
+					model.setVensterOpen(true);
+				}
 				}
 				}
 			}
@@ -649,12 +652,22 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			activeErfgoed.addItem(e);
 		}
 		}
+		refreshForState();
 		if(model.getActiveItem() != null)
 		{
+			if(model.getNieuweAfbeelding())
+			{
 			activePhoto.setNewFoto(model.getActiveItem().getFoto());
+			activePanel(true);
+			btnGoedkeuren.setEnabled(false);
+			btnAfkeuren.setEnabled(false);
+			saveWijziging.setVisible(true);
+			btnWijzigen.setVisible(false);
+			model.setNieuweAfbeelding(false);
+			}
 		}
 		state = model.getActiveItem().getStatus();
-		refreshForState();
+		
 		repaint();
 	}
 	private void clearActive(){
@@ -732,8 +745,12 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			if(para.getSoort().equals("nieuw"))
 			{
 				lblBewerken.setText("Nieuw Item");
-				btnWijzigen.setEnabled(true);
 				clearActive();
+				activePanel(true);
+				saveWijziging.setVisible(true);
+				btnGoedkeuren.setEnabled(false);
+				btnAfkeuren.setEnabled(false);
+				btnWijzigen.setVisible(false);
 			}
 		}
 		if(para.getObject() != null)
