@@ -32,11 +32,8 @@ public class DataBankConnection {
 	
 	public DataBankConnection(Model m) {
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
-			//conn = DriverManager.getConnection("jdbc:sqlserver://free-sql.BizHostNet.com;database=1327440627;user=1327440627;password=tcxaeetvy12qaf");
-			//conn =
-			//	       DriverManager.getConnection("jdbc:mysql://localhost/test?" +
-			//                                   "user=monty&password=greatsqldb");
+			//conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
+			conn = DriverManager.getConnection("jdbc:sqlserver://ProjectChimalo.mssql.somee.com;database=ProjectChimalo;user=anthonyvd;password=klokken05");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
@@ -46,7 +43,8 @@ public class DataBankConnection {
 	public DataBankConnection() {
 		try {
 			//conn = DriverManager.getConnection("jdbc:sqlserver://free-sql.BizHostNet.com;database=1327440627;user=1327440627;password=tcxaeetvy12qaf");
-			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
+			//conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
+			conn = DriverManager.getConnection("jdbc:sqlserver://ProjectChimalo.mssql.somee.com;database=ProjectChimalo;user=anthonyvd;password=klokken05");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
@@ -798,7 +796,7 @@ public void schrijfErfgoed(Erfgoed g) {
      	
      	
      	newItem.executeUpdate();
-     	
+     	JOptionPane.showMessageDialog(null, "Het erfgoed is opgeslagen");
  
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het schrijven van het erfgoed\nFoutmelding: " + ex.toString());
@@ -857,7 +855,7 @@ public void schrijfNieuwErfgoed(Erfgoed g) {
     	newItem.setString(9, g.getGemeente());
     	
     	newItem.executeUpdate();
-    	
+    	JOptionPane.showMessageDialog(null, "Het erfgoed is opgeslagen");
 
     } catch (SQLException ex) {
    	 JOptionPane.showMessageDialog(null, "Er is een fout opgetreden bij het opslaan van een nieuw erfgoed. Controlleer de naam van het erfgoed en probeer opnieuw.\n Foutmelding: " +ex.toString());

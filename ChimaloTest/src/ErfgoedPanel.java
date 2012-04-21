@@ -162,7 +162,6 @@ public class ErfgoedPanel extends ImagePanel  {
 					model.schrijfErfgoed(new Erfgoed(nr, naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() ));
 					model.leesAlleItems();
 					}
-					JOptionPane.showMessageDialog(null, "Het erfgoed is opgeslagen");
 				}
 				else {
 					JOptionPane.showMessageDialog(model.getHoofdframe(), "Je moet minstens een naam voor het erfgoed opgeven");
