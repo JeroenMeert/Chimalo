@@ -19,6 +19,12 @@ public boolean isUsed() {
 	return used;
 }
 
+
+public void setUsed(boolean used) {
+	this.used = used;
+}
+
+
 public ImagePanel()
 {
 super();
@@ -47,6 +53,8 @@ public void setNewFoto(BufferedImage b){
 	{
 		used = true;
 	}
+	else
+		used = false;
 }
 
 public Image getFoto(){

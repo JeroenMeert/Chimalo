@@ -33,18 +33,23 @@ public class DataBankConnection {
 	public DataBankConnection(Model m) {
 		try {
 			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
+			//conn = DriverManager.getConnection("jdbc:sqlserver://free-sql.BizHostNet.com;database=1327440627;user=1327440627;password=tcxaeetvy12qaf");
+			//conn =
+			//	       DriverManager.getConnection("jdbc:mysql://localhost/test?" +
+			//                                   "user=monty&password=greatsqldb");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 		}
 		this.m = m;
 	}
 	public DataBankConnection() {
 		try {
+			//conn = DriverManager.getConnection("jdbc:sqlserver://free-sql.BizHostNet.com;database=1327440627;user=1327440627;password=tcxaeetvy12qaf");
 			conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
 		} catch (SQLException ex) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 			for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -74,7 +79,7 @@ public class DataBankConnection {
             
             
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -96,7 +101,7 @@ public class DataBankConnection {
     			return false;
     		
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -154,7 +159,7 @@ public class DataBankConnection {
 
            
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         }
 	}
 	public void overschrijfItem(Item i){
@@ -192,7 +197,7 @@ public class DataBankConnection {
             }
         } catch (IOException ex) {
 			// TODO Auto-generated catch block
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 		}
         finally {
         }
@@ -246,7 +251,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -276,7 +281,7 @@ public class DataBankConnection {
         		JOptionPane.showMessageDialog(null, "Geen gebruiker gevonden!");
         	}
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -300,7 +305,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -334,7 +339,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+            JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
             for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -367,7 +372,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -411,7 +416,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -428,7 +433,7 @@ public class DataBankConnection {
         	wijzigStatus.setInt(4, i);
         	wijzigStatus.executeUpdate();
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         }
 	}
 
@@ -457,7 +462,7 @@ public class DataBankConnection {
                     }
 		    	}
 		    }catch(Exception ex ){
-		    	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 	                ex.printStackTrace();
 		    }
 		return image;
@@ -481,7 +486,7 @@ public class DataBankConnection {
 
 
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -506,7 +511,7 @@ public class DataBankConnection {
               }
             
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -546,7 +551,7 @@ public class DataBankConnection {
         	}
             
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -570,7 +575,7 @@ public class DataBankConnection {
                 }
         	}
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -602,7 +607,7 @@ public class DataBankConnection {
         	wijzigStatus.setInt(2 ,nr);
         	wijzigStatus.executeUpdate();
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -633,7 +638,7 @@ public class DataBankConnection {
         	wijzig.setString(2, soort);
         	wijzig.executeUpdate();
         } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
@@ -654,7 +659,7 @@ public class DataBankConnection {
                  System.out.println("Standaardtekst niet gevonden in databank.");
              }
 		    }catch(Exception ex ){
-		    	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+		    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 		    }
         return result;
 	}
@@ -670,7 +675,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
      	}
      	return result;
      } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
     	 for (Throwable t : ex) {
              t.printStackTrace();
          }
@@ -707,7 +712,7 @@ public void schrijfNieuwItem(Item i) {
      	
  
      } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
     	 for (Throwable t : ex) {
              t.printStackTrace();
          }
@@ -734,7 +739,7 @@ public void schrijfNieuwItemZonderAfbeelding(Item i) {
     	
 
     } catch (SQLException ex) {
-   	 JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+   	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
    	 for (Throwable t : ex) {
             t.printStackTrace();
         }
@@ -755,7 +760,7 @@ public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
      	}
  
      } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
     	 for (Throwable t : ex) {
              t.printStackTrace();
          }
@@ -771,7 +776,7 @@ public void removeErfgoed(Erfgoed er) {
     	weg.executeUpdate();
 
     } catch (SQLException ex) {
-    	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het verwijderen van het erfgoed\nFoutmelding: " + ex.toString());
     	for (Throwable t : ex) {
             t.printStackTrace();
         }
@@ -796,7 +801,7 @@ public void schrijfErfgoed(Erfgoed g) {
      	
  
      } catch (SQLException ex) {
-    	 JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het schrijven van het erfgoed\nFoutmelding: " + ex.toString());
     	 for (Throwable t : ex) {
              t.printStackTrace();
          }
@@ -810,7 +815,7 @@ public void sluitConnectie()
 		conn.close();
 	} catch (SQLException ex) {
 		// TODO Auto-generated catch block
-		JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+		JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het sluiten van de connectie\nFoutmelding: " + ex.toString());
 		for (Throwable t : ex) {
             t.printStackTrace();
         }
@@ -877,7 +882,7 @@ public Erfgoed getErfgoed(int erfgoednr) {
     		JOptionPane.showMessageDialog(null, "Geen Erfgoed gevonden!");
     	}
     } catch (SQLException ex) {
-    	JOptionPane.showMessageDialog(null, "Er is een database opgetreden\nFoutmelding: " + ex.toString());
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
     	for (Throwable t : ex) {
             t.printStackTrace();
         }

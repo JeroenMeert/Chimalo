@@ -253,7 +253,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(activeGebruiker == -1) {
-					if(wachtwoordVeld.getText().equals(""))
+					if(!wachtwoordVeld.getText().equals(""))
 					{
 					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
 					nieuw();

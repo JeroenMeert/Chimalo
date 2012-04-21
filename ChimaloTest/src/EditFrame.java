@@ -45,6 +45,8 @@ public class EditFrame extends JFrame{
 	 
 	 public EditFrame(final Image bi, Model m, String ext){
 		super("Afbeelding");
+		this.extentie = ext;
+		System.out.println(extentie);
 		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
 		Image image = imageIcon.getImage();
 		setIconImage(image);
@@ -93,8 +95,10 @@ public class EditFrame extends JFrame{
 			}
 		});
 		btnPanel = new JPanel();
-		imagePanel=new ImagePanel((BufferedImage)bi);
+		imagePanel=new ImagePanel();
+		imagePanel.setNewFoto((BufferedImage)bi);
 		btnOpslaan = new JButton("Opslaan");
+		if(extentie == null)
 		extentie= m.getActiveItem().getExtentie();
 		btnOpslaan.addActionListener(new ActionListener() {
 			
@@ -179,6 +183,7 @@ public class EditFrame extends JFrame{
 				if(imagePanel.isUsed())
 				{
 					model.getActiveItem().setFoto((BufferedImage)imagePanel.getFoto());
+					System.out.println(extentie);
 					model.getActiveItem().setExtentie(extentie);
 					model.setNieuweAfbeelding(true);
 					model.notifyChangeListeners();

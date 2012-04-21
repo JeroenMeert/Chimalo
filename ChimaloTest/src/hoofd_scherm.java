@@ -75,7 +75,7 @@ public class hoofd_scherm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 2, true, "anthonyvandooren@gmail.com"));
+					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 1, true, "anthonyvandooren@gmail.com"));
 					hoofd_scherm frame = new hoofd_scherm(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
