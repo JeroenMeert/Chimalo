@@ -38,6 +38,7 @@ public class DataBankConnection {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
 		}
+		m.setDbconnectie(conn);
 		this.m = m;
 	}
 	public DataBankConnection() {
@@ -224,8 +225,7 @@ public class DataBankConnection {
         }
 	}
 	public ArrayList<Item> leesItems(){
-		
-		
+		System.out.println("---Lees items---");
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
@@ -265,7 +265,7 @@ public class DataBankConnection {
         }
         return terugTeGevenItems;
 	}
-	private Gebruiker haalGebruikerOp(int userNr){
+	public Gebruiker haalGebruikerOp(int userNr){
 		Gebruiker i = null;
         try {
         	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE GebruikerNr =? ");
@@ -346,6 +346,7 @@ public class DataBankConnection {
 	}
 
 	public ArrayList<Item> leesItemsOpStatus(String status){
+		System.out.println("Lees items op " + status);
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		PreparedStatement haalItemsOp =null;
         try {
@@ -388,7 +389,7 @@ public class DataBankConnection {
 	}
 	public ArrayList<Item> leesItemsOpAuteur(int auteurNr){
 		
-		
+		System.out.println("Lees items op auteur");
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
         	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie, Type FROM Object WHERE GebruikerNr =? ");
@@ -422,6 +423,7 @@ public class DataBankConnection {
         return terugTeGevenItems;
 	}
 	public void wijzigStatus(String status,int i, String titel, String beschrijving){
+		System.out.println("Wijzigen van status naar " + status + " Item: " + titel);
         try {
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Object SET Naam = ? ,Tekst = ?,Status = ?  WHERE ObjectNr = ?");
@@ -437,6 +439,7 @@ public class DataBankConnection {
 
 	
 	public BufferedImage haalFotoOp(int userID){
+		System.out.println("Lees foto " + userID);
 		JFrame f = new JFrame();
         try {     
 		    	PreparedStatement readImage = conn.prepareStatement("SELECT Foto FROM Object WHERE ObjectNr=?");
@@ -467,6 +470,7 @@ public class DataBankConnection {
 	}
 	
 	public ArrayList<Gebruiker> getGebruikers() {
+		System.out.println("Lees gebruikers");
 		ArrayList<Gebruiker> gebruikers= new ArrayList<Gebruiker>();
         try {
         	PreparedStatement geb = conn.prepareStatement("SELECT * FROM Gebruiker");
@@ -662,6 +666,7 @@ public class DataBankConnection {
         return result;
 	}
 public ArrayList<Erfgoed> getErfGoeden() {
+	System.out.println("---Lees erfgoeden---");
      try { 	
      	ArrayList<Erfgoed> result=new ArrayList<Erfgoed>();
      	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
@@ -820,27 +825,6 @@ public void sluitConnectie()
 	}
 }
 
-public void herstartConnectie()
-{
-	if(conn != null)
-	{
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally {
-			try {
-				conn = DriverManager.getConnection("jdbc:odbc:JdbcVb");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-}
-
 public void schrijfNieuwErfgoed(Erfgoed g) {
     try {
     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link,Geschiedenis,Info,Kenmerken, Statuut, Gemeente) VALUES (?,?,?,?,?,?,?,?,?)");
@@ -867,6 +851,7 @@ public void schrijfNieuwErfgoed(Erfgoed g) {
 }
 
 public Erfgoed getErfgoed(int erfgoednr) {
+	System.out.println("Lees erfgoednr " +erfgoednr);
 	Erfgoed i = null;
     try {
     	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Erfgoed WHERE ErfgoedNr =? ");
@@ -874,6 +859,86 @@ public Erfgoed getErfgoed(int erfgoednr) {
     	ResultSet rs = haalGebruikerOp.executeQuery();
     	if (rs.next()){
     		i = new Erfgoed(rs.getInt("ErfgoedNr"), rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"), rs.getString("Kenmerken"), rs.getString("Statuut"), rs.getString("Gemeente"));
+    	}
+    	else
+    	{
+    		JOptionPane.showMessageDialog(null, "Geen Erfgoed gevonden!");
+    	}
+    } catch (SQLException ex) {
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+	return i;
+}
+
+public int countItems() {
+	System.out.println("Bezig met tellen van items");
+	int teller = 0;
+    try {
+    	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT COUNT(*) AS [teller] FROM Object");
+    	ResultSet rs = haalGebruikerOp.executeQuery();
+    	if (rs.next()){
+    		teller = rs.getInt("teller");
+    	}
+    } catch (SQLException ex) {
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+	return teller;
+}
+
+public Item aanvullenItem(Item i)
+{
+	System.out.println("Aanvullen van item " + i.getTitel());
+    try {
+    	PreparedStatement h = conn.prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tijdstip=? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
+    	h.setString(1, i.getTitel());
+    	h.setDate(2, i.getInzendDatum());
+    	h.setString(3, i.getText());
+    	h.setInt(4, i.getAuteur().getGebruikersnummer());
+    	h.setInt(5, i.getErfgoed().getErfgoedNr());
+    	h.setString(6, "Goedgekeurd");
+    	h.setString(7, i.getLink());
+    	h.setString(8, i.getType());
+    	ResultSet rs = h.executeQuery();
+    	if (rs.next()){
+    		i.setId(rs.getInt("ObjectNr"));
+    	}
+    	else
+    	{
+    		JOptionPane.showMessageDialog(null, "Geen Item gevonden!");
+    	}
+    } catch (SQLException ex) {
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+	return i;
+}
+
+public Erfgoed aanvullenErfgoed(Erfgoed i)
+{
+	System.out.println("Aanvullen van Erfgoed " + i.getNaam());
+    try {
+    	PreparedStatement h = conn.prepareStatement("SELECT * FROM Erfgoed WHERE Naam =? AND Locatie=? AND Kenmerken=? AND Geschiedenis=? AND Info= ? AND Link= ? AND Gemeente=? AND Type=? AND Statuut=?");
+    	h.setString(1, i.getNaam());
+    	h.setString(2, i.getLocatie());
+    	h.setString(3, i.getKenmerken());
+    	h.setString(4, i.getGeschiedenis());
+    	h.setString(5, i.getInfo());
+    	h.setString(6, i.getLink());
+    	h.setString(7, i.getGemeente());
+    	h.setString(8, i.getType());
+    	h.setString(9, i.getStatuut());
+    	
+    	ResultSet rs = h.executeQuery();
+    	if (rs.next()){
+    		i.setErfgoedNr(rs.getInt("ErfgoedNr"));
     	}
     	else
     	{

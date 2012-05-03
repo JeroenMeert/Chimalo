@@ -1,7 +1,7 @@
 
 public class Erfgoed {
 
-	private int erfgoedNr;
+	private int erfgoedNr = -1;
 	private String naam;
 	private String locatie;
 	private String type;

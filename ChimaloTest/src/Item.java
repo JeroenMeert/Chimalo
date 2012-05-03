@@ -52,7 +52,7 @@ public class Item {
 
 	public Item()
 	{
-		
+		erfgoed = new Erfgoed();
 	}
 
 	public String getExtentie() {

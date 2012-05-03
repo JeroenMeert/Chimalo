@@ -19,6 +19,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.awt.FlowLayout;
 
 
@@ -30,6 +31,7 @@ public class Chimalo extends JFrame {
 	private JPanel panel_1;
 	private JFrame parent;
 	private Model m;
+	private JLabel lblstatus;
 	
 	/**
 	 * Launch the application.
@@ -69,7 +71,6 @@ public class Chimalo extends JFrame {
 		setIconImage(image1);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 741, 420);
-		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -94,7 +95,11 @@ public class Chimalo extends JFrame {
 		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		JLabel lblGebruikersnaam = new JLabel("Gebruikersnaam:");
 		panel_1.add(lblGebruikersnaam);
-		
+		JPanel panel_3 = new JPanel();
+		panel.add(panel_3, BorderLayout.SOUTH);
+		lblstatus = new JLabel("De inloggegevens zijn: test/test (gebruikersnaam/wachtwoord)");
+		panel_3.add(lblstatus);
+		m.setStatusLabel(lblstatus);
 		user = new JTextField(naam);
 		user.addKeyListener(new KeyListener() {
 			
@@ -145,7 +150,30 @@ public class Chimalo extends JFrame {
 						Gebruiker admin = m.checkAccount(user.getText(), m.getMd5(pass.getText()));
 						
 					if (admin != null){
+						
 						m.setAdmin(admin);
+						final updateItems update = new updateItems(m);
+						update.execute();
+						int delay = 1200000; //milliseconds
+						  ActionListener taskPerformer = new ActionListener() {
+						      public void actionPerformed(ActionEvent evt) {
+						    	  updateItems update = new updateItems(m);
+						          update.execute();
+						      }
+						  };
+						 m.setTimer(new Timer(delay, taskPerformer));
+						 m.getTimer().setRepeats(true);
+						 m.getTimer().start();
+						 
+						 try {
+							update.get();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (ExecutionException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						hoofd_scherm scherm = new hoofd_scherm(m);
 						scherm.setVisible(true);
 						parent.dispose();
@@ -159,16 +187,16 @@ public class Chimalo extends JFrame {
 					    
 					    // verplaats de GUI
 					    scherm.setLocation(x, y);
-						
-					}
+						}
+				
 					else {
 						JOptionPane.showMessageDialog(null, "Ongeldige gegevens of de gebruiker heeft geen toegang tot het dashboard");
 						user.setText("");
 						pass.setText("");
 					}
 				}
+				}
 				
-			}
 		});
 		panel_1.add(pass);
 		pass.setColumns(10);
@@ -178,13 +206,33 @@ public class Chimalo extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				DataBankConnection dbc = new DataBankConnection();
-				try {
-					Gebruiker admin = dbc.checkAccount(user.getText(), dbc.md5(pass.getText()));
-					
+				Gebruiker admin = m.checkAccount(user.getText(), m.getMd5(pass.getText()));
+				
 				if (admin != null){
-					hoofd_scherm scherm = new hoofd_scherm(new Model(admin));
+					m.setAdmin(admin);
+					final updateItems update = new updateItems(m);
+					update.execute();
+					int delay = 1200000; //milliseconds
+					  ActionListener taskPerformer = new ActionListener() {
+					      public void actionPerformed(ActionEvent evt) {
+					    	  updateItems update = new updateItems(m);
+					          update.execute();
+					      }
+					  };
+					 m.setTimer(new Timer(delay, taskPerformer));
+					 m.getTimer().setRepeats(true);
+					 m.getTimer().start();
+					 
+					 try {
+						update.get();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (ExecutionException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					hoofd_scherm scherm = new hoofd_scherm(m);
 					scherm.setVisible(true);
 					parent.dispose();
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -197,15 +245,13 @@ public class Chimalo extends JFrame {
 				    
 				    // verplaats de GUI
 				    scherm.setLocation(x, y);
-					
-				}
+					}
+			
 				else {
 					JOptionPane.showMessageDialog(null, "Ongeldige gegevens of de gebruiker heeft geen toegang tot het dashboard");
 					user.setText("");
 					pass.setText("");
 				}
-			}
-			finally {dbc.sluitConnectie();}
 			}
 			
 		});

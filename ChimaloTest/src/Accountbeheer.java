@@ -27,6 +27,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	private JButton activate;
 	private ChangeListener accountbeheer;
 	private JTextField emailveld;
+	private ChangeListener dit;
 	/**
 	 * Launch the application.
 	 */
@@ -35,6 +36,8 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			public void run() {
 				try {
 					Model m = new Model(new Gebruiker("Van Dooren", "Anthony", "", "Administrator", 8, true, "anthonyvandooren@gmail.com"));
+					m.leesAlleErfgoeden();
+					m.leesAlleItems();
 					Accountbeheer frame = new Accountbeheer(m);
 					frame.setVisible(true);
 					Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -62,9 +65,10 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
 		Image image = imageIcon.getImage();
 		setIconImage(image);
-		parent = this;
+		dit = this;
 		m = mod;
 		m.subscribe(this);
+		parent = this;
 		accountbeheer = this;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,6 +90,7 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				parent.dispose();
+				m.unsubscribe(dit);
 				hoofd_scherm frame = new hoofd_scherm(m);
 				frame.setVisible(true);
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -253,16 +258,17 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(activeGebruiker == -1) {
-					if(!wachtwoordVeld.getText().equals(""))
+					if((!wachtwoordVeld.getText().equals("")) && (!emailveld.getText().equals("")))
 					{
 					m.voegToe(naamVeld.getText(), voornaamVeld.getText(), m.getMd5(wachtwoordVeld.getText()), typeBox.getSelectedItem().toString(), emailveld.getText());
 					nieuw();
 					}
 					else
-						JOptionPane.showMessageDialog(null, "Je moet een wachtwoord opgeven om een nieuwe gebruiker op te slaan");
+						JOptionPane.showMessageDialog(null, "Je moet een wachtwoord en een email opgeven om een nieuwe gebruiker op te slaan");
 				}
 				else
 				{
+					if((!naamVeld.getText().equals("")) && (!emailveld.getText().equals("")) && (!voornaamVeld.getText().equals(""))) {
 					String wachtwoord = "";
 					if(!wachtwoordVeld.getText().equals(""))
 					{
@@ -270,6 +276,9 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 					}
 					m.updateGebruiker(activeGebruiker,naamVeld.getText(), voornaamVeld.getText(), wachtwoord, typeBox.getSelectedItem().toString(), emailveld.getText());
 					nieuw();
+					}
+					else
+						JOptionPane.showMessageDialog(null, "Om een bestaande gebruiker te bewerken moeten alle velden ingevult worden (behalve wachtwoord als u deze hetzelfde wilt houden)");
 				}
 			}
 		});

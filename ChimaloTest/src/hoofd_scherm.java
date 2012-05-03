@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -116,7 +117,7 @@ public class hoofd_scherm extends JFrame {
 		state="Keuzelijst";
 		model.setHoofdframe(this);
 		setResizable(false);
-		setSize(new Dimension(1000,539));
+		setSize(new Dimension(1006, 198));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -192,7 +193,7 @@ public class hoofd_scherm extends JFrame {
 				ArrayList<Erfgoed> erfgoeden = model.getErfgoeden();
 				Erfgoed input = (Erfgoed) JOptionPane.showInputDialog(null,
 						"Selecteer het erfgoed dat je wilt bewerken","Erfgoedbeheer", JOptionPane.INFORMATION_MESSAGE, 
-						null, erfgoeden.toArray(),"Tennis");
+						null, erfgoeden.toArray(),"");
 				newPanel(new ErfgoedPanel(model,new Parameter(input)));
 			}
 			
@@ -242,6 +243,11 @@ public class hoofd_scherm extends JFrame {
 		ImagePanel panel = new ImagePanel("logochimalo.jpg");
 		panel.setPreferredSize(new Dimension(1000,89));
 		getContentPane().add(panel, BorderLayout.NORTH);
+		JLabel statuslbl = new JLabel("Gereed");
+		JMenuBar menuBar_1 = new JMenuBar();
+		menuBar_1.add(statuslbl);
+		getContentPane().add(menuBar_1, BorderLayout.SOUTH);
+		model.setStatusLabel(statuslbl);
 		hoofdpanel = new DashbordPanel(model, new Parameter());
 		getContentPane().add(hoofdpanel, BorderLayout.WEST);
 		pack();

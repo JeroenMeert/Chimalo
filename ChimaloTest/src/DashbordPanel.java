@@ -30,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -72,6 +73,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	private JLabel lblNaarErfgoed;
 	private int itemCount = 0;
 	private JComboBox typebox;
+	private String activeList = "Keurlijst";
 	
 	/**
 	 * @wbp.parser.constructor
@@ -83,7 +85,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		model.setActivePanel(this);
 		parentPanel=model.getHoofdframe();
 		m.subscribe(this);
-		
 		this.setPreferredSize(new Dimension(1000, 500));
 		this.setBackground(UIManager.getColor("Button.disabledShadow"));
 		
@@ -150,7 +151,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		btnAfkeuren.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				model.wijzigStatus("Afgekeurd");
-				model.leesOpStatus(state);
+				for(Item i : model.getItems())
+				{
+					if(i.getId() == model.getActiveItem().getId())
+					{
+						i.setStatus("Afgekeurd");
+					}
+				}
 				try {
 					MailFrame frame = new MailFrame(model, false);
 					frame.setVisible(true);
@@ -167,10 +174,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				refreshItems();
-				clearActive();
-				refreshForState();
-				refreshTeller();
+				model.notifyChangeListeners();
 			}
 		});
 		btnAfkeuren.setBackground(UIManager.getColor("Button.disabledShadow"));
@@ -181,7 +185,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		btnGoedkeuren.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				model.wijzigStatus("Goedgekeurd");
-				model.leesOpStatus(state);
+				for(Item i : model.getItems())
+				{
+					if(i.getId() == model.getActiveItem().getId())
+					{
+						i.setStatus("Goedgekeurd");
+					}
+				}
 				try {
 					MailFrame frame = new MailFrame(model, false);
 					frame.setVisible(true);
@@ -198,10 +208,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				refreshItems();
-				clearActive();
-				refreshForState();
-				refreshTeller();
+				model.notifyChangeListeners();
 			}
 		});
 		
@@ -279,7 +286,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnKeurlijst.isSelected()){
-					model.leesOpStatus("Keurlijst");
+					activeList = "Keurlijst";
+					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}				
 			}
@@ -294,7 +302,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnGoedgekeurd.isSelected()){
-					model.leesOpStatus("Goedgekeurd");
+					activeList = "Goedgekeurd";
+					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}				
 			}
@@ -310,7 +319,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnAfgekeurde.isSelected()){
-					model.leesOpStatus("Afgekeurd");
+					activeList = "Afgekeurd";
+					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}
 				
@@ -377,7 +387,14 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 								}
 								else {
 									model.overschrijfActive();
-								}	
+								}
+								for(Item i :model.getItems()) {
+									if(model.getActiveItem().getId() == i.getId())
+									{
+										model.getItems().remove(i);
+										model.getItems().add(new Item(model.getActiveItem().getFoto(), model.getActiveItem().getId(), model.getActiveItem().getTitel(), model.getActiveItem().getText(), model.getActiveItem().getAuteur(), model.getActiveItem().getInzendDatum(), model.getActiveItem().getErfgoed(),model.getActiveItem().getLink(), model.getActiveItem().getStatus(), model.getActiveItem().getExtentie(), model.getActiveItem().getType()));
+									}
+								}
 							}
 							finally {
 								MailFrame frame = new MailFrame(model, true);
@@ -405,10 +422,14 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						}
 						else {
 						model.schrijfNieuwItem(model.getActiveItem());
+						
 						}
+						model.setActiveItem(model.aanvullenItem(model.getActiveItem()));
+						model.getItems().add(new Item(model.getActiveItem().getFoto(), model.getActiveItem().getId(), model.getActiveItem().getTitel(), model.getActiveItem().getText(), model.getActiveItem().getAuteur(), model.getActiveItem().getInzendDatum(), model.getActiveItem().getErfgoed(),model.getActiveItem().getLink(), model.getActiveItem().getStatus(), model.getActiveItem().getExtentie(), model.getActiveItem().getType()));
 						}
 						activePanel(false);
-						model.leesOpStatus(state);
+						
+						
 						clearActive();
 						refreshForState();
 						refreshTeller();
@@ -418,7 +439,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						
 						}
 				else {
-					JOptionPane.showMessageDialog(model.getHoofdframe(), "Gelieve alle velden in te vullen en een foto te selecteren");	
+					JOptionPane.showMessageDialog(model.getHoofdframe(), "Gelieve minstens titel en beschrijving in te vullen.");	
 					}
 			}
 		});
@@ -491,15 +512,15 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.leesAlleItems();
+				activeList = "Alles";
 				model.notifyChangeListeners();
+				
 			}
 		});
 		model.nieuwItem();
 		activePanel(false);
-		refreshForState();
-		refreshTeller();
-		repaint();
+		model.notifyChangeListeners();
+		rdbtnKeurlijst.setSelected(true);
 		panel = new MemberPanel(model.getAdmin());
 		panel.setBorder(new LineBorder(Color.GRAY));
 		panel.setBounds(67, 320, 240, 110);
@@ -515,6 +536,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			panel_1.setVisible(false);
 			panel_1.removeAll();
 		for (final Item i : model.getItems()){
+			if((i.getStatus().equals(activeList)) || (activeList.equals("Alles")))
+			{
 			ip =new ItemPanel(i);
 			final String titel= i.getTitel();
 			final String tekst = i.getText();
@@ -622,6 +645,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			itemCount++;
 			}
 		}
+		}
 		panel_1.repaint();
 		panel_1.setVisible(true);
 	}
@@ -651,6 +675,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		refreshForState();
 		if(model.getActiveItem() != null)
 		{
+			for(int i = 0; i<activeErfgoed.getItemCount(); i++)
+			{
+				if(model.getActiveItem().getErfgoed().getErfgoedNr() == activeErfgoed.getItemAt(i).getErfgoedNr())
+				{
+					activeErfgoed.setSelectedIndex(i);
+				}
+			}
 			if(model.getNieuweAfbeelding())
 			{
 			activePhoto.setNewFoto(model.getActiveItem().getFoto());
@@ -663,7 +694,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			}
 		}
 		state = model.getActiveItem().getStatus();
-		
+		refreshTeller();
 		repaint();
 	}
 	private void clearActive(){
@@ -723,7 +754,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		int goed=0;
 		int slecht=0;
 		int keur=0;
-		for (Item i : model.alleItems()){
+		for (Item i : model.getItems()){
 			if (i.getStatus().equals("Keurlijst"))
 				keur++;
 			if (i.getStatus().equals("Goedgekeurd"))
@@ -745,7 +776,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					JOptionPane.showMessageDialog(null, "Het lijkt erop dat er nog geen erfgoed bestaat. Gelieve eerst een erfgoed toe te voegen");
 				}
 				else {
-				lblBewerken.setText("Nieuw Item");
+				lblBewerken.setText("");
 				clearActive();
 				activePanel(true);
 				saveWijziging.setVisible(true);
@@ -781,7 +812,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						Erfgoed erfgoed = (Erfgoed) para.getObject();
 						zoekVeld.setText(erfgoed.getNaam());
 						zoekBox.setSelectedItem("Erfgoed");
-						model.leesAlleItems();
+						activeList = "Alles";
 						model.notifyChangeListeners();
 					}
 				}

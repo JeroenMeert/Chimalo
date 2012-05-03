@@ -107,6 +107,7 @@ public class EditFrame extends JFrame{
 				JFileChooser c = new JFileChooser();
 		        int x = c.showSaveDialog(parent);
 		        if (x == JFileChooser.APPROVE_OPTION) {
+		        	if(extentie != null) {
 		        	File f = c.getSelectedFile();
 		        	String filePath = f.getPath();
 		        	BufferedImage b = (BufferedImage) bi;
@@ -117,6 +118,7 @@ public class EditFrame extends JFrame{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+		        	}
 		        }
 				
 			}

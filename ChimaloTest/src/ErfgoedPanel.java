@@ -154,13 +154,32 @@ public class ErfgoedPanel extends ImagePanel  {
 				// TODO Auto-generated method stub
 				if(!naamVeld.getText().equals("")) {
 					if(nr == -1) {
-					model.schrijfNieuwErfgoed(new Erfgoed(naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() ));
-					model.leesAlleItems();
+						erfgoed = new Erfgoed(naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() );
+						model.schrijfNieuwErfgoed(erfgoed);
+						erfgoed = model.aanvullenErfgoed(erfgoed);
+						nr = erfgoed.getErfgoedNr();
+						model.getErfgoeden().add(erfgoed);
 					}
 					else
 					{
-					model.schrijfErfgoed(new Erfgoed(nr, naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() ));
-					model.leesAlleItems();
+						erfgoed = new Erfgoed(nr, naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() );
+						model.schrijfErfgoed(erfgoed);
+						for(Erfgoed er : model.getErfgoeden())
+						{
+							if(er.getErfgoedNr() == erfgoed.getErfgoedNr())
+							{
+								model.getErfgoeden().remove(er);
+								model.getErfgoeden().add(erfgoed);
+								break;
+							}
+						}
+						for(Item i : model.getItems())
+						{
+							if(i.getErfgoed().getErfgoedNr() == erfgoed.getErfgoedNr()) {
+								i.setErfgoed(erfgoed);
+							}
+						}
+						model.notifyChangeListeners();
 					}
 				}
 				else {
@@ -182,6 +201,15 @@ public class ErfgoedPanel extends ImagePanel  {
 						if(model.magErfgoedVerwijderdWorden(erfgoed)) {
 							Erfgoed e = new Erfgoed();
 							model.removeErfgoed(erfgoed);
+							for(Erfgoed er : model.getErfgoeden())
+							{
+								if(er.getErfgoedNr() == nr)
+								{
+									model.getErfgoeden().remove(er);
+									break;
+								}
+							}
+							model.notifyChangeListeners();
 							naamVeld.setText(e.getNaam());
 							locatieVeld.setText(e.getLocatie());
 							gemeente.setSelectedIndex(0);

@@ -1,7 +1,11 @@
+import java.awt.image.BufferedImage;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -12,10 +16,10 @@ public class Model {
 	private DataBankConnection dbc;
 	private ArrayList<ChangeListener> listeners;
 	private Item activeItem;
-	private String mailUsername = "002113av";
-	private String mailPassword = "5sdaje7";
-	private String smtpHost = "mail-out.hogent.be";
-	private int smtpPort = 25;
+	private String mailUsername = "erfgoedbankherzele@gmail.com";
+	private String mailPassword = "eenbankalsgeenander";
+	private String smtpHost = "smtp.gmail.com";
+	private int smtpPort = 587;
 	private Erfgoed activeErfgoed;
 	private String mailFrom = "ErfgoedHerzele";
 	private hoofd_scherm hoofdframe;
@@ -23,18 +27,21 @@ public class Model {
 	private Boolean vensterOpen = false;
 	private Boolean nieuweAfbeelding = false;
 	private ChangeListener activePanel;
+	private ArrayList<Erfgoed> erfgoeden;
+	private int itemTeller = 0;
+	private JLabel statusLabel;
+	private Connection dbconnectie;
+	private Timer timer;
 	
 	public Model(Gebruiker admin){
 		listeners = new ArrayList<ChangeListener>();
 		dbc = new DataBankConnection(this);
 		this.admin = admin;
-		items = dbc.leesItems();
 	}
 	
 	public Model() {
 		listeners = new ArrayList<ChangeListener>();
 		dbc = new DataBankConnection(this);
-		items = dbc.leesItems();
 	}
 	
 	public void subscribe(ChangeListener c){
@@ -52,10 +59,6 @@ public class Model {
 	public ArrayList<Item> getItems(){
 		return items;
 	}
-
-	public ArrayList<Item> alleItems(){
-		return dbc.leesItems();
-	}
 	
 	public void leesAlleItems() {
 		items = dbc.leesItems();
@@ -67,9 +70,7 @@ public class Model {
 	}
 	public void wijzigStatus(String s){
 		dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
-		items=dbc.leesItems();
 		activeItem.setStatus(s);
-		notifyChangeListeners();
 	}
 	public Item getActiveItem(){
 		return activeItem;
@@ -170,7 +171,11 @@ public class Model {
 	}
 	
 	public ArrayList<Erfgoed> getErfgoeden(){
-		return dbc.getErfGoeden();
+		return erfgoeden;
+	}
+	
+	public void leesAlleErfgoeden() {
+		erfgoeden = dbc.getErfGoeden();
 	}
 
 	public void schrijfNieuwItem(Item i) {
@@ -216,7 +221,6 @@ public class Model {
 	public void nieuwItem()
 	{
 		activeItem = new Item();
-		notifyChangeListeners();
 	}
 
 	public hoofd_scherm getHoofdframe() {
@@ -230,10 +234,6 @@ public class Model {
 	public void sluitConnectie()
 	{
 		dbc.sluitConnectie();
-	}
-	public void herstartConnectie()
-	{
-		dbc.herstartConnectie();
 	}
 
 	public Gebruiker getAdmin() {
@@ -281,5 +281,68 @@ public class Model {
 	public void setNieuweAfbeelding(Boolean nieuweAfbeelding) {
 		this.nieuweAfbeelding = nieuweAfbeelding;
 	}
+	
+	public Item aanvullenItem(Item i)
+	{
+		return dbc.aanvullenItem(i);
+	}
+	public Erfgoed aanvullenErfgoed(Erfgoed i)
+	{
+		return dbc.aanvullenErfgoed(i);
+	}
+	
+	public int countItems() {
+		return dbc.countItems();
+	}
+
+	public int getItemTeller() {
+		return itemTeller;
+	}
+
+	public void setItemTeller(int itemTeller) {
+		this.itemTeller = itemTeller;
+	}
+
+	public JLabel getStatusLabel() {
+		return statusLabel;
+	}
+
+	public void setStatusLabel(JLabel statusLabel) {
+		this.statusLabel = statusLabel;
+	}
+
+	public Connection getDbconnectie() {
+		return dbconnectie;
+	}
+
+	public void setDbconnectie(Connection dbconnectie) {
+		this.dbconnectie = dbconnectie;
+	}
+
+	public void setItems(ArrayList<Item> items) {
+		this.items = items;
+	}
+	
+	public Erfgoed getErfgoed(int erfgoednr) {
+		return dbc.getErfgoed(erfgoednr);
+	}
+	
+	public BufferedImage haalFotoOp(int userID){
+		return dbc.haalFotoOp(userID);
+	}
+	
+	public Gebruiker haalGebruikerOp(int userNr){
+		return dbc.haalGebruikerOp(userNr);
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
+	}
+	
+	
 	
 }
