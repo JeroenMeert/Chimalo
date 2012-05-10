@@ -150,7 +150,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		btnAfkeuren = new JButton("Afkeuren");
 		btnAfkeuren.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				model.wijzigStatus("Afgekeurd");
+				if(model.wijzigStatus("Afgekeurd")) {
 				for(Item i : model.getItems())
 				{
 					if(i.getId() == model.getActiveItem().getId())
@@ -175,6 +175,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					e.printStackTrace();
 				}
 				model.notifyChangeListeners();
+				}
 			}
 		});
 		btnAfkeuren.setBackground(UIManager.getColor("Button.disabledShadow"));
@@ -184,7 +185,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		btnGoedkeuren = new JButton("Goedkeuren");
 		btnGoedkeuren.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				model.wijzigStatus("Goedgekeurd");
+				if(model.wijzigStatus("Goedgekeurd"))
+				{
 				for(Item i : model.getItems())
 				{
 					if(i.getId() == model.getActiveItem().getId())
@@ -209,6 +211,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 					e.printStackTrace();
 				}
 				model.notifyChangeListeners();
+				}
 			}
 		});
 		
@@ -366,6 +369,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		saveWijziging.setVisible(false);
 		saveWijziging.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				if(!((activeTitel.getText().equals("")) || (activeBeschrijving.getText().equals("")) || (activeErfgoed.getSelectedItem().equals(null))))
 						{
 						if(!activePhoto.isUsed())
@@ -383,16 +387,19 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 							try {
 								if(!activePhoto.isUsed())
 								{
-									model.overschrijfItemZonderAfbeelding(model.getActiveItem());
+									if(!model.overschrijfItemZonderAfbeelding(model.getActiveItem()))
+										return;
 								}
 								else {
-									model.overschrijfActive();
+									if(!model.overschrijfActive())
+										return;
 								}
 								for(Item i :model.getItems()) {
 									if(model.getActiveItem().getId() == i.getId())
 									{
 										model.getItems().remove(i);
 										model.getItems().add(new Item(model.getActiveItem().getFoto(), model.getActiveItem().getId(), model.getActiveItem().getTitel(), model.getActiveItem().getText(), model.getActiveItem().getAuteur(), model.getActiveItem().getInzendDatum(), model.getActiveItem().getErfgoed(),model.getActiveItem().getLink(), model.getActiveItem().getStatus(), model.getActiveItem().getExtentie(), model.getActiveItem().getType()));
+										break;
 									}
 								}
 							}
@@ -418,10 +425,12 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						java.sql.Date date = new java.sql.Date( cal.getTime().getTime());
 						model.getActiveItem().setInzendDatum(date);
 						if(!activePhoto.isUsed()) {
-							model.schrijfNieuwItemZonderAfbeelding(model.getActiveItem());
+							if(model.schrijfNieuwItemZonderAfbeelding(model.getActiveItem()))
+								return;
 						}
 						else {
-						model.schrijfNieuwItem(model.getActiveItem());
+						if(model.schrijfNieuwItem(model.getActiveItem()))
+							return;
 						
 						}
 						model.setActiveItem(model.aanvullenItem(model.getActiveItem()));

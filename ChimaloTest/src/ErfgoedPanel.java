@@ -155,7 +155,8 @@ public class ErfgoedPanel extends ImagePanel  {
 				if(!naamVeld.getText().equals("")) {
 					if(nr == -1) {
 						erfgoed = new Erfgoed(naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() );
-						model.schrijfNieuwErfgoed(erfgoed);
+						if(!model.schrijfNieuwErfgoed(erfgoed))
+							return;
 						erfgoed = model.aanvullenErfgoed(erfgoed);
 						nr = erfgoed.getErfgoedNr();
 						model.getErfgoeden().add(erfgoed);
@@ -163,7 +164,8 @@ public class ErfgoedPanel extends ImagePanel  {
 					else
 					{
 						erfgoed = new Erfgoed(nr, naamVeld.getText(), locatieVeld.getText(), type.getSelectedItem().toString(), linkVeld.getText(), geschiedenisVeld.getText(), nuttigeinfoVeld.getText(), kenmerkenVeld.getText(), statuut.getSelectedItem().toString(), gemeente.getSelectedItem().toString() );
-						model.schrijfErfgoed(erfgoed);
+						if(!model.schrijfErfgoed(erfgoed))
+							return;
 						for(Erfgoed er : model.getErfgoeden())
 						{
 							if(er.getErfgoedNr() == erfgoed.getErfgoedNr())
@@ -200,7 +202,8 @@ public class ErfgoedPanel extends ImagePanel  {
 					if(result == JOptionPane.YES_OPTION) {
 						if(model.magErfgoedVerwijderdWorden(erfgoed)) {
 							Erfgoed e = new Erfgoed();
-							model.removeErfgoed(erfgoed);
+							if(!model.removeErfgoed(erfgoed))
+								return;
 							for(Erfgoed er : model.getErfgoeden())
 							{
 								if(er.getErfgoedNr() == nr)

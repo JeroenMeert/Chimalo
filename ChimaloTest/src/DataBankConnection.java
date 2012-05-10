@@ -109,7 +109,8 @@ public class DataBankConnection {
 	}
 	
 	
-	public void voegToe(String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
+	public boolean voegToe(String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
+		boolean success = false;
 		if(!hasDuplicates(Gebruikersnaam)) {
         try {
         	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Emailadres) VALUES (?,?,?,?,?,?)");
@@ -121,6 +122,7 @@ public class DataBankConnection {
         	voegBeheerderToe.setString(6, Emailadres);
 
            voegBeheerderToe.executeUpdate();
+           success = true;
         } catch (SQLException ex) {
             for (Throwable t : ex) {
                 t.printStackTrace();
@@ -130,8 +132,10 @@ public class DataBankConnection {
 		else {
 			JOptionPane.showMessageDialog(null, "Een gebruiker met deze Gebruikersnaam bestaat al, kies een andere!");
 		}
+		return success;
 	}
-	public void updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
+	public boolean updateGebruiker(int nr, String Gebruikersnaam, String Naam, String pass, String type, String Emailadres){
+		boolean success = false;
         try {
         	if(!pass.equals(""))
         	{
@@ -155,13 +159,15 @@ public class DataBankConnection {
             	voegBeheerderToe.setInt(6, nr);
             	voegBeheerderToe.executeUpdate();
         	}
-
+        	success = true;
            
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         }
+        return success;
 	}
-	public void overschrijfItem(Item i){
+	public boolean overschrijfItem(Item i){
+		boolean success = false;
         try {
         	BufferedImage duke = i.getFoto();
         	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
@@ -189,7 +195,7 @@ public class DataBankConnection {
         	overschrijf.setInt(11, i.getId());
         	overschrijf.setString(10, i.getType());
         	overschrijf.executeUpdate();
-
+        	success = true;
         } catch (SQLException ex) {
             for (Throwable t : ex) {
                 t.printStackTrace();
@@ -200,8 +206,10 @@ public class DataBankConnection {
 		}
         finally {
         }
+        return success;
 	}
-	public void overschrijfItemZonderAfbeelding(Item i){
+	public boolean overschrijfItemZonderAfbeelding(Item i){
+		boolean success = false;
         try {
         	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
@@ -215,7 +223,7 @@ public class DataBankConnection {
         	overschrijf.setInt(10, i.getId());
         	overschrijf.setString(9, i.getType());
         	overschrijf.executeUpdate();
-
+        	success = true;
         } catch (SQLException ex) {
             for (Throwable t : ex) {
                 t.printStackTrace();
@@ -223,6 +231,7 @@ public class DataBankConnection {
         }
         finally {
         }
+        return success;
 	}
 	public ArrayList<Item> leesItems(){
 		System.out.println("---Lees items---");
@@ -422,7 +431,8 @@ public class DataBankConnection {
         }
         return terugTeGevenItems;
 	}
-	public void wijzigStatus(String status,int i, String titel, String beschrijving){
+	public boolean wijzigStatus(String status,int i, String titel, String beschrijving){
+		boolean s = false;
 		System.out.println("Wijzigen van status naar " + status + " Item: " + titel);
         try {
             //Statement stat = conn.createStatement();
@@ -432,9 +442,11 @@ public class DataBankConnection {
         	wijzigStatus.setString(3,status);
         	wijzigStatus.setInt(4, i);
         	wijzigStatus.executeUpdate();
+        	s = true;
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         }
+        return s;
 	}
 
 	
@@ -630,8 +642,9 @@ public class DataBankConnection {
 	}
 	
 	
-	public void setMailText(String soort, String txt)
+	public boolean setMailText(String soort, String txt)
 	{
+		boolean success = false;
         try {
             //Statement stat = conn.createStatement();
         	PreparedStatement wijzig = conn.prepareStatement("UPDATE Standaardtekst SET Tekst = ? WHERE Soort = ?");
@@ -639,12 +652,14 @@ public class DataBankConnection {
         	wijzig.setString(1, txt);
         	wijzig.setString(2, soort);
         	wijzig.executeUpdate();
+        	success = true;
         } catch (SQLException ex) {
         	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
         	for (Throwable t : ex) {
                 t.printStackTrace();
             }
         }
+        return success;
 	}
 	
 	public String getMailText(String soort)
@@ -685,7 +700,8 @@ public ArrayList<Erfgoed> getErfGoeden() {
      }
      return new ArrayList<Erfgoed>();
 }
-public void schrijfNieuwItem(Item i) {
+public boolean schrijfNieuwItem(Item i) {
+	boolean s = false;
      try {
     	BufferedImage duke = i.getFoto();
      	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
@@ -712,7 +728,7 @@ public void schrijfNieuwItem(Item i) {
      	newItem.setString(9, i.getExtentie());
      	newItem.setString(10, i.getType());
      	newItem.executeUpdate();
-     	
+     	s = true;
  
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
@@ -723,10 +739,12 @@ public void schrijfNieuwItem(Item i) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+     return s;
     
 }
 
-public void schrijfNieuwItemZonderAfbeelding(Item i) {
+public boolean schrijfNieuwItemZonderAfbeelding(Item i) {
+	boolean s = false;
     try {	    
     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
@@ -739,7 +757,7 @@ public void schrijfNieuwItemZonderAfbeelding(Item i) {
     	newItem.setString(8, i.getExtentie());
     	newItem.setString(9, i.getType());
     	newItem.executeUpdate();
-    	
+    	s = true;
 
     } catch (SQLException ex) {
    	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
@@ -747,7 +765,7 @@ public void schrijfNieuwItemZonderAfbeelding(Item i) {
             t.printStackTrace();
         }
     }
-   
+   return s;
 }
 
 public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
@@ -770,22 +788,25 @@ public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
      }
      return b;
 }
-public void removeErfgoed(Erfgoed er) {
+public boolean removeErfgoed(Erfgoed er) {
 	// TODO Auto-generated method stub
+	boolean s = false;
     try {
     	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE ErfgoedNr =?");
     	
     	weg.setInt(1,er.getErfgoedNr());
     	weg.executeUpdate();
-
+    	s = true;
     } catch (SQLException ex) {
     	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het verwijderen van het erfgoed\nFoutmelding: " + ex.toString());
     	for (Throwable t : ex) {
             t.printStackTrace();
         }
     }
+    return s;
 }
-public void schrijfErfgoed(Erfgoed g) {
+public boolean schrijfErfgoed(Erfgoed g) {
+	boolean s= false;
      try {   
      	PreparedStatement newItem = conn.prepareStatement("UPDATE Erfgoed SET Naam = ? , Locatie = ?, Type = ?, Link = ?, Geschiedenis = ?, Info = ?, Kenmerken = ?, Statuut = ?, Gemeente = ? WHERE ErfgoedNr = ?");
      	newItem.setString(1,g.getNaam());
@@ -802,13 +823,14 @@ public void schrijfErfgoed(Erfgoed g) {
      	
      	newItem.executeUpdate();
      	JOptionPane.showMessageDialog(null, "Het erfgoed is opgeslagen");
- 
+     	s=true;
      } catch (SQLException ex) {
     	 JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het schrijven van het erfgoed\nFoutmelding: " + ex.toString());
     	 for (Throwable t : ex) {
              t.printStackTrace();
          }
      }
+     return s;
 }
 
 public void sluitConnectie()
@@ -825,7 +847,8 @@ public void sluitConnectie()
 	}
 }
 
-public void schrijfNieuwErfgoed(Erfgoed g) {
+public boolean schrijfNieuwErfgoed(Erfgoed g) {
+	boolean s = false;
     try {
     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link,Geschiedenis,Info,Kenmerken, Statuut, Gemeente) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,g.getNaam());
@@ -840,6 +863,7 @@ public void schrijfNieuwErfgoed(Erfgoed g) {
     	
     	newItem.executeUpdate();
     	JOptionPane.showMessageDialog(null, "Het erfgoed is opgeslagen");
+    	s=true;
 
     } catch (SQLException ex) {
    	 JOptionPane.showMessageDialog(null, "Er is een fout opgetreden bij het opslaan van een nieuw erfgoed. Controlleer de naam van het erfgoed en probeer opnieuw.\n Foutmelding: " +ex.toString());
@@ -847,6 +871,7 @@ public void schrijfNieuwErfgoed(Erfgoed g) {
             t.printStackTrace();
         }
     }
+    return s;
    
 }
 

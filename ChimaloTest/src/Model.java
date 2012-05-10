@@ -68,9 +68,12 @@ public class Model {
 		items=dbc.leesItemsOpStatus(status);
 		notifyChangeListeners();
 	}
-	public void wijzigStatus(String s){
-		dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
-		activeItem.setStatus(s);
+	public boolean wijzigStatus(String s){
+		boolean success = dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
+		if(success) {
+			activeItem.setStatus(s);
+		}
+		return success;
 	}
 	public Item getActiveItem(){
 		return activeItem;
@@ -151,9 +154,9 @@ public class Model {
 		this.mailFrom = mailFrom;
 	}
 	
-	public void setMailText(String soort, String txt)
+	public boolean setMailText(String soort, String txt)
 	{
-		dbc.setMailText(soort, txt);
+		return dbc.setMailText(soort, txt);
 	}
 	
 	public String getMailText(String soort)
@@ -165,9 +168,10 @@ public class Model {
 	{
 		return dbc.getGebruiker(gebruikersnaam);
 	}
-	public void overschrijfActive(){
-		dbc.overschrijfItem(activeItem);
+	public boolean overschrijfActive(){
+		boolean s = dbc.overschrijfItem(activeItem);
 		notifyChangeListeners();
+		return s;
 	}
 	
 	public ArrayList<Erfgoed> getErfgoeden(){
@@ -178,8 +182,8 @@ public class Model {
 		erfgoeden = dbc.getErfGoeden();
 	}
 
-	public void schrijfNieuwItem(Item i) {
-		dbc.schrijfNieuwItem(i);
+	public boolean schrijfNieuwItem(Item i) {
+		return dbc.schrijfNieuwItem(i);
 		
 	}
 	
@@ -195,8 +199,8 @@ public class Model {
 		else return false;
 	}
 
-	public void removeErfgoed(Erfgoed e) {
-		dbc.removeErfgoed(e);
+	public boolean removeErfgoed(Erfgoed e) {
+		return dbc.removeErfgoed(e);
 		
 	}
 
@@ -208,14 +212,16 @@ public class Model {
 		return activeErfgoed;
 	}
 
-	public void schrijfNieuwErfgoed(Erfgoed er) {
-		dbc.schrijfNieuwErfgoed(er);
+	public boolean schrijfNieuwErfgoed(Erfgoed er) {
+		boolean s = dbc.schrijfNieuwErfgoed(er);
 		notifyChangeListeners();
+		return s;
 	}
-	public void schrijfErfgoed(Erfgoed er)
+	public boolean schrijfErfgoed(Erfgoed er)
 	{
-		dbc.schrijfErfgoed(er);
+		boolean s = dbc.schrijfErfgoed(er);
 		notifyChangeListeners();
+		return s;
 	}
 	
 	public void nieuwItem()
@@ -244,14 +250,14 @@ public class Model {
 		this.admin = admin;
 	}
 	
-	public void overschrijfItemZonderAfbeelding(Item i)
+	public boolean overschrijfItemZonderAfbeelding(Item i)
 	{
-		dbc.overschrijfItemZonderAfbeelding(i);
+		return dbc.overschrijfItemZonderAfbeelding(i);
 	}
 	
-	public void schrijfNieuwItemZonderAfbeelding(Item i)
+	public boolean schrijfNieuwItemZonderAfbeelding(Item i)
 	{
-		dbc.schrijfNieuwItemZonderAfbeelding(i);
+		return dbc.schrijfNieuwItemZonderAfbeelding(i);
 	}
 	
 	public void setActivePanel(ChangeListener p){
