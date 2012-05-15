@@ -222,8 +222,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(!model.getVensterOpen()) {
-				if(activeTitel.isEnabled())
+				if(!model.getVensterOpen()) { //hierdoor kan je maar 1 image venster opendoen
+				if(activeTitel.isEnabled()) // een alternatief om te kijken of je op wijzigen hebt geklikt
 				{
 				if(model.getActiveItem()!=null){
 					if((model.getActiveItem().getId() != -1) && (model.getActiveItem().getFoto() != null) )
@@ -718,13 +718,13 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	}
 	
 	public void refreshForState(){
-		if (model.getActiveItem().getId() == -1){
+		if (model.getActiveItem().getId() == -1){ //nieuw item maken
 			btnGoedkeuren.setEnabled(false);
 			btnAfkeuren.setEnabled(false);
 			saveWijziging.setVisible(false);
 			btnWijzigen.setVisible(true);
 			activePanel(false);
-			if(model.getActiveItem().getFoto() != null)
+			if(model.getActiveItem().getFoto() != null) // na het selecteren van een foto moeten de velden actief blijven
 			{
 				activePanel(true);
 				btnWijzigen.setVisible(false);
@@ -773,7 +773,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		}
 		lblTeller.setText("Keurlijst : "+keur+" Goedgekeurd : "+goed+" Afgekeurd : "+slecht);
 	}
-	
+	// om het meervoudig schrijven van constructors te voorkomen.
 	private void processParameter(Parameter para)
 	{
 		if(para.getSoort() != null)

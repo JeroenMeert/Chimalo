@@ -180,7 +180,7 @@ public class MailFrame extends JFrame {
 		//title
 		String content = editorPane.getText();
 		content = content.replaceAll("\"", "'");
-		String patternStr = "<td(\\s\\w+?[^=]*?='[^']*?')*?\\s+?class='(\\S+?\\s)*?titlecell(\\s\\S+?)*?'.*?>(.*?)</td>";
+		String patternStr = "<td(\\s\\w+?[^=]*?='[^']*?')*?\\s+?class='(\\S+?\\s)*?titlecell(\\s\\S+?)*?'.*?>(.*?)</td>"; // stript de tekst uit de html via regex
 		// Compile and use regular expression
 		Pattern pattern = Pattern.compile(patternStr, Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(content);
@@ -204,13 +204,12 @@ public class MailFrame extends JFrame {
 		contents = contents.trim().replaceAll("\r\n          ","");
 		HtmlHandler htmltext = new HtmlHandler(getClass().getResourceAsStream("/" + item.getStatus().toLowerCase()+".html"),item, m);
 		content = htmltext.getHtml();
+		//shortcodes
 		content = content.replaceAll("&title", title);
 		content = content.replaceAll("&text", contents);
 		content = content.replaceAll("&amp;", "&");
 		content = content.replaceAll("&lt;", "<");
 		content = content.replaceAll("&gt;", ">");
-		//content = content.replaceAll("border-bottom-color: #FF0000;", "font-family: Arial;border-bottom-color: #FF0000;");
-		//content = content.replaceFirst("padding-bottom: 0;", "font-weight: bold; color: #FFFFFF;padding-bottom: 0;");
 		content = content.replaceAll("&titel", item.getTitel());
 		content = content.replaceAll("&auteur", item.getAuteur().getNaam());
 		content = content.replaceAll("&inzenddatum", item.getInzendDatum().toString());
