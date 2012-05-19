@@ -425,11 +425,11 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						java.sql.Date date = new java.sql.Date( cal.getTime().getTime());
 						model.getActiveItem().setInzendDatum(date);
 						if(!activePhoto.isUsed()) {
-							if(model.schrijfNieuwItemZonderAfbeelding(model.getActiveItem()))
+							if(!model.schrijfNieuwItemZonderAfbeelding(model.getActiveItem()))
 								return;
 						}
 						else {
-						if(model.schrijfNieuwItem(model.getActiveItem()))
+						if(!model.schrijfNieuwItem(model.getActiveItem()))
 							return;
 						
 						}
