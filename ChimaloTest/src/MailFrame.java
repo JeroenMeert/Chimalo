@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -17,7 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -30,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import java.awt.Font;
+import javax.swing.JButton;
+import javax.swing.JSeparator;
 
 
 public class MailFrame extends JFrame {
@@ -165,6 +169,19 @@ public class MailFrame extends JFrame {
 		lblUKuntDe.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblUKuntDe.setBounds(10, 84, 563, 14);
 		contentPane.add(lblUKuntDe);
+		
+		JButton btnVerzenden = new JButton("Verzenden");
+		btnVerzenden.setBounds(247, 577, 112, 23);
+		contentPane.add(btnVerzenden);
+		btnVerzenden.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				verzenden();
+				
+			}
+		});
+		
 		preloader();
 		pack();
 	}
@@ -233,7 +250,11 @@ public class MailFrame extends JFrame {
 		{
 		Gebruiker gebruiker = item.getAuteur();
 		Mail mail = new Mail(m, gebruiker.getEmail(), "[Erfgoedbank Herzele] uw item werd " + item.getStatus().toLowerCase(), content);
-		mail.send();
+		boolean success = mail.send();
+		if(success)
+		{
+			this.dispose();
+		}
 		}
 	}
 	

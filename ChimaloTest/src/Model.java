@@ -349,6 +349,10 @@ public class Model {
 		this.timer = timer;
 	}
 	
+	public boolean verwijderItem()
+	{
+		return dbc.verwijder(activeItem);
+	}
 	
 	
 }

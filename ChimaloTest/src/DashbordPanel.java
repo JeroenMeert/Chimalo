@@ -73,8 +73,9 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	private JLabel lblNaarErfgoed;
 	private int itemCount = 0;
 	private JComboBox typebox;
+	private JButton verwijder;
 	private String activeList = "Keurlijst";
-	
+	private int index=0;
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -210,6 +211,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				verwijder.setVisible(false);
 				model.notifyChangeListeners();
 				}
 			}
@@ -244,6 +246,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						}
 					}
 					model.setVensterOpen(true);
+					index=activeErfgoed.getSelectedIndex();
 				}
 				}
 				}
@@ -453,8 +456,35 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			}
 		});
 		saveWijziging.setBounds(475, 441, 118, 23);
+		verwijder = new JButton("Verwijder");
+		verwijder.setVisible(false);
 		this.add(saveWijziging);
 		
+		verwijder.setBounds(475, 441, 118, 23);
+		this.add(verwijder);
+		verwijder.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int option = JOptionPane.showConfirmDialog(null, "Ben u zeker dat u " + model.getActiveItem().getTitel() + " wilt verwijderen?");
+				if(option == JOptionPane.OK_OPTION)
+				{
+				boolean gelukt = model.verwijderItem();
+				if(gelukt) {
+					for(Item i : model.getItems())
+					{
+						if(i.getId() == model.getActiveItem().getId())
+						{
+							model.getItems().remove(i);
+							break;
+						}
+					}
+					model.notifyChangeListeners();
+					clearActive();
+				}
+				}
+			}
+		});
 		lblNaarErfgoed = new JLabel("Naar Erfgoed >>");
 		lblNaarErfgoed.setBounds(495, 39, 112, 14);
 		lblNaarErfgoed.setVisible(false);
@@ -694,6 +724,8 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			if(model.getNieuweAfbeelding())
 			{
 			activePhoto.setNewFoto(model.getActiveItem().getFoto());
+			System.out.println("index: " +index);
+			activeErfgoed.setSelectedIndex(index);
 			activePanel(true);
 			btnGoedkeuren.setEnabled(false);
 			btnAfkeuren.setEnabled(false);
@@ -715,6 +747,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		activeTitel.setText("");
 		activeLink.setText("http://");
 		activePhoto.setNewFoto(null);
+		verwijder.setVisible(false);
 	}
 	
 	public void refreshForState(){
@@ -738,6 +771,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			btnWijzigen.setEnabled(true);
 			btnWijzigen.setVisible(true);
 			saveWijziging.setVisible(false);
+			verwijder.setVisible(false);
 			activePanel(false);
 		}
 		if (state.equals("Afgekeurd")){
@@ -746,6 +780,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			btnWijzigen.setEnabled(true);
 			btnWijzigen.setVisible(true);
 			saveWijziging.setVisible(false);
+			verwijder.setVisible(true);
 			activePanel(false);
 		}
 		if (state.equals("Keurlijst")){
@@ -754,6 +789,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			btnWijzigen.setEnabled(true);
 			btnWijzigen.setVisible(true);
 			saveWijziging.setVisible(false);
+			verwijder.setVisible(false);
 			activePanel(false);
 		}
 		}

@@ -11,6 +11,7 @@ import javax.swing.border.Border;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
+import javax.swing.JButton;
 
 
 public class ItemPanel extends JPanel {
@@ -40,6 +41,21 @@ public class ItemPanel extends JPanel {
 		ImagePanel imagePanel = new ImagePanel(item.getFoto());
 		imagePanel.setBounds(10, 26, 79, 79);
 		panel.add(imagePanel);
+		if(i.getStatus().equals("Keurlijst"))
+		{
+			imagePanel.setBorder(BorderFactory.createMatteBorder(0, 10, 0, 0, Color.yellow));
+		}
+		else
+		{
+			if(i.getStatus().equals("Goedgekeurd"))
+			{
+				imagePanel.setBorder(BorderFactory.createMatteBorder(0, 10, 0, 0, Color.green));
+			}
+			else
+			{
+				imagePanel.setBorder(BorderFactory.createMatteBorder(0, 10, 0, 0, Color.red));
+			}
+		}
 		
 		JLabel lblErfgoed = new JLabel("Auteur:");
 		lblErfgoed.setFont(new Font("Tahoma", Font.PLAIN, 11));

@@ -30,7 +30,7 @@ public class Mail {
 		this.text = text;		
 	}
 	
-	public void send()
+	public boolean send()
 	{
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
@@ -57,9 +57,11 @@ public class Mail {
 			Transport.send(message);
  
 			JOptionPane.showMessageDialog(null, "De email is successvol verzonden aan " + to);
+			return true;
  
 		} catch (MessagingException e) {
 			JOptionPane.showMessageDialog(null, "De mail kon niet verzonden worden aan " + to + "\n Foutmelding: " + e.getMessage());
+			return false;
 		}
 	}
 }

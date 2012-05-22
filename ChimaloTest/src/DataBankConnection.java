@@ -977,5 +977,26 @@ public Erfgoed aanvullenErfgoed(Erfgoed i)
     }
 	return i;
 }
+
+public boolean verwijder(Item i)
+{
+	System.out.println("Verwijderen van item met status " + i.getStatus() + "en id "+ i.getId());
+	ResultSet rs = null;
+    try {     
+    	PreparedStatement h = conn.prepareStatement("Delete FROM Object WHERE ObjectNr=?");
+    	h.setInt(1, i.getId());
+    	int success = h.executeUpdate();
+    	if(success != 0)
+    	{
+    		return true;
+    	}
+    } catch (SQLException ex) {
+    	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
+    	for (Throwable t : ex) {
+            t.printStackTrace();
+        }
+    }
+    return false;
+}
 }
 	
