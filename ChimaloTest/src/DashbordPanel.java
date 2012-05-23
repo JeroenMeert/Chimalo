@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
@@ -424,8 +425,10 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						else
 						{
 						model.getActiveItem().setAuteur(model.getAdmin());
-						Calendar cal = new GregorianCalendar() ;
-						java.sql.Date date = new java.sql.Date( cal.getTime().getTime());
+						Calendar cal = new GregorianCalendar().getInstance() ;
+						cal.add(Calendar.DAY_OF_MONTH, 1);
+						Date datum = cal.getTime();
+						java.sql.Date date = new java.sql.Date( datum.getTime());
 						model.getActiveItem().setInzendDatum(date);
 						if(!activePhoto.isUsed()) {
 							if(!model.schrijfNieuwItemZonderAfbeelding(model.getActiveItem()))
