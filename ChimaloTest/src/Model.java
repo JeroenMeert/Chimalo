@@ -72,7 +72,7 @@ public class Model {
 		notifyChangeListeners();
 	}
 	public boolean wijzigStatus(String s){
-		boolean success = dbc.wijzigStatus(s,activeItem.getId(),activeItem.getTitel(),activeItem.getText());
+		boolean success = dbc.wijzigStatus(s,getActiveItem());
 		if(success) {
 			activeItem.setStatus(s);
 		}

@@ -151,6 +151,14 @@ public class DataBankConnection {
 	public boolean overschrijfItem(Item i){
 		boolean success = false;
         try {
+        	Calendar calendar = Calendar.getInstance();
+          	 
+       	 	calendar.add(Calendar.HOUR, -7);// server time van somee.com is 7 uur eerder dan onze tijdzone, dit is de tijdelijke fix ervoor
+
+       	 	java.util.Date now = calendar.getTime();
+       	 
+       	 	java.sql.Timestamp tijd = new java.sql.Timestamp(now.getTime());
+       	 	
         	BufferedImage duke = i.getFoto();
         	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
             Blob dukeBlob = m.getDbconnectie().createBlob();
@@ -166,7 +174,7 @@ public class DataBankConnection {
             ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
         	PreparedStatement overschrijf = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type= ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
-        	overschrijf.setDate(2,i.getInzendDatum());
+        	overschrijf.setTimestamp(2,tijd);
         	overschrijf.setString(3,i.getText());
         	overschrijf.setBlob(4, dukeBlob);
         	overschrijf.setInt(5,i.getAuteur().getGebruikersnummer());
@@ -193,9 +201,16 @@ public class DataBankConnection {
 	public boolean overschrijfItemZonderAfbeelding(Item i){
 		boolean success = false;
         try {
+        	Calendar calendar = Calendar.getInstance();
+          	 
+       	 	calendar.add(Calendar.HOUR, -7);// server time van somee.com is 7 uur eerder dan onze tijdzone, dit is de tijdelijke fix ervoor
+
+       	 	java.util.Date now = calendar.getTime();
+       	 
+       	 	java.sql.Timestamp tijd = new java.sql.Timestamp(now.getTime());
         	PreparedStatement overschrijf = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
-        	overschrijf.setDate(2,i.getInzendDatum());
+        	overschrijf.setTimestamp(2,tijd);
         	overschrijf.setString(3,i.getText());
         	overschrijf.setInt(4,i.getAuteur().getGebruikersnummer());
         	overschrijf.setString(5,i.getStatus());
@@ -413,16 +428,22 @@ public class DataBankConnection {
         }
         return terugTeGevenItems;
 	}
-	public boolean wijzigStatus(String status,int i, String titel, String beschrijving){
+	public boolean wijzigStatus(String status, Item i){
 		boolean s = false;
-		System.out.println("Wijzigen van status naar " + status + " Item: " + titel);
+		System.out.println("Wijzigen van status naar " + status + " Item: " + i.getTitel());
         try {
+        	Calendar calendar = Calendar.getInstance();
+       	 
+       	 	calendar.add(Calendar.HOUR, -7);// server time van somee.com is 7 uur eerder dan onze tijdzone, dit is de tijdelijke fix ervoor
+
+       	 	java.util.Date now = calendar.getTime();
+       	 
+       	 	java.sql.Timestamp tijd = new java.sql.Timestamp(now.getTime());
             //Statement stat = m.getDbconnectie().createStatement();
-        	PreparedStatement wijzigStatus = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? ,Tekst = ?,Status = ?  WHERE ObjectNr = ?");
-        	wijzigStatus.setString(1 ,titel);
-        	wijzigStatus.setString(2,beschrijving);
-        	wijzigStatus.setString(3,status);
-        	wijzigStatus.setInt(4, i);
+        	PreparedStatement wijzigStatus = m.getDbconnectie().prepareStatement("UPDATE Object SET Status=?, Tijdstip=? WHERE ObjectNr = ?");
+        	wijzigStatus.setString(1 ,status);
+        	wijzigStatus.setTimestamp(2, tijd);
+        	wijzigStatus.setInt(3, i.getId());
         	wijzigStatus.executeUpdate();
         	s = true;
         } catch (SQLException ex) {
