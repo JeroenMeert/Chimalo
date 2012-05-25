@@ -11,6 +11,9 @@ import javax.swing.border.Border;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 
 
@@ -21,9 +24,7 @@ public class ItemPanel extends JPanel {
 	 */
 
 	private Item item;
-	/**
-	 * @wbp.parser.constructor
-	 */
+
 	public ItemPanel(Item i) {
 		item=i;
 
@@ -164,6 +165,76 @@ public class ItemPanel extends JPanel {
 		email.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		email.setBounds(112, 57, 168, 14);
 		add(email);
+		
+	}
+	
+	/**
+	 * @wbp.parser.constructor
+	 */
+	public ItemPanel(Erfgoed e, ArrayList<Item> items) {
+		
+		BufferedImage img = null;
+		int count = 0;
+		
+		for(Item i : items) {
+			if(i.getFoto() != null && e.getErfgoedNr() == i.getErfgoed().getErfgoedNr())
+			{
+				img = i.getFoto();
+			}
+			if(e.getErfgoedNr() == i.getErfgoed().getErfgoedNr())
+			{
+			count++;
+			}
+		}
+		this.setBackground(Color.white);
+
+		
+		this.setBorder(BorderFactory.createEtchedBorder(Color.DARK_GRAY,Color.lightGray ));
+		setPreferredSize(new Dimension(280,120));
+		setLayout(new GridLayout(0, 1, 0, 0));
+		
+		ImagePanel panel = new ImagePanel("itempanel.jpg");
+		add(panel);
+		panel.setLayout(null);
+		
+		ImagePanel imagePanel = new ImagePanel(img);
+		imagePanel.setBounds(10, 26, 79, 79);
+		panel.add(imagePanel);
+		
+		JLabel lblErfgoed = new JLabel("Type: " + e.getType());
+		lblErfgoed.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblErfgoed.setBounds(107, 26, 159, 14);
+		panel.add(lblErfgoed);
+		
+		JLabel lblErfgoed_1 = new JLabel("Locatie: " + e.getLocatie());
+		lblErfgoed_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblErfgoed_1.setBounds(107, 42, 159, 14);
+		panel.add(lblErfgoed_1);
+		
+		JLabel lblDatum = new JLabel("Aantal inzendingen: " + count);
+		lblDatum.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblDatum.setBounds(108, 78, 158, 14);
+		panel.add(lblDatum);
+		
+		ImagePanel panel_1 = new ImagePanel("itembar.jpg");
+		panel_1.setBounds(0, 0, 403, 18);
+		panel.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel lblTitel = new JLabel("titel");
+		lblTitel.setBounds(5, 2, 403, 14);
+		panel_1.add(lblTitel);
+		lblTitel.setForeground(Color.GRAY);
+		lblTitel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		
+		//opvullen
+		lblTitel.setText(e.getNaam());
+		
+		JLabel lblGemeente = new JLabel("Gemeente: " +e.getGemeente());
+		lblGemeente.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblGemeente.setBounds(107, 60, 159, 14);
+		panel.add(lblGemeente);
+		
 		
 	}
 }

@@ -21,8 +21,9 @@ public class Model {
 	private String smtpHost = "smtp.gmail.com";
 	private int smtpPort = 587;
 	private Erfgoed activeErfgoed;
-	private String mailFrom = "ErfgoedHerzele";
+	private String mailFrom = "ErfgoedbankHerzele";
 	private hoofd_scherm hoofdframe;
+	private Chimalo Chimalo;
 	private Gebruiker admin;
 	private Boolean vensterOpen = false;
 	private Boolean nieuweAfbeelding = false;
@@ -32,6 +33,7 @@ public class Model {
 	private JLabel statusLabel;
 	private Connection dbconnectie;
 	private Timer timer;
+	private boolean loginschermIsOpen = true;
 	
 	public Model(Gebruiker admin){
 		listeners = new ArrayList<ChangeListener>();
@@ -51,6 +53,7 @@ public class Model {
 		listeners.remove(c);
 	}
 	public void notifyChangeListeners(){
+		System.out.println(listeners.size());
 		for (ChangeListener c : listeners ){
 			ChangeEvent e= new ChangeEvent(this);
 			c.stateChanged(e);
@@ -352,6 +355,22 @@ public class Model {
 	public boolean verwijderItem()
 	{
 		return dbc.verwijder(activeItem);
+	}
+
+	public boolean isLoginschermOpen() {
+		return loginschermIsOpen;
+	}
+
+	public void setLoginschermIsOpen(boolean loginschermOpen) {
+		this.loginschermIsOpen = loginschermOpen;
+	}
+
+	public Chimalo getChimalo() {
+		return Chimalo;
+	}
+
+	public void setChimalo(Chimalo chimalo) {
+		Chimalo = chimalo;
 	}
 	
 	

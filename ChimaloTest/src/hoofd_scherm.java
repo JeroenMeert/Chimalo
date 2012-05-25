@@ -101,7 +101,7 @@ public class hoofd_scherm extends JFrame {
 	 * Create the frame.
 	 */
 	public hoofd_scherm(Model m) {
-		super("Dashboard");
+		super("Dashboard - Overpowered by Chimalo");
 		parent=this;
 		model = m;
 		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
@@ -184,22 +184,6 @@ public class hoofd_scherm extends JFrame {
 		
 		
 		
-		JMenuItem mntmErfgoeden = new JMenuItem("Overzicht erfgoeden");
-		mntmErfgoeden.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				model.unsubscribe(model.getActivePanel());
-				ArrayList<Erfgoed> erfgoeden = model.getErfgoeden();
-				Erfgoed input = (Erfgoed) JOptionPane.showInputDialog(null,
-						"Selecteer het erfgoed dat je wilt bewerken","Erfgoedbeheer", JOptionPane.INFORMATION_MESSAGE, 
-						null, erfgoeden.toArray(),"");
-				newPanel(new ErfgoedPanel(model,new Parameter(input)));
-			}
-			
-		});
-		opties.add(mntmErfgoeden);
-		
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.WHITE);
@@ -241,7 +225,7 @@ public class hoofd_scherm extends JFrame {
 		mnGebruiker.add(mntmUitloggen);
 		
 		ImagePanel panel = new ImagePanel("logochimalo.jpg");
-		panel.setPreferredSize(new Dimension(1000,89));
+		panel.setPreferredSize(new Dimension(1000,93));
 		getContentPane().add(panel, BorderLayout.NORTH);
 		JLabel statuslbl = new JLabel("Gereed");
 		JMenuBar menuBar_1 = new JMenuBar();

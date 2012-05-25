@@ -33,6 +33,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -77,11 +78,29 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	private JButton verwijder;
 	private String activeList = "Keurlijst";
 	private int index=0;
+	private JRadioButton rdbtnErfgoeden;
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public DashbordPanel(Model m, Parameter para) {
 		super("background1.jpg");
+		try {
+            // Set cross-platform Java L&F (also called "Metal")
+        UIManager.setLookAndFeel(
+            UIManager.getCrossPlatformLookAndFeelClassName());
+		} 
+		catch (UnsupportedLookAndFeelException e) {
+       // handle exception
+		}
+		catch (ClassNotFoundException e) {
+       // handle exception
+		}
+		catch (InstantiationException e) {
+       // handle exception
+		}
+		catch (IllegalAccessException e) {
+       // handle exception
+		}
 		parent=this;
 		model = m;
 		model.setActivePanel(this);
@@ -280,6 +299,12 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		});
 		this.add(activePhoto);
 		
+		zoekBox = new JComboBox();
+		zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
+		zoekBox.setSelectedIndex(0);
+		zoekBox.setBounds(849, 37, 79, 20);
+		this.add(zoekBox);
+		
 		lblBewerken = new JLabel("");
 		lblBewerken.setBounds(67, 40, 379, 14);
 		this.add(lblBewerken);
@@ -287,13 +312,17 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		rdbtnKeurlijst = new JRadioButton("Keurlijst");
 		rdbtnKeurlijst.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnKeurlijst.setOpaque(true);
-		rdbtnKeurlijst.setBounds(619, 1, 79, 25);
+		rdbtnKeurlijst.setBounds(619, 1, 63, 25);
 		rdbtnKeurlijst.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnKeurlijst.isSelected()){
+					if(activeList.equals("erfgoeden")) {
+						zoekVeld.setText("");
+					}
 					activeList = "Keurlijst";
+					zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
 					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}				
@@ -301,15 +330,19 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		});
 		this.add(rdbtnKeurlijst);
 		
-		 rdbtnGoedgekeurd = new JRadioButton("Goedgekeurde items");
+		 rdbtnGoedgekeurd = new JRadioButton("Goedgekeurd");
 		rdbtnGoedgekeurd.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnGoedgekeurd.setBounds(694, 2, 128, 24);
+		rdbtnGoedgekeurd.setBounds(678, 1, 95, 24);
 		rdbtnGoedgekeurd.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (rdbtnGoedgekeurd.isSelected()){
+					if(activeList.equals("erfgoeden")) {
+						zoekVeld.setText("");
+					}
 					activeList = "Goedgekeurd";
+					zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
 					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}				
@@ -318,15 +351,19 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		});
 		this.add(rdbtnGoedgekeurd);
 		
-		rdbtnAfgekeurde = new JRadioButton("Afgekeurde Items");
+		rdbtnAfgekeurde = new JRadioButton("Afgekeurd");
 		rdbtnAfgekeurde.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		rdbtnAfgekeurde.setBounds(819, 2, 181, 24);
+		rdbtnAfgekeurde.setBounds(770, 1, 93, 24);
 		rdbtnAfgekeurde.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnAfgekeurde.isSelected()){
+					if(activeList.equals("erfgoeden")) {
+						zoekVeld.setText("");
+					}
 					activeList = "Afgekeurd";
+					zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
 					model.notifyChangeListeners();
 					//scrollPane.setViewportView(panel_1);
 				}
@@ -335,14 +372,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			
 		});
 		this.add(rdbtnAfgekeurde);
-		
-		
-		
-		ButtonGroup groep = new ButtonGroup();
-		groep.add(rdbtnKeurlijst);
-		groep.add(rdbtnGoedgekeurd);
-		groep.add(rdbtnAfgekeurde);
-		
 		
 		
 		JLabel lblZoeken = new JLabel("Zoeken:");
@@ -354,11 +383,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		this.add(zoekVeld);
 		zoekVeld.setColumns(10);
 		
-		zoekBox = new JComboBox();
-		zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Titel", "Auteur","Type", "Datum","Erfgoed"}));
-		zoekBox.setSelectedIndex(0);
-		zoekBox.setBounds(849, 37, 79, 20);
-		this.add(zoekBox);
+		
 		
 
 		btnGoedkeuren.setBounds(200, 441, 120, 23);
@@ -554,7 +579,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				activeList = "Alles";
 				model.notifyChangeListeners();
 				
 			}
@@ -570,7 +594,108 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		JLabel lblType = new JLabel("Type");
 		lblType.setBounds(317, 155, 46, 14);
 		add(lblType);
+		
+		rdbtnErfgoeden = new JRadioButton("Erfgoeden");
+		rdbtnErfgoeden.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		rdbtnErfgoeden.setBounds(863, 2, 75, 23);
+		rdbtnErfgoeden.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(rdbtnErfgoeden.isSelected())
+				{
+				activeList = "Erfgoeden";
+				zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Naam", "Type","Gemeente"}));
+				model.notifyChangeListeners();
+				}
+			}
+		});
+		
+		add(rdbtnErfgoeden);
+		
+		ButtonGroup groep = new ButtonGroup();
+		groep.add(rdbtnKeurlijst);
+		groep.add(rdbtnGoedgekeurd);
+		groep.add(rdbtnAfgekeurde);
+		groep.add(rdbtnErfgoeden);
 		processParameter(para);
+	}
+	
+	private void refreshErfgoedlijst() {
+		if(activeList.equals("Erfgoeden"))
+		{
+		itemCount = 0;
+		panel_1.setVisible(false);
+		panel_1.removeAll();
+	for (final Erfgoed i : model.getErfgoeden()){
+		
+		ip =new ItemPanel(i, model.getItems());
+		ip.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				model.unsubscribe(parent);
+				model.getHoofdframe().newPanel(new ErfgoedPanel(model,new Parameter(i)));
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				return;
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				return;
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				return;					
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				return;					
+			}
+			
+		});
+		if (!zoekVeld.getText().isEmpty())
+		{
+			if (String.valueOf(zoekBox.getSelectedItem())=="Naam"){
+			
+				if (i.getNaam().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+				{
+					panel_1.add(ip);
+					itemCount++;
+				}
+			}
+			if (String.valueOf(zoekBox.getSelectedItem())=="Type"){
+
+				if (i.getType().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+				{
+					panel_1.add(ip);
+					itemCount++;
+				}
+			}
+			if (String.valueOf(zoekBox.getSelectedItem())=="Gemeente"){
+
+				if (i.getGemeente().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+				{
+					panel_1.add(ip);
+					itemCount++;
+				}
+				
+			}
+		}else {
+		panel_1.add(ip);
+		itemCount++;
+		}
+	}
+	}
+	panel_1.repaint();
+	panel_1.setVisible(true);
+		
 	}
 	
 	private void refreshItems(){
@@ -590,7 +715,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			ip.addMouseListener(new MouseListener(){
 			
 				@Override
-				public void mouseClicked(MouseEvent arg0) {
+				public void mouseClicked(MouseEvent e) {
 					activeTitel.setText(titel);
 					activeBeschrijving.setText(tekst);
 					activeLink.setText(link);
@@ -696,6 +821,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 	public void stateChanged(ChangeEvent arg0) {
 		try {
 		refreshItems();
+		refreshErfgoedlijst();
 		}
 		finally {
 			if(itemCount == 0)
@@ -714,6 +840,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			activeErfgoed.addItem(e);
 		}
 		}
+		state = model.getActiveItem().getStatus();
 		refreshForState();
 		if(model.getActiveItem() != null)
 		{
@@ -737,7 +864,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			model.setNieuweAfbeelding(false);
 			}
 		}
-		state = model.getActiveItem().getStatus();
 		refreshTeller();
 		repaint();
 	}
@@ -831,6 +957,15 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				btnGoedkeuren.setEnabled(false);
 				btnAfkeuren.setEnabled(false);
 				btnWijzigen.setVisible(false);
+				}
+			}
+			else {
+				if(para.getSoort().equals("erfgoeden"))
+				{
+					activeList = "Erfgoeden";
+					rdbtnErfgoeden.setSelected(true);
+					zoekBox.setModel(new DefaultComboBoxModel(new String[] {"Naam", "Type","Gemeente"}));
+					model.notifyChangeListeners();
 				}
 			}
 		}

@@ -245,17 +245,13 @@ public class ErfgoedPanel extends ImagePanel  {
 		JMenu mnErfgoeden = new JMenu("Erfgoeden");
 		menuBar.add(mnErfgoeden);
 		
-		JMenuItem mntmSelecteerErfgoed = new JMenuItem("Selecteer Erfgoed");
+		JMenuItem mntmSelecteerErfgoed = new JMenuItem("Overzicht");
 		mnErfgoeden.add(mntmSelecteerErfgoed);
 		mntmSelecteerErfgoed.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<Erfgoed> erfgoeden = model.getErfgoeden();
-				Erfgoed input = (Erfgoed) JOptionPane.showInputDialog(null,
-						"Selecteer het erfgoed dat je wilt bewerken","Erfgoedbeheer", JOptionPane.INFORMATION_MESSAGE, 
-						null, erfgoeden.toArray(),"Tennis");
-				parentFrame.newPanel(new ErfgoedPanel(model,new Parameter(input)));
+				parentFrame.newPanel(new DashbordPanel(model,new Parameter("erfgoeden", "")));
 			}
 		});
 		

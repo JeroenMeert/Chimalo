@@ -61,7 +61,24 @@ public class Accountbeheer extends JFrame implements ChangeListener {
 	 * Create the frame.
 	 */
 	public Accountbeheer(Model mod) {
-		super("Account Beheer");
+		super("Account Beheer - Overpowered by Chimalo");
+		try {
+            // Set cross-platform Java L&F (also called "Metal")
+        UIManager.setLookAndFeel(
+            UIManager.getCrossPlatformLookAndFeelClassName());
+		} 
+		catch (UnsupportedLookAndFeelException e) {
+       // handle exception
+		}
+		catch (ClassNotFoundException e) {
+       // handle exception
+		}
+		catch (InstantiationException e) {
+       // handle exception
+		}
+		catch (IllegalAccessException e) {
+       // handle exception
+		}
 		ImageIcon imageIcon = new ImageIcon(getClass().getResource("logo1.png"));
 		Image image = imageIcon.getImage();
 		setIconImage(image);

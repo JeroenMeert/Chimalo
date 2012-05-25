@@ -1,5 +1,8 @@
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +34,17 @@ public class updateItems extends SwingWorker<Integer, Integer> {
 	protected Integer doInBackground() throws Exception {
 		System.out.println("---Lees items---");
 		size = m.countItems();
-		Connection conn = m.getDbconnectie();
+		Connection conn;
+		if(!m.isLoginschermOpen())
+		{
+		publish(-1);
+		conn = DriverManager.getConnection("jdbc:sqlserver://ProjectChimalo.mssql.somee.com;database=ProjectChimalo;user=anthonyvd;password=klokken05");
+		m.setDbconnectie(conn);
+		}
+		else
+		{
+			conn = m.getDbconnectie();
+		}
 		ResultSet rs = null;
 		int teller = 0;
         try {
@@ -98,9 +111,26 @@ public class updateItems extends SwingWorker<Integer, Integer> {
     protected void done() {
 		Calendar now = Calendar.getInstance();
 	    String tekst = "("+ now.get(Calendar.HOUR_OF_DAY) + ":" + controlMinuten(now.get(Calendar.MINUTE)) + ") "+ keurlijstItems + " nieuwe Items in de Keurlijst. Volgende synchronisatie om ";
-	    now.add(Calendar.MINUTE,20);
+	    now.add(Calendar.MINUTE,2);
 	    tekst = tekst + now.get(Calendar.HOUR_OF_DAY) + ":" + controlMinuten(now.get(Calendar.MINUTE));
 		text.setText(tekst);
+		if(m.isLoginschermOpen())
+		{
+			hoofd_scherm scherm = new hoofd_scherm(m);
+			scherm.setVisible(true);
+			m.getChimalo().dispose();
+			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+			
+			// bereken het midden van je scherm
+		    int w = scherm.getSize().width;
+		    int h = scherm.getSize().height;
+		    int x = (size.width-w)/2;
+		    int y = (size.height-h)/2;
+		    
+		    // verplaats de GUI
+		    scherm.setLocation(x, y);
+		    m.setLoginschermIsOpen(false);
+		}
 	}
 	
 	@Override
@@ -109,9 +139,20 @@ public class updateItems extends SwingWorker<Integer, Integer> {
         // De methoden publish() en process() zijn niet synchroon.
         // Het is dus mogelijk dat we een lijst van tussentijdse updates ontvangen en niet enkel de meest recente.
         // Deze methode zal worden uitgevoerd op de event dispatching thread van Swing !
-		text.setText("Bezig met het vernieuwen van de Itemlijst. Voortgang: " + (chunks.get(chunks.size()-1)*100/size) + "% voltooid");
-		System.out.println("Bezig met het vernieuwen van de Itemlijst. Voortgang: " +(chunks.get(chunks.size()-1)*100/size) + "% voltooid");
-    	
+		if(m.isLoginschermOpen())
+		{
+			if((chunks.get(chunks.size()-1)) == -1)
+			{
+				text.setText("Bezig met het herstarten van de connectie");
+			}
+			else
+			{
+			text.setText("Bezig met het laden van de inzendingen (" + (chunks.get(chunks.size()-1)*100/size) + "%)");
+			}
+		}
+		else {
+			text.setText("Bezig met het vernieuwen van de Itemlijst. Voortgang: " + (chunks.get(chunks.size()-1)*100/size) + "% voltooid");
+		}
     }
 	
 	public String controlMinuten(int minuten) {

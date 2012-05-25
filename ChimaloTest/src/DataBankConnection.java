@@ -31,28 +31,9 @@ public class DataBankConnection {
 	private Connection conn;
 	
 	public DataBankConnection(Model m) {
-		try {
-			//conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
-			conn = DriverManager.getConnection("jdbc:sqlserver://ProjectChimalo.mssql.somee.com;database=ProjectChimalo;user=anthonyvd;password=klokken05");
-		} catch (SQLException ex) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
-		}
-		m.setDbconnectie(conn);
 		this.m = m;
 	}
 	public DataBankConnection() {
-		try {
-			//conn = DriverManager.getConnection("jdbc:sqlserver://free-sql.BizHostNet.com;database=1327440627;user=1327440627;password=tcxaeetvy12qaf");
-			//conn = DriverManager.getConnection("jdbc:sqlserver://localhost;database=Project;user=sa;password=nokia0617");
-			conn = DriverManager.getConnection("jdbc:sqlserver://ProjectChimalo.mssql.somee.com;database=ProjectChimalo;user=anthonyvd;password=klokken05");
-		} catch (SQLException ex) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
-			for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-		}
 	}
 
 
@@ -60,7 +41,7 @@ public class DataBankConnection {
 		Gebruiker result = null;
         try {
         	
-        	PreparedStatement zoekLogin = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
+        	PreparedStatement zoekLogin = m.getDbconnectie().prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam = ? AND Wachtwoord = ? AND Actief = ?");
 
         	zoekLogin.setString(1, name);
         	zoekLogin.setString(2, pass);
@@ -89,7 +70,7 @@ public class DataBankConnection {
 	public boolean hasDuplicates(String Gebruikersnaam) {
 		try {
     		int count = 0;
-    		PreparedStatement haalItemsOp = conn.prepareStatement("SELECT COUNT(*) AS [rowcount] FROM Gebruiker WHERE Gebruikersnaam =? ");
+    		PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT COUNT(*) AS [rowcount] FROM Gebruiker WHERE Gebruikersnaam =? ");
     		haalItemsOp.setString(1,Gebruikersnaam);
     		ResultSet r = haalItemsOp.executeQuery();
     		r.next();
@@ -113,7 +94,7 @@ public class DataBankConnection {
 		boolean success = false;
 		if(!hasDuplicates(Gebruikersnaam)) {
         try {
-        	PreparedStatement voegBeheerderToe = conn.prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Emailadres) VALUES (?,?,?,?,?,?)");
+        	PreparedStatement voegBeheerderToe = m.getDbconnectie().prepareStatement("INSERT INTO Gebruiker (Gebruikersnaam, Naam, Wachtwoord, Type, Actief, Emailadres) VALUES (?,?,?,?,?,?)");
         	voegBeheerderToe.setString(1, Gebruikersnaam);
         	voegBeheerderToe.setString(2, Naam);
         	voegBeheerderToe.setString(3, pass);
@@ -139,7 +120,7 @@ public class DataBankConnection {
         try {
         	if(!pass.equals(""))
         	{
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ?, Emailadres = ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = m.getDbconnectie().prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?,Wachtwoord = ?, Type = ?, Actief = ?, Emailadres = ? WHERE gebruikerNr = ?");
         		voegBeheerderToe.setString(1, Gebruikersnaam);
         		voegBeheerderToe.setString(2, Naam);
         		voegBeheerderToe.setString(3, pass);
@@ -150,7 +131,7 @@ public class DataBankConnection {
         		voegBeheerderToe.executeUpdate();
         	}
         	else {
-        		PreparedStatement voegBeheerderToe = conn.prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ?, Emailadres= ? WHERE gebruikerNr = ?");
+        		PreparedStatement voegBeheerderToe = m.getDbconnectie().prepareStatement("UPDATE Gebruiker SET Gebruikersnaam = ? ,Naam = ?, Type = ?, Actief = ?, Emailadres= ? WHERE gebruikerNr = ?");
             	voegBeheerderToe.setString(1, Gebruikersnaam);
             	voegBeheerderToe.setString(2, Naam);
             	voegBeheerderToe.setString(3, type);
@@ -171,7 +152,7 @@ public class DataBankConnection {
         try {
         	BufferedImage duke = i.getFoto();
         	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
-            Blob dukeBlob = conn.createBlob();
+            Blob dukeBlob = m.getDbconnectie().createBlob();
             
             // We vragen aan de blob een OutputStream waarmee we bytes naar de blob kunnen schrijven.
             // Het argument 1 geeft aan dat we de blob willen schrijven vanaf de eerste byte (en niet ergens halverwege).
@@ -182,7 +163,7 @@ public class DataBankConnection {
             // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
             // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
             ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type= ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, Foto = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type= ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
@@ -211,7 +192,7 @@ public class DataBankConnection {
 	public boolean overschrijfItemZonderAfbeelding(Item i){
 		boolean success = false;
         try {
-        	PreparedStatement overschrijf = conn.prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type = ? WHERE ObjectNr = ?");
+        	PreparedStatement overschrijf = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? , Tijdstip = ?, Tekst = ?, GebruikerNr = ?, Status = ?, ErfgoedNr = ?, Link = ?, Extensie = ?, Type = ? WHERE ObjectNr = ?");
         	overschrijf.setString(1, i.getTitel());
         	overschrijf.setDate(2,i.getInzendDatum());
         	overschrijf.setString(3,i.getText());
@@ -238,7 +219,7 @@ public class DataBankConnection {
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		ResultSet rs = null;
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extensie, Type FROM Object");
+        	PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT GebruikerNr, Naam, Tijdstip , Tekst, Status, ObjectNr, ErfgoedNr, Link, Extensie, Type FROM Object");
         	rs = haalItemsOp.executeQuery();
         	while (rs.next()){
         		int in = rs.getInt("ObjectNr");
@@ -277,7 +258,7 @@ public class DataBankConnection {
 	public Gebruiker haalGebruikerOp(int userNr){
 		Gebruiker i = null;
         try {
-        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE GebruikerNr =? ");
+        	PreparedStatement haalGebruikerOp = m.getDbconnectie().prepareStatement("SELECT * FROM Gebruiker WHERE GebruikerNr =? ");
         	haalGebruikerOp.setInt(1, userNr);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
@@ -300,8 +281,8 @@ public class DataBankConnection {
 	{
 		Gebruiker result=null;
         try {
-            Statement stat = conn.createStatement();
-        	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam =? ");
+            Statement stat = m.getDbconnectie().createStatement();
+        	PreparedStatement haalGebruikerOp = m.getDbconnectie().prepareStatement("SELECT * FROM Gebruiker WHERE Gebruikersnaam =? ");
         	haalGebruikerOp.setString(1, gebruikersnaam);
         	ResultSet rs = haalGebruikerOp.executeQuery();
         	if (rs.next()){
@@ -324,7 +305,7 @@ public class DataBankConnection {
 		
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie, Type FROM Object ORDER BY Tijdstip DESC");
+        	PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie, Type FROM Object ORDER BY Tijdstip DESC");
         	ResultSet rs = haalItemsOp.executeQuery();
         	
         	while (rs.next()){
@@ -359,7 +340,7 @@ public class DataBankConnection {
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
 		PreparedStatement haalItemsOp =null;
         try {
-        	haalItemsOp = conn.prepareStatement("SELECT * FROM Object WHERE Status = ?");
+        	haalItemsOp = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Status = ?");
         	haalItemsOp.setString(1, status);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -401,7 +382,7 @@ public class DataBankConnection {
 		System.out.println("Lees items op auteur");
 		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
         try {
-        	PreparedStatement haalItemsOp = conn.prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie, Type FROM Object WHERE GebruikerNr =? ");
+        	PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie, Type FROM Object WHERE GebruikerNr =? ");
         	haalItemsOp.setInt(1,auteurNr);
         	ResultSet rs = haalItemsOp.executeQuery();
         	
@@ -435,8 +416,8 @@ public class DataBankConnection {
 		boolean s = false;
 		System.out.println("Wijzigen van status naar " + status + " Item: " + titel);
         try {
-            //Statement stat = conn.createStatement();
-        	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Object SET Naam = ? ,Tekst = ?,Status = ?  WHERE ObjectNr = ?");
+            //Statement stat = m.getDbconnectie().createStatement();
+        	PreparedStatement wijzigStatus = m.getDbconnectie().prepareStatement("UPDATE Object SET Naam = ? ,Tekst = ?,Status = ?  WHERE ObjectNr = ?");
         	wijzigStatus.setString(1 ,titel);
         	wijzigStatus.setString(2,beschrijving);
         	wijzigStatus.setString(3,status);
@@ -454,7 +435,7 @@ public class DataBankConnection {
 		System.out.println("Lees foto " + userID);
 		JFrame f = new JFrame();
         try {     
-		    	PreparedStatement readImage = conn.prepareStatement("SELECT Foto FROM Object WHERE ObjectNr=?");
+		    	PreparedStatement readImage = m.getDbconnectie().prepareStatement("SELECT Foto FROM Object WHERE ObjectNr=?");
 		    	readImage.setInt(1, userID);
 		    	ResultSet rs = readImage.executeQuery();
 		    	
@@ -485,7 +466,7 @@ public class DataBankConnection {
 		System.out.println("Lees gebruikers");
 		ArrayList<Gebruiker> gebruikers= new ArrayList<Gebruiker>();
         try {
-        	PreparedStatement geb = conn.prepareStatement("SELECT * FROM Gebruiker");
+        	PreparedStatement geb = m.getDbconnectie().prepareStatement("SELECT * FROM Gebruiker");
         	ResultSet rs = geb.executeQuery();
         	
         	while (rs.next()){
@@ -512,7 +493,7 @@ public class DataBankConnection {
 	{
 		ResultSet rs = null;
         try {
-        	Statement stmt = conn.createStatement(
+        	Statement stmt = m.getDbconnectie().createStatement(
                     ResultSet.TYPE_FORWARD_ONLY,
                     ResultSet.CONCUR_UPDATABLE);
                 
@@ -538,7 +519,7 @@ public class DataBankConnection {
 	{
 		ResultSet rs = null;
         try {   
-        	Statement stmt = conn.createStatement(
+        	Statement stmt = m.getDbconnectie().createStatement(
                     (ResultSet.TYPE_FORWARD_ONLY),
                     ResultSet.CONCUR_UPDATABLE);
         	rs = stmt.executeQuery("SELECT * from Object");
@@ -578,7 +559,7 @@ public class DataBankConnection {
 	{
 		ResultSet rs = null;
         try {     
-        	Statement stmt = conn.createStatement(
+        	Statement stmt = m.getDbconnectie().createStatement(
                     (ResultSet.TYPE_FORWARD_ONLY),
                     ResultSet.CONCUR_UPDATABLE);
         	rs = stmt.executeQuery("SELECT * from Object");
@@ -600,8 +581,8 @@ public class DataBankConnection {
 	{
         try {
 
-            //Statement stat = conn.createStatement();
-        	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
+            //Statement stat = m.getDbconnectie().createStatement();
+        	PreparedStatement wijzigStatus = m.getDbconnectie().prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
         	wijzigStatus.setBoolean(1, false);
         	wijzigStatus.setInt(2 ,nr);
         	wijzigStatus.executeUpdate();
@@ -615,8 +596,8 @@ public class DataBankConnection {
 	public void maakGebruikerActief(int nr)
 	{
         try {
-            //Statement stat = conn.createStatement();
-        	PreparedStatement wijzigStatus = conn.prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
+            //Statement stat = m.getDbconnectie().createStatement();
+        	PreparedStatement wijzigStatus = m.getDbconnectie().prepareStatement("UPDATE Gebruiker SET Actief = ? WHERE GebruikerNr = ?");
         	wijzigStatus.setBoolean(1, true);
         	wijzigStatus.setInt(2 ,nr);
         	wijzigStatus.executeUpdate();
@@ -646,8 +627,8 @@ public class DataBankConnection {
 	{
 		boolean success = false;
         try {
-            //Statement stat = conn.createStatement();
-        	PreparedStatement wijzig = conn.prepareStatement("UPDATE Standaardtekst SET Tekst = ? WHERE Soort = ?");
+            //Statement stat = m.getDbconnectie().createStatement();
+        	PreparedStatement wijzig = m.getDbconnectie().prepareStatement("UPDATE Standaardtekst SET Tekst = ? WHERE Soort = ?");
         	
         	wijzig.setString(1, txt);
         	wijzig.setString(2, soort);
@@ -666,7 +647,7 @@ public class DataBankConnection {
 	{
 		String result = null;
         try {
-		    	PreparedStatement read = conn.prepareStatement("SELECT Tekst FROM Standaardtekst WHERE Soort=?");
+		    	PreparedStatement read = m.getDbconnectie().prepareStatement("SELECT Tekst FROM Standaardtekst WHERE Soort=?");
 		    	read.setString(1, soort);
 		    	ResultSet rs = read.executeQuery();
 		    	
@@ -684,7 +665,7 @@ public ArrayList<Erfgoed> getErfGoeden() {
 	System.out.println("---Lees erfgoeden---");
      try { 	
      	ArrayList<Erfgoed> result=new ArrayList<Erfgoed>();
-     	PreparedStatement erfgoed = conn.prepareStatement("SELECT * FROM Erfgoed");
+     	PreparedStatement erfgoed = m.getDbconnectie().prepareStatement("SELECT * FROM Erfgoed");
      	ResultSet rs= erfgoed.executeQuery();
      	while (rs.next()){
      		Erfgoed e = new Erfgoed(rs.getInt("ErfgoedNr"), rs.getString("Naam"), rs.getString("Locatie"),rs.getString("Type"),rs.getString("Link"),rs.getString("Geschiedenis"),rs.getString("Info"), rs.getString("Kenmerken"), rs.getString("Statuut"), rs.getString("Gemeente"));
@@ -705,7 +686,7 @@ public boolean schrijfNieuwItem(Item i) {
      try {
     	BufferedImage duke = i.getFoto();
      	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
-         Blob dukeBlob = conn.createBlob();
+         Blob dukeBlob = m.getDbconnectie().createBlob();
          
          // We vragen aan de blob een OutputStream waarmee we bytes naar de blob kunnen schrijven.
          // Het argument 1 geeft aan dat we de blob willen schrijven vanaf de eerste byte (en niet ergens halverwege).
@@ -716,7 +697,7 @@ public boolean schrijfNieuwItem(Item i) {
          // De mogelijke waarden voor dit argument kan je opvragen met de methode ImageIO.getWriterFormatNames().
          // Voorbeelden zijn "jpeg", "png, "gif" en "bmp".
          ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
-     	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?,?)");   	
+     	PreparedStatement newItem = m.getDbconnectie().prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?,?)");   	
      	newItem.setString(1,i.getTitel());
      	newItem.setDate(2,i.getInzendDatum());
      	newItem.setString(3,i.getText());
@@ -746,7 +727,7 @@ public boolean schrijfNieuwItem(Item i) {
 public boolean schrijfNieuwItemZonderAfbeelding(Item i) {
 	boolean s = false;
     try {	    
-    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?)");
+    	PreparedStatement newItem = m.getDbconnectie().prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
     	newItem.setDate(2,i.getInzendDatum());
     	newItem.setString(3,i.getText());
@@ -771,7 +752,7 @@ public boolean schrijfNieuwItemZonderAfbeelding(Item i) {
 public boolean magErfgoedVerwijderdWorden(Erfgoed er) {
 	 Boolean b = true;
      try { 	    
-     	PreparedStatement magweg = conn.prepareStatement("SELECT * FROM Object WHERE ErfgoedNr = ?");
+     	PreparedStatement magweg = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE ErfgoedNr = ?");
      	
      	magweg.setInt(1,er.getErfgoedNr());
      	
@@ -792,7 +773,7 @@ public boolean removeErfgoed(Erfgoed er) {
 	// TODO Auto-generated method stub
 	boolean s = false;
     try {
-    	PreparedStatement weg = conn.prepareStatement("DELETE FROM Erfgoed WHERE ErfgoedNr =?");
+    	PreparedStatement weg = m.getDbconnectie().prepareStatement("DELETE FROM Erfgoed WHERE ErfgoedNr =?");
     	
     	weg.setInt(1,er.getErfgoedNr());
     	weg.executeUpdate();
@@ -808,7 +789,7 @@ public boolean removeErfgoed(Erfgoed er) {
 public boolean schrijfErfgoed(Erfgoed g) {
 	boolean s= false;
      try {   
-     	PreparedStatement newItem = conn.prepareStatement("UPDATE Erfgoed SET Naam = ? , Locatie = ?, Type = ?, Link = ?, Geschiedenis = ?, Info = ?, Kenmerken = ?, Statuut = ?, Gemeente = ? WHERE ErfgoedNr = ?");
+     	PreparedStatement newItem = m.getDbconnectie().prepareStatement("UPDATE Erfgoed SET Naam = ? , Locatie = ?, Type = ?, Link = ?, Geschiedenis = ?, Info = ?, Kenmerken = ?, Statuut = ?, Gemeente = ? WHERE ErfgoedNr = ?");
      	newItem.setString(1,g.getNaam());
     	newItem.setString(2,g.getLocatie());
     	newItem.setString(3,g.getType());
@@ -837,7 +818,7 @@ public void sluitConnectie()
 {
 	try {
 		if(conn != null)
-		conn.close();
+		m.getDbconnectie().close();
 	} catch (SQLException ex) {
 		// TODO Auto-generated catch block
 		JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden bij het sluiten van de connectie\nFoutmelding: " + ex.toString());
@@ -850,7 +831,7 @@ public void sluitConnectie()
 public boolean schrijfNieuwErfgoed(Erfgoed g) {
 	boolean s = false;
     try {
-    	PreparedStatement newItem = conn.prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link,Geschiedenis,Info,Kenmerken, Statuut, Gemeente) VALUES (?,?,?,?,?,?,?,?,?)");
+    	PreparedStatement newItem = m.getDbconnectie().prepareStatement("INSERT INTO Erfgoed (Naam, Locatie, Type, Link,Geschiedenis,Info,Kenmerken, Statuut, Gemeente) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,g.getNaam());
     	newItem.setString(2,g.getLocatie());
     	newItem.setString(3,g.getType());
@@ -879,7 +860,7 @@ public Erfgoed getErfgoed(int erfgoednr) {
 	System.out.println("Lees erfgoednr " +erfgoednr);
 	Erfgoed i = null;
     try {
-    	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT * FROM Erfgoed WHERE ErfgoedNr =? ");
+    	PreparedStatement haalGebruikerOp = m.getDbconnectie().prepareStatement("SELECT * FROM Erfgoed WHERE ErfgoedNr =? ");
     	haalGebruikerOp.setInt(1, erfgoednr);
     	ResultSet rs = haalGebruikerOp.executeQuery();
     	if (rs.next()){
@@ -902,7 +883,7 @@ public int countItems() {
 	System.out.println("Bezig met tellen van items");
 	int teller = 0;
     try {
-    	PreparedStatement haalGebruikerOp = conn.prepareStatement("SELECT COUNT(*) AS [teller] FROM Object");
+    	PreparedStatement haalGebruikerOp = m.getDbconnectie().prepareStatement("SELECT COUNT(*) AS [teller] FROM Object");
     	ResultSet rs = haalGebruikerOp.executeQuery();
     	if (rs.next()){
     		teller = rs.getInt("teller");
@@ -920,7 +901,7 @@ public Item aanvullenItem(Item i)
 {
 	System.out.println("Aanvullen van item " + i.getTitel());
     try {
-    	PreparedStatement h = conn.prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tijdstip=? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
+    	PreparedStatement h = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tijdstip=? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
     	h.setString(1, i.getTitel());
     	h.setDate(2, i.getInzendDatum());
     	h.setString(3, i.getText());
@@ -950,7 +931,7 @@ public Erfgoed aanvullenErfgoed(Erfgoed i)
 {
 	System.out.println("Aanvullen van Erfgoed " + i.getNaam());
     try {
-    	PreparedStatement h = conn.prepareStatement("SELECT * FROM Erfgoed WHERE Naam =? AND Locatie=? AND Kenmerken=? AND Geschiedenis=? AND Info= ? AND Link= ? AND Gemeente=? AND Type=? AND Statuut=?");
+    	PreparedStatement h = m.getDbconnectie().prepareStatement("SELECT * FROM Erfgoed WHERE Naam =? AND Locatie=? AND Kenmerken=? AND Geschiedenis=? AND Info= ? AND Link= ? AND Gemeente=? AND Type=? AND Statuut=?");
     	h.setString(1, i.getNaam());
     	h.setString(2, i.getLocatie());
     	h.setString(3, i.getKenmerken());
@@ -983,7 +964,7 @@ public boolean verwijder(Item i)
 	System.out.println("Verwijderen van item met status " + i.getStatus() + "en id "+ i.getId());
 	ResultSet rs = null;
     try {     
-    	PreparedStatement h = conn.prepareStatement("Delete FROM Object WHERE ObjectNr=?");
+    	PreparedStatement h = m.getDbconnectie().prepareStatement("Delete FROM Object WHERE ObjectNr=?");
     	h.setInt(1, i.getId());
     	int success = h.executeUpdate();
     	if(success != 0)
