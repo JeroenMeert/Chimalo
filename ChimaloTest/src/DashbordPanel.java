@@ -451,7 +451,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 						{
 						model.getActiveItem().setAuteur(model.getAdmin());
 						Calendar cal = new GregorianCalendar().getInstance() ;
-						cal.add(Calendar.DAY_OF_MONTH, 1);
 						Date datum = cal.getTime();
 						java.sql.Date date = new java.sql.Date( datum.getTime());
 						model.getActiveItem().setInzendDatum(date);

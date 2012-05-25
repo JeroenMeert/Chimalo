@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -684,6 +685,15 @@ public ArrayList<Erfgoed> getErfGoeden() {
 public boolean schrijfNieuwItem(Item i) {
 	boolean s = false;
      try {
+    	 
+    	 Calendar calendar = Calendar.getInstance();
+    	 
+    	 calendar.add(Calendar.HOUR, -7);// server time van somee.com is 7 uur eerder dan onze tijdzone, dit is de tijdelijke fix ervoor
+
+    	 java.util.Date now = calendar.getTime();
+    	 
+    	 java.sql.Timestamp tijd = new java.sql.Timestamp(now.getTime());
+    	 
     	BufferedImage duke = i.getFoto();
      	// Vervolgens maken we een nieuwe blob aan die we zullen vullen met de afbeelding.
          Blob dukeBlob = m.getDbconnectie().createBlob();
@@ -699,7 +709,7 @@ public boolean schrijfNieuwItem(Item i) {
          ImageIO.write(duke, i.getExtentie(), dukeBlobStream);
      	PreparedStatement newItem = m.getDbconnectie().prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, Foto,GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?,?)");   	
      	newItem.setString(1,i.getTitel());
-     	newItem.setDate(2,i.getInzendDatum());
+     	newItem.setTimestamp(2,tijd);
      	newItem.setString(3,i.getText());
      	newItem.setBlob(4, dukeBlob);
      	newItem.setInt(5, i.getAuteur().getGebruikersnummer());
@@ -726,10 +736,19 @@ public boolean schrijfNieuwItem(Item i) {
 
 public boolean schrijfNieuwItemZonderAfbeelding(Item i) {
 	boolean s = false;
-    try {	    
+    try {
+    	// create a java calendar instance
+   	 	Calendar calendar = Calendar.getInstance();
+
+   	 	// get a java.util.Date from the calendar instance.
+   	 	// this date will represent the current instant, or "now".
+   	 	java.util.Date now = calendar.getTime();
+
+   	 	// a java current time (now) instance
+   	 	java.sql.Timestamp tijd = new java.sql.Timestamp(now.getTime());
     	PreparedStatement newItem = m.getDbconnectie().prepareStatement("INSERT INTO Object (Naam, Tijdstip, Tekst, GebruikerNr,Status,ErfgoedNr,Link, Extensie, Type) VALUES (?,?,?,?,?,?,?,?,?)");
     	newItem.setString(1,i.getTitel());
-    	newItem.setDate(2,i.getInzendDatum());
+    	newItem.setTimestamp(2,tijd);
     	newItem.setString(3,i.getText());
     	newItem.setInt(4, i.getAuteur().getGebruikersnummer());
     	newItem.setString(5,"Goedgekeurd");
@@ -901,9 +920,8 @@ public Item aanvullenItem(Item i)
 {
 	System.out.println("Aanvullen van item " + i.getTitel());
     try {
-    	PreparedStatement h = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tijdstip=? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
+    	PreparedStatement h = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
     	h.setString(1, i.getTitel());
-    	h.setDate(2, i.getInzendDatum());
     	h.setString(3, i.getText());
     	h.setInt(4, i.getAuteur().getGebruikersnummer());
     	h.setInt(5, i.getErfgoed().getErfgoedNr());
