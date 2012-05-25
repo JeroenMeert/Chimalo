@@ -53,7 +53,6 @@ public class Model {
 		listeners.remove(c);
 	}
 	public void notifyChangeListeners(){
-		System.out.println(listeners.size());
 		for (ChangeListener c : listeners ){
 			ChangeEvent e= new ChangeEvent(this);
 			c.stateChanged(e);
@@ -65,11 +64,6 @@ public class Model {
 	
 	public void leesAlleItems() {
 		items = dbc.leesItems();
-	}
-	public void leesOpStatus(String status){
-		
-		items=dbc.leesItemsOpStatus(status);
-		notifyChangeListeners();
 	}
 	public boolean wijzigStatus(String s){
 		boolean success = dbc.wijzigStatus(s,getActiveItem());

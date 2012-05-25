@@ -12,6 +12,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -88,7 +90,9 @@ public class ItemPanel extends JPanel {
 		datum.setBounds(174, 58, 102, 14);
 		panel.add(datum);
 		auteur.setText(i.getAuteur().getGebruikersnaam());
-		datum.setText(String.valueOf(i.getInzendDatum()));
+		DateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+		StringBuilder nu = new StringBuilder( formatter.format( i.getInzendDatum() ) );
+		datum.setText(nu.toString());
 		erfgoed.setText(i.getErfgoed().getNaam());
 		
 		ImagePanel panel_1 = new ImagePanel("itembar.jpg");
@@ -177,13 +181,14 @@ public class ItemPanel extends JPanel {
 		int count = 0;
 		
 		for(Item i : items) {
-			if(i.getFoto() != null && e.getErfgoedNr() == i.getErfgoed().getErfgoedNr())
+			
+			if(e.getErfgoedNr() == i.getErfgoed().getErfgoedNr() && i.getStatus().equals("Goedgekeurd"))
 			{
-				img = i.getFoto();
-			}
-			if(e.getErfgoedNr() == i.getErfgoed().getErfgoedNr())
-			{
-			count++;
+				if(i.getFoto() != null && e.getErfgoedNr() == i.getErfgoed().getErfgoedNr())
+				{
+					img = i.getFoto();
+				}
+				count++;
 			}
 		}
 		this.setBackground(Color.white);

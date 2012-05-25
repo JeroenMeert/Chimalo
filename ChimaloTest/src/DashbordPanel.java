@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -708,7 +710,9 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			final String titel= i.getTitel();
 			final String tekst = i.getText();
 			final String auteur = i.getAuteur().getGebruikersnaam();
-			final String datum = String.valueOf(i.getInzendDatum());
+			DateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+			StringBuilder nu = new StringBuilder( formatter.format( i.getInzendDatum() ) );
+			final String datum = nu.toString();
 			final Erfgoed erfgoed = i.getErfgoed();
 			final String link = i.getLink();
 			ip.addMouseListener(new MouseListener(){
@@ -781,7 +785,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 				}
 				if (String.valueOf(zoekBox.getSelectedItem())=="Datum"){
 
-					if (String.valueOf(i.getInzendDatum()).toLowerCase().contains(zoekVeld.getText().toLowerCase()))
+					if(nu.toString().toLowerCase().contains(zoekVeld.getText().toLowerCase()))
 					{
 						panel_1.add(ip);
 						itemCount++;
@@ -853,7 +857,6 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 			if(model.getNieuweAfbeelding())
 			{
 			activePhoto.setNewFoto(model.getActiveItem().getFoto());
-			System.out.println("index: " +index);
 			activeErfgoed.setSelectedIndex(index);
 			activePanel(true);
 			btnGoedkeuren.setEnabled(false);

@@ -178,13 +178,16 @@ public class hoofd_scherm extends JFrame {
 		});
 		opties.add(mntmDashboard);
 		opties.add(mntmNieuw);
-		
-		
-		
-		
-		
-		
-		
+		JMenuItem mntmNieuwErfgoed = new JMenuItem("Nieuw erfgoed maken");
+		mntmNieuwErfgoed.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				model.unsubscribe(model.getActivePanel());
+				newPanel(new ErfgoedPanel(model, new Parameter("nieuw")));
+			}
+		});
+		opties.add(mntmNieuwErfgoed);
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.WHITE);
 		separator.setBackground(Color.WHITE);

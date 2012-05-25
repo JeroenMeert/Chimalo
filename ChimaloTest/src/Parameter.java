@@ -15,6 +15,11 @@ public class Parameter {
 		this.soort = soort;
 		this.object = object;
 	}
+	
+	public Parameter(String soort)
+	{
+		this.soort = soort;
+	}
 
 	public Parameter(Object o) {
 		object = o;

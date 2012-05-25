@@ -141,17 +141,18 @@ public class updateItems extends SwingWorker<Integer, Integer> {
         // Deze methode zal worden uitgevoerd op de event dispatching thread van Swing !
 		if(m.isLoginschermOpen())
 		{
+			text.setText("Bezig met het laden van de inzendingen (" + (chunks.get(chunks.size()-1)*100/size) + "%)");
+		}
+		else {
 			if((chunks.get(chunks.size()-1)) == -1)
 			{
 				text.setText("Bezig met het herstarten van de connectie");
 			}
 			else
 			{
-			text.setText("Bezig met het laden van de inzendingen (" + (chunks.get(chunks.size()-1)*100/size) + "%)");
+				if((chunks.get(chunks.size()-1)) >= 0)
+					text.setText("Bezig met het vernieuwen van de Itemlijst. Voortgang: " + (chunks.get(chunks.size()-1)*100/size) + "% voltooid");
 			}
-		}
-		else {
-			text.setText("Bezig met het vernieuwen van de Itemlijst. Voortgang: " + (chunks.get(chunks.size()-1)*100/size) + "% voltooid");
 		}
     }
 	

@@ -316,118 +316,6 @@ public class DataBankConnection {
         }
 		return result;
 	}
-	public ArrayList<Item> leesItemsOpDatum(){
-		
-		
-		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-        try {
-        	PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr, ErfGoedNr , Geschiedenis, Link, Locatie, Gemeente, Extensie, Type FROM Object ORDER BY Tijdstip DESC");
-        	ResultSet rs = haalItemsOp.executeQuery();
-        	
-        	while (rs.next()){
-        		
-        		int in = rs.getInt("ObjectNr");
-        		String titel = rs.getString("Naam");
-        		String tekst = rs.getString("Tekst");
-        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
-        		String link = rs.getString("Link");
-        		String status = rs.getString("Status");
-        		BufferedImage foto = haalFotoOp(in);
-        		String Extensie = rs.getString("Extensie");
-        		String type = rs.getString("Type");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie, type);
-        		terugTeGevenItems.add(i);
-        	}
-        	
-
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
-            for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        return terugTeGevenItems;
-	}
-
-	public ArrayList<Item> leesItemsOpStatus(String status){
-		System.out.println("Lees items op " + status);
-		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-		PreparedStatement haalItemsOp =null;
-        try {
-        	haalItemsOp = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Status = ?");
-        	haalItemsOp.setString(1, status);
-        	ResultSet rs = haalItemsOp.executeQuery();
-        	
-        	while (rs.next()){
-        		int in = rs.getInt("ObjectNr");
-        		String titel = rs.getString(2);
-        		String tekst = rs.getString("Tekst");
-        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
-        		String link = rs.getString("Link");
-        		String status1 = rs.getString("Status");
-        		BufferedImage foto = haalFotoOp(in);
-        		String Extensie = rs.getString("Extensie");
-        		String type = rs.getString("Type");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status1, Extensie, type);
-        		terugTeGevenItems.add(i);
-        	}
-
-
-        } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
-        	for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        finally {
-        	if(haalItemsOp != null)
-				try {
-					haalItemsOp.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        }
-        return terugTeGevenItems;
-	}
-	public ArrayList<Item> leesItemsOpAuteur(int auteurNr){
-		
-		System.out.println("Lees items op auteur");
-		ArrayList<Item> terugTeGevenItems= new ArrayList<Item>();
-        try {
-        	PreparedStatement haalItemsOp = m.getDbconnectie().prepareStatement("SELECT Naam, GebruikerNr, Tijdstip , Tekst, Status, ObjectNr,ErfgoedNr,Geschiedenis,Link, Locatie, Gemeente, Extensie, Type FROM Object WHERE GebruikerNr =? ");
-        	haalItemsOp.setInt(1,auteurNr);
-        	ResultSet rs = haalItemsOp.executeQuery();
-        	
-        	while (rs.next()){
-        		
-        		int in = rs.getInt("ObjectNr");
-        		String titel = rs.getString("Naam");
-        		String tekst = rs.getString("Tekst");
-        		Gebruiker gebruiker = haalGebruikerOp(rs.getInt("GebruikerNr"));
-        		Erfgoed erfgoed = getErfgoed(rs.getInt("ErfgoedNr"));
-        		String link = rs.getString("Link");
-        		String status = rs.getString("Status");
-        		BufferedImage foto = haalFotoOp(in);
-        		String Extensie = rs.getString("Extensie");
-        		String type = rs.getString("Type");
-        		Item i = new Item(foto,in,titel,tekst,gebruiker,rs.getDate("Tijdstip"),erfgoed,link, status, Extensie, type);
-        		terugTeGevenItems.add(i);
-        	}
-        	
-
-
-        } catch (SQLException ex) {
-        	JOptionPane.showMessageDialog(null, "Er is een database fout opgetreden\nFoutmelding: " + ex.toString());
-        	for (Throwable t : ex) {
-                t.printStackTrace();
-            }
-        }
-        return terugTeGevenItems;
-	}
 	public boolean wijzigStatus(String status, Item i){
 		boolean s = false;
 		System.out.println("Wijzigen van status naar " + status + " Item: " + i.getTitel());
@@ -943,12 +831,12 @@ public Item aanvullenItem(Item i)
     try {
     	PreparedStatement h = m.getDbconnectie().prepareStatement("SELECT * FROM Object WHERE Naam =? AND Tekst=? AND GebruikerNr=? AND ErfgoedNr= ? AND Status= ? AND Link=? AND Type=?");
     	h.setString(1, i.getTitel());
-    	h.setString(3, i.getText());
-    	h.setInt(4, i.getAuteur().getGebruikersnummer());
-    	h.setInt(5, i.getErfgoed().getErfgoedNr());
-    	h.setString(6, "Goedgekeurd");
-    	h.setString(7, i.getLink());
-    	h.setString(8, i.getType());
+    	h.setString(2, i.getText());
+    	h.setInt(3, i.getAuteur().getGebruikersnummer());
+    	h.setInt(4, i.getErfgoed().getErfgoedNr());
+    	h.setString(5, "Goedgekeurd");
+    	h.setString(6, i.getLink());
+    	h.setString(7, i.getType());
     	ResultSet rs = h.executeQuery();
     	if (rs.next()){
     		i.setId(rs.getInt("ObjectNr"));
@@ -1000,7 +888,7 @@ public Erfgoed aanvullenErfgoed(Erfgoed i)
 
 public boolean verwijder(Item i)
 {
-	System.out.println("Verwijderen van item met status " + i.getStatus() + "en id "+ i.getId());
+	System.out.println("Verwijderen van item met status " + i.getStatus() + " en id "+ i.getId());
 	ResultSet rs = null;
     try {     
     	PreparedStatement h = m.getDbconnectie().prepareStatement("Delete FROM Object WHERE ObjectNr=?");
