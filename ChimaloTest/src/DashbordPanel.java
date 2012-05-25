@@ -596,7 +596,7 @@ public class DashbordPanel extends ImagePanel implements ChangeListener{
 		lblType.setBounds(317, 155, 46, 14);
 		add(lblType);
 		
-		rdbtnErfgoeden = new JRadioButton("Erfgoeden");
+		rdbtnErfgoeden = new JRadioButton("Erfgoed");
 		rdbtnErfgoeden.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		rdbtnErfgoeden.setBounds(863, 2, 75, 23);
 		rdbtnErfgoeden.addActionListener(new ActionListener() {

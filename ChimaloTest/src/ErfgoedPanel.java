@@ -242,7 +242,7 @@ public class ErfgoedPanel extends ImagePanel  {
 			}
 		});
 		
-		JMenu mnErfgoeden = new JMenu("Erfgoeden");
+		JMenu mnErfgoeden = new JMenu("Erfgoederen");
 		menuBar.add(mnErfgoeden);
 		
 		JMenuItem mntmSelecteerErfgoed = new JMenuItem("Overzicht");
